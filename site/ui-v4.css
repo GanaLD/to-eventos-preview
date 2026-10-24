@@ -86,3 +86,19 @@
 
 /* Evitar que o estilo antigo pinte o texto do WhatsApp de laranja. */
 .nav-contact span{margin-left:0;color:inherit}
+
+
+/* Contraste adaptativo: sobre fundo off-white, os pontos escurecem e o brilho permanece laranja. */
+.to-section-nav.is-on-light{color:var(--graphite)}
+.to-section-nav.is-on-light .to-section-nav-rail{background:rgba(26,26,26,.28)}
+.to-section-nav.is-on-light .to-section-nav-list a{color:var(--graphite)}
+.to-section-nav.is-on-light .to-section-nav-list a>i{border-color:rgba(26,26,26,.7);background:var(--offwhite)}
+.to-section-nav.is-on-light .to-section-nav-list a.is-active>i{border-color:var(--to-rail)}
+.to-section-nav.is-on-light:hover,.to-section-nav.is-on-light:focus-within{background:rgba(244,244,242,.94);border-color:rgba(26,26,26,.12)}
+@media(min-width:721px) and (max-width:1100px){.site-header{padding-inline:32px}}
+@media(max-width:720px){
+.to-section-nav.is-on-light{color:var(--offwhite)}
+.to-section-nav.is-on-light .to-section-nav-list a{color:var(--offwhite)}
+.to-section-nav.is-on-light .to-section-nav-list a>i{border-color:rgba(244,244,242,.72);background:var(--graphite)}
+.to-section-nav.is-on-light:hover,.to-section-nav.is-on-light:focus-within{background:rgba(26,26,26,.94)}
+}
