@@ -15,7 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Instalar Playwright (Chromium já instalado)
-        run: npm install --no-save --no-package-lock playwright@1.56.1
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install chrome
       - name: Testes estruturais e sintaxe
         run: |
           node tests/hero-responsive-v73-smoke.mjs
