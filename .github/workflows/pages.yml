@@ -23,9 +23,16 @@ jobs:
         run: |
           node tests/v4-smoke.mjs
           node tests/v41-smoke.mjs
+          node tests/hero-v5-smoke.mjs
           node --check site/main.js
           node --check site/ui-v4.js
           node --check site/ui-v41.js
+          node --check site/hero-v5.js
+      - name: Integrar vídeo autoral do HERO no artefato do Pages
+        run: |
+          mkdir -p site/assets/media
+          curl --fail --location --retry 3 --connect-timeout 15 --max-time 90 'https://d2ol7oe51mr4n9.cloudfront.net/user_2wayxIrYymbrFzIPfYY8jkYgTU2/0541ee43-65c7-4f9e-b054-2796ac3aeaab.mp4' --output site/assets/media/motion-hero.mp4
+          test "$(wc -c < site/assets/media/motion-hero.mp4)" -gt 100000
       - name: Preparar GitHub Pages
         uses: actions/configure-pages@v5
         with:
