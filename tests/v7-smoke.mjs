@@ -13,6 +13,7 @@ assert((hero.match(/class="to-hero-scroll-cue"/g)||[]).length===1,'Somente um in
 assert(!orig.includes('createElement(\'div\')'),'Indicador não pode ser duplicado por JavaScript');
 assert(!html.includes('<script defer src="florais-v6.js"></script>'),'Evitar duas instâncias GSAP para os mesmos florais');
 assert(hero.includes('to-hero-scroll-cue')&&hero.includes('ROLE PARA CONTROLAR'),'Mouse deve orientar o scroll do HERO');
+assert(/\.to-hero-scroll-cue\{[^}]*top:50%[^}]*bottom:auto[^}]*translate\(-50%,-50%\)/s.test(css),'Indicador e mouse devem ficar no centro real do HERO');
 assert(/\.to-hero-scroll-cue\{[^}]*background:transparent[^}]*border:0[^}]*box-shadow:none/s.test(css),'Indicador do mouse não pode ter cartão, moldura ou sombra');
 assert(/\.hero-film-screen video\{[^}]*object-fit:contain[^}]*background:\s*var\(--to-hero-ambient\)/s.test(css),'O frame integral do HERO deve permanecer sem corte e com preenchimento na cor do vídeo');
 assert(css.includes('--to-hero-ambient:#ff6108'),'Eliminar a diferença de cor entre as faixas laterais e o primeiro frame de vídeo');
