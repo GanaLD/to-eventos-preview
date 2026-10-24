@@ -9,6 +9,9 @@ const about=html.slice(html.indexOf('id="sobre"'),html.indexOf('id="solucoes"'))
 const solutions=html.slice(html.indexOf('id="solucoes"'),html.indexOf('id="projetos"'));
 const projects=html.slice(html.indexOf('id="projetos"'),html.indexOf('id="contato"'));
 assert(html.includes('v7.css')&&html.includes('v7.js'),'Arquivos de UI V7 devem carregar');
+assert((hero.match(/class="to-hero-scroll-cue"/g)||[]).length===1,'Somente um indicador de scroll deve existir no HERO');
+assert(!orig.includes('createElement(\'div\')'),'Indicador não pode ser duplicado por JavaScript');
+assert(!html.includes('<script defer src="florais-v6.js"></script>'),'Evitar duas instâncias GSAP para os mesmos florais');
 assert(hero.includes('to-hero-scroll-cue')&&hero.includes('ROLE PARA CONTROLAR'),'Mouse deve orientar o scroll do HERO');
 assert(css.includes('object-fit:contain')&&css.includes('100dvh'),'Vídeo HERO integral sem cortes ou deformação');
 assert(orig.includes('videoPhaseEnd = 0.7')&&orig.includes('revealStart = 85'),'Vídeo antes dos textos no HERO');
