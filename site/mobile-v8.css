@@ -31,7 +31,7 @@
   .hero-scroll-stage .hero-visual{
     display:block;
     flex:0 0 auto;
-    width:min(100%,540px,calc(34dvh * 16 / 9));
+    width:min(100%,540px,60dvh);
     height:auto;
     aspect-ratio:16/9;
     min-height:0;
@@ -51,7 +51,7 @@
 @media (max-width:430px) {
   .hero-scroll-stage .hero-title{font-size:clamp(33px,8.7vw,40px)}
   .hero-scroll-stage .hero-copy>p{font-size:14px}
-  .hero-scroll-stage .hero-visual{width:min(100%,calc(33dvh * 16 / 9))}
+  .hero-scroll-stage .hero-visual{width:min(100%,58dvh)}
 }
 /* Scroll vertical do usuário continua controlando um trilho HORIZONTAL,
    sem esticar vídeos, achatar cards ou converter cases em uma página vertical. */
