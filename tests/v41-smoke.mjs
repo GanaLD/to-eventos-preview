@@ -23,7 +23,7 @@ assert(html.indexOf('id="hero"') < html.indexOf('id="to-page-turn"'), 'HERO não
 assert(html.indexOf('id="to-page-turn"') < html.indexOf('id="sobre"') && html.indexOf('id="sobre"') < html.indexOf('id="solucoes"'), 'Ordem das seções precisa ser preservada');
 assert(html.indexOf('<!-- FIM DA TRANSIÇÃO SOBRE → SOLUÇÕES -->') < html.indexOf('id="projetos"'), 'Projetos devem permanecer fora do palco da transição');
 assert(css.includes('.to-page-turn{position:relative;isolation:isolate}'), 'Palco precisa ter isolação de empilhamento');
-assert(css.includes('#sobre{position:sticky'), 'Papoulas devem ficar no fluxo com sticky natural, sem pin com gap artificial');
+assert(/#sobre\s*\{[^}]*position:\s*sticky/s.test(css), 'Papoulas devem ficar no fluxo com sticky natural, sem pin com gap artificial');
 assert(!js.includes('pinSpacing: false') && !js.includes('pin: about'), 'NÃO usar pinSpacing:false/pin:true no Sobre: sobrepõe o HERO');
 assert(js.includes('gsap.fromTo(solutions'), 'GSAP deve animar exclusivamente a subida da seção de competências');
 assert(js.includes("start: 'top bottom'") && js.includes("end: 'top top'"), 'Entrada da seção deve ocorrer somente quando competências alcançar o viewport');
