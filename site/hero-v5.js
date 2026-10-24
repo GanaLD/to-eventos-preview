@@ -8,6 +8,11 @@
   const destination = hero?.querySelector('.hero-visual');
   const copy = [...(hero?.querySelector('.hero-copy')?.children ?? [])];
   const foot = hero?.querySelector('.hero-foot');
+  const cue = document.createElement('div');
+  cue.className = 'to-hero-scroll-cue';
+  cue.setAttribute('aria-hidden','true');
+  cue.innerHTML = '<span class="to-cue-label">ROLE PARA CONTROLAR</span><span class="to-cue-mouse"><span class="to-cue-wheel"></span></span>';
+  hero.appendChild(cue);
   const gsap = window.gsap;
   const ScrollTrigger = window.ScrollTrigger;
   if (!stage || !hero || !film || !video || !destination || !gsap || !ScrollTrigger) return;
@@ -93,6 +98,7 @@
       refreshPriority: 8,
       onUpdate: self => {
         timeline.progress(self.progress);
+        cue.style.opacity = String(Math.max(0,1-self.progress/.18));
         scheduleSeek(Math.min(1, self.progress / videoPhaseEnd) * (duration - .015));
       }
     });
@@ -122,6 +128,7 @@
       invalidateOnRefresh: true, anticipatePin: 1, refreshPriority: 8,
       onUpdate: self => {
         timeline.progress(self.progress);
+        cue.style.opacity = String(Math.max(0,1-self.progress/.18));
         scheduleSeek(Math.min(1, self.progress / videoPhaseEnd) * (duration - .015));
       }
     });
