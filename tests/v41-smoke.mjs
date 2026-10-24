@@ -29,5 +29,5 @@ assert(js.includes('gsap.fromTo(solutions'), 'GSAP deve animar exclusivamente a 
 assert(js.includes("start: 'top bottom'") && js.includes("end: 'top top'"), 'Entrada da seção deve ocorrer somente quando competências alcançar o viewport');
 assert(js.includes('invalidateOnRefresh: true'), 'Transição deve recalcular dimensões após resize');
 assert(original.includes("getElementById('projects-track')"), 'GSAP horizontal precisa ser preservado');
-assert(original.includes("document.querySelector('.hero-scroll-stage')"), 'HERO Scroll deve ser preservado');
+assert(html.includes('hero-v5.js') && html.includes('data-role="hero-film"'), 'HERO Scroll V5 deve permanecer ativo');
 console.log('TO Eventos V4.1 — regressões estruturais OK');
