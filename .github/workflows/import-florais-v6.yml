@@ -1,0 +1,33 @@
+name: Importar papoulas originais V6
+on:
+  push:
+    paths:
+      - .github/workflows/import-florais-v6.yml
+permissions:
+  contents: write
+jobs:
+  importar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Baixar arquivos de referência enviados pelo cliente
+        run: |
+          mkdir -p site/assets/media
+          curl -fsSL --retry 3 --max-time 60 'https://at.adobe.com/UGG1Mysqi34EzfAa' -o site/assets/media/papoula-2-direita.png
+          curl -fsSL --retry 3 --max-time 60 'https://at.adobe.com/r4DptHYz8bZniKMF' -o site/assets/media/papoula-3-esquerda.png
+          curl -fsSL --retry 3 --max-time 120 'https://at.adobe.com/lLUJnMIGW12K3J6g' -o site/assets/media/animacao-papoulas.mp4
+          file site/assets/media/papoula-2-direita.png site/assets/media/papoula-3-esquerda.png site/assets/media/animacao-papoulas.mp4
+          test "$(wc -c < site/assets/media/papoula-2-direita.png)" -gt 100000
+          test "$(wc -c < site/assets/media/papoula-3-esquerda.png)" -gt 100000
+          test "$(wc -c < site/assets/media/animacao-papoulas.mp4)" -gt 100000
+      - name: Armazenar mídias no repositório
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/assets/media/papoula-2-direita.png site/assets/media/papoula-3-esquerda.png site/assets/media/animacao-papoulas.mp4
+          if ! git diff --cached --quiet; then
+            git commit -m 'assets: incorporar papoulas e vídeo originais TO Eventos V6'
+            git push origin HEAD:main
+          fi
