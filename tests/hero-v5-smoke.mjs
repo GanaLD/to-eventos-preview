@@ -13,7 +13,7 @@ assert(html.includes('class="hero-film-screen"'), 'Vídeo de abertura precisa pr
 assert(html.includes('src="assets/media/motion-hero.mp4"'), 'Hero usa arquivo motion-hero.mp4 servido localmente pelo Pages');
 assert(/id="hero"[\s\S]*hero-film-screen/.test(html), 'Vídeo dentro do #hero');
 assert(css.includes('.site-header{display:none'), 'Barra superior não deve existir na versão atual');
-assert(css.includes('.hero-visual{aspect-ratio:16/9'), 'Último enquadramento deve preservar 16:9');
+assert(/\.hero-visual\s*\{[^}]*aspect-ratio:\s*16\/9/s.test(css), 'Último enquadramento deve preservar 16:9');
 assert(css.includes('object-fit:contain'), 'Não distorcer o vídeo');
 assert(js.includes('currentTime'), 'Vídeo deve ser controlado pelo scroll');
 assert(js.includes('ScrollTrigger.create'), 'HERO necessita GSAP ScrollTrigger');
