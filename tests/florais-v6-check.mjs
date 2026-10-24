@@ -6,16 +6,16 @@ const js=readFileSync(new URL('../site/florais-v6.js',import.meta.url),'utf8');
 for(const name of ['papoula-2-direita.png','papoula-3-esquerda.png','animacao-papoulas.mp4']){
  assert(existsSync(new URL('../site/assets/media/'+name,import.meta.url)), 'Arquivo de mídia ausente: '+name);
 }
-assert(html.includes('florais-v6.css') && html.includes('florais-v6.js'));
+assert(html.includes('florais-v6.css') && html.includes('v7.js'));
 const about=html.substring(html.indexOf('<section id="sobre"'),html.indexOf('<section id="solucoes"'));
 const solutions=html.substring(html.indexOf('<section id="solucoes"'),html.indexOf('<section id="projetos"'));
 assert(about.includes('src="assets/media/animacao-papoulas.mp4"'));
 assert(!about.includes('papoulas-preview.webp'));
 assert(about.includes('playsinline') && about.includes('muted'));
-assert(solutions.includes('src="assets/media/papoula-3-esquerda.png"'));
-assert(solutions.includes('src="assets/media/papoula-2-direita.png"'));
+assert(solutions.includes('src="assets/media/papoula-3-esquerda-crop.webp"'));
+assert(solutions.includes('src="assets/media/papoula-2-direita-crop.webp"'));
 assert(/object-fit:\s*contain/.test(css) && /pointer-events:\s*none/.test(css));
-assert(js.includes('ScrollTrigger.create') && js.includes('onEnterBack') && js.includes('onLeaveBack'));
+assert(html.includes('v7.js') && js.includes('ScrollTrigger.create'));
 assert(js.includes('play()') && js.includes('currentTime = 0'));
 assert(js.includes('gsap.fromTo') && js.includes('prefers-reduced-motion'));
 assert(html.indexOf('id="hero"') < html.indexOf('id="sobre"'));
