@@ -1,0 +1,47 @@
+name: Importar mídias oficiais TO Eventos V7
+on:
+  push:
+    paths:
+      - '.github/workflows/import-v7-assets.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  importar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Baixar e verificar arquivos originais autorizados
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p original-assets site/assets/docs site/assets/media
+          curl --fail --silent --show-error --location --retry 3 --max-time 280 'https://at.adobe.com/IgSPL7nnYkKdMUpQ' --output original-assets/connect-reduzido-original.mp4
+          curl --fail --silent --show-error --location --retry 3 --max-time 180 'https://at.adobe.com/CBDUfeib7B7fncQz' --output site/assets/docs/portfolio-thais-ortiz.pdf
+          test "$(wc -c < original-assets/connect-reduzido-original.mp4)" -gt 20000000
+          test "$(wc -c < site/assets/docs/portfolio-thais-ortiz.pdf)" -gt 5000000
+          ffprobe -v error -show_entries stream=codec_name,width,height -of csv=p=0 original-assets/connect-reduzido-original.mp4
+          head -c 5 site/assets/docs/portfolio-thais-ortiz.pdf | grep -q '%PDF-'
+          pdfinfo site/assets/docs/portfolio-thais-ortiz.pdf | grep -q 'Pages: *13'
+      - name: Gerar MP4 web responsivo e poster do próprio Connect
+        shell: bash
+        run: |
+          set -euo pipefail
+          ffmpeg -hide_banner -loglevel error -y -i original-assets/connect-reduzido-original.mp4 -vf "scale=1280:-2:flags=lanczos" -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart site/assets/media/connect-web.mp4
+          ffmpeg -hide_banner -loglevel error -y -ss 12 -i original-assets/connect-reduzido-original.mp4 -frames:v 1 -vf "scale=1280:-2:flags=lanczos" -c:v libwebp -q:v 82 site/assets/media/connect-poster.webp
+          test "$(wc -c < site/assets/media/connect-web.mp4)" -gt 1000000
+          test "$(wc -c < site/assets/media/connect-poster.webp)" -gt 10000
+      - name: Preservar originais e integrar mídias reais ao repositório
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add original-assets/connect-reduzido-original.mp4 site/assets/docs/portfolio-thais-ortiz.pdf site/assets/media/connect-web.mp4 site/assets/media/connect-poster.webp
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(v7): incorpora vídeo Connect e PDF originais com derivados web"
+            git push origin HEAD:main
+          fi
