@@ -5,7 +5,7 @@
 .hero-scroll-stage .hero-film-screen{background:var(--to-hero-ambient);overflow:hidden}
 .hero-scroll-stage .hero-film-screen video{width:100%;height:100%;object-fit:contain;object-position:center center;background:var(--to-hero-ambient);aspect-ratio:auto}
 .hero-scroll-stage .hero-visual video{object-fit:contain;object-position:center center}
-.to-hero-scroll-cue{position:absolute;z-index:12;left:50%;bottom:46px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;opacity:1;padding:0;background:transparent;border:0;box-shadow:none;border-radius:0;filter:none}
+.to-hero-scroll-cue{position:absolute;z-index:12;left:50%;top:50%;bottom:auto;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;opacity:1;padding:0;background:transparent;border:0;box-shadow:none;border-radius:0;filter:none}
 .to-cue-label{font:700 11px/1.25 var(--font-ui,Inter,sans-serif);letter-spacing:.16em;text-transform:uppercase;color:var(--to-graphite);text-shadow:none;white-space:nowrap}
 .to-cue-mouse{position:relative;width:34px;height:52px;border:1.7px solid var(--to-graphite);border-radius:20px;background:transparent;box-shadow:none}
 .to-cue-wheel{position:absolute;left:50%;top:8px;width:4px;height:10px;border-radius:999px;background:var(--to-graphite);transform:translateX(-50%);box-shadow:none;animation:to-cue-wheel 1.25s ease-in-out infinite}
@@ -50,7 +50,7 @@
   #solucoes .solutions-floral-right{right:-40px;width:clamp(115px,14vw,165px)}
 }
 @media(max-width:899px){
-  .to-hero-scroll-cue{bottom:max(72px,env(safe-area-inset-bottom) + 26px);gap:8px}
+  .to-hero-scroll-cue{top:50%;bottom:auto;transform:translate(-50%,-50%);gap:8px}
   .to-cue-mouse{width:30px;height:46px}
   .to-cue-wheel{height:9px;top:7px}
   .to-cue-label{font-size:9px;letter-spacing:.13em}
