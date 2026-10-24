@@ -12,8 +12,10 @@
   display:flex;
   flex-direction:column;
   justify-content:center;
-  min-height:100svh;
-  height:100svh;
+  min-height:100vh;
+  height:100vh;
+  min-height:100dvh;
+  height:100dvh;
   padding:0;
   overflow:hidden;
   background:var(--graphite);
@@ -83,7 +85,7 @@
 .hero-scroll-stage.is-motion-hero .hero-copy,
 .hero-scroll-stage.is-motion-hero .hero-foot{position:relative;z-index:1}
 @media(max-width:899px){
-  .hero-scroll-stage .hero{min-height:100svh;height:100svh;padding:0;overflow:hidden}
+  .hero-scroll-stage .hero{min-height:100vh;height:100vh;min-height:100dvh;height:100dvh;padding:0;overflow:hidden}
   .hero-scroll-stage .hero-grid{
     display:flex;
     flex-direction:column;
@@ -117,3 +119,12 @@
   .hero-scroll-stage .hero-copy{opacity:1!important;transform:none!important}
   .hero-scroll-stage .hero-visual video{pointer-events:auto}
 }
+
+/* V7: scroll cue, confined to the cinematic phase. */
+.to-hero-scroll-cue{position:absolute;z-index:9;left:50%;bottom:46px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;color:#F4F4F2;opacity:1;transition:opacity .2s ease}
+.to-cue-label{font-size:11px;font-weight:700;letter-spacing:.16em;white-space:nowrap;text-transform:uppercase}
+.to-cue-mouse{position:relative;width:34px;height:52px;border:1.7px solid #F4F4F2;border-radius:22px}
+.to-cue-wheel{position:absolute;left:50%;top:8px;width:4px;height:10px;border-radius:4px;background:#FF4D00;transform:translateX(-50%);animation:toCueWheel 1.25s ease-in-out infinite}
+@keyframes toCueWheel{0%{opacity:0;top:8px}35%{opacity:1}85%,100%{opacity:0;top:27px}}
+@media(max-width:899px){.to-hero-scroll-cue{bottom:calc(72px + env(safe-area-inset-bottom,0px));gap:8px}.to-cue-label{font-size:9px}.to-cue-mouse{width:30px;height:46px}}
+@media(prefers-reduced-motion:reduce){.to-cue-wheel{animation:none}.to-hero-scroll-cue{display:none}}
