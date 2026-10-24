@@ -1,0 +1,30 @@
+name: QA visual TO Eventos V7
+on:
+  workflow_run:
+    workflows: ['Publicar preview da TO Eventos']
+    types: [completed]
+permissions:
+  contents: read
+jobs:
+  browser-qa:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Instalar Playwright e Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Inspecionar e registrar screenshots da LP publicada
+        run: node tests/v7-visual.mjs
+      - name: Disponibilizar capturas desktop e mobile
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: to-eventos-v7-qa-screenshots
+          path: qa-artifacts/
+          if-no-files-found: warn
