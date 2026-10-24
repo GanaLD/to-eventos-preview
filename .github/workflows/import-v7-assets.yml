@@ -47,5 +47,6 @@ jobs:
           git add original-assets/connect-reduzido-original.mp4 site/assets/docs/portfolio-thais-ortiz.pdf site/assets/media/connect-web.mp4 site/assets/media/connect-poster.webp
           if ! git diff --cached --quiet; then
             git commit -m "assets(v7): incorpora vídeo Connect e PDF originais com derivados web"
+            git pull --rebase origin main
             git push origin HEAD:main
           fi
