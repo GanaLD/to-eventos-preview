@@ -17,7 +17,7 @@ assert(hero.includes("video.removeAttribute('aria-hidden')"),'Mídia de fallback
 assert(/\.hero-scroll-stage \.hero-visual\s*\{\s*display:block/.test(css),'Frame final do hero precisa ser visível no mobile');
 assert(css.includes('aspect-ratio:16/9')&&css.includes('object-fit:contain'),'Enquadramento de mídia 16:9 com contain');
 assert(gallery.includes("if (track && pin && area)"),'Gallery horizontal GSAP não pode excluir mobile');
-assert(gallery.includes('mobile ? Math.max'),'Scrub precisa permitir percurso touch mais controlado');
+assert(gallery.includes('isMobile() ? Math.max'),'Scrub precisa permitir percurso touch mais controlado');
 assert(css.includes('.is-gsap-active #projetos .projects-track')&&css.includes('flex-direction:row'),'Com GSAP, painéis permanecem em linha no mobile');
 assert(css.includes('.is-gsap-active #projetos .project-panel-inner'),'Conteúdo interno adapta-se ao viewport sem cortar mídias');
 assert(style.includes("prefers-reduced-motion:reduce"),'Fallback de movimento reduzido continua disponível');
