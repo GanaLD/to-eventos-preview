@@ -70,3 +70,8 @@
 
 /* Preserve document width while floral images are lazy-loaded and animated. */
 #solucoes .solutions-florals{overflow:hidden;contain:paint}
+
+/* Hard containment for the ornamental layers, including lazy images on 360px screens. */
+#solucoes{overflow:hidden;contain:paint}
+#solucoes .solutions-floral-left{aspect-ratio:720/1613}
+#solucoes .solutions-floral-right{aspect-ratio:706/1527}
