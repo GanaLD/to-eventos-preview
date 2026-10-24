@@ -22,6 +22,8 @@
       if (active) section.link.setAttribute('aria-current', 'location');
       else section.link.removeAttribute('aria-current');
     }
+    const onLight = current?.element.classList.contains('section-light') || current?.element.classList.contains('projects-horizontal');
+    nav.classList.toggle('is-on-light', Boolean(onLight));
     const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     const ratio = Math.min(1, Math.max(0, window.scrollY / max));
     if (progress) progress.style.transform = 'scaleY(' + ratio + ')';
