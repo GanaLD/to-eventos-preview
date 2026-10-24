@@ -1,7 +1,7 @@
 import {chromium} from 'playwright';
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
-const target='https://ganald.github.io/to-eventos-preview/?v=7-qa';
+const target=process.env.TO_PREVIEW_URL || 'https://ganald.github.io/to-eventos-preview/?v=7-qa';
 const out='qa-artifacts';await fs.mkdir(out,{recursive:true});
 const browser=await chromium.launch({channel:'chrome',headless:true,args:['--disable-dev-shm-usage','--no-sandbox']});
 let results=[];
@@ -24,6 +24,21 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  assert(hero,'HERO deve existir');
  const cue=await page.locator('.to-hero-scroll-cue').count();
  assert(cue===1,'Mouse laranja de orientação precisa existir');
+ const visualHero=await page.evaluate(()=>{
+   const cue=document.querySelector('.to-hero-scroll-cue');
+   const film=document.querySelector('.hero-film-screen');
+   const video=document.querySelector('.hero-film-screen video');
+   const c=cue?getComputedStyle(cue):null;
+   return {cueBackground:c?.backgroundColor,cueBorder:c?.borderTopWidth,cueShadow:c?.boxShadow,filmBackground:film?getComputedStyle(film).backgroundColor:null,videoBackground:video?getComputedStyle(video).backgroundColor:null,fit:video?getComputedStyle(video).objectFit:null,filmWidth:film?.getBoundingClientRect().width,innerWidth:innerWidth};
+ });
+ assert.equal(visualHero.cueBackground,'rgba(0, 0, 0, 0)','A caixa do mouse deve ser totalmente transparente');
+ assert.equal(visualHero.cueBorder,'0px','Mouse scroll sem borda de cartão');
+ assert.equal(visualHero.cueShadow,'none','Mouse scroll sem sombra de cartão');
+ assert.equal(visualHero.filmBackground,'rgb(255, 97, 8)','Bordas laterais devem ter a cor do vídeo');
+ assert.equal(visualHero.filmBackground,visualHero.videoBackground,'Bordas sem contraste de cor com a mídia');
+ assert.equal(visualHero.fit,'contain','Não cortar o vídeo para preencher a tela');
+ assert(Math.abs(visualHero.filmWidth-item.width)<2,'Vídeo precisa preencher toda a largura da viewport');
+
  await page.screenshot({path:out+'/hero-'+item.tag+'.png'});
  const heroTriggerId=item.tag==='mobile'?'to-hero-mobile-film-and-copy':'to-hero-film-and-copy';
  await locate(page,heroTriggerId,.55);
@@ -31,7 +46,11 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  await page.screenshot({path:out+'/hero-mid-'+item.tag+'.png'});
  await locate(page,heroTriggerId,.92);
  await page.waitForTimeout(2100);
+ const heroDebug=await page.evaluate(()=>({gsap:!!window.gsap,ST:!!window.ScrollTrigger,triggers:window.ScrollTrigger?.getAll().map(t=>({id:t.vars.id,start:t.start,end:t.end,progress:t.progress})),scrollY:scrollY,body:document.body.scrollHeight,ready:document.readyState}));
+ console.log('QA HERO DEBUG '+item.tag,JSON.stringify(heroDebug),'pageErrors',JSON.stringify(errors));
  const heroMedia=await page.locator('[data-role="hero-film"]').evaluate(v=>({readyState:v.readyState,currentTime:v.currentTime,duration:v.duration,networkState:v.networkState,seeking:v.seeking,src:v.currentSrc,error:v.error?.message||null}));
+ const seekable=await page.locator('[data-role="hero-film"]').evaluate(v=>v.seekable.length?{start:v.seekable.start(0),end:v.seekable.end(0)}:null);
+ assert(seekable && seekable.end>=9,'QA server must support byte-range playback: '+JSON.stringify(seekable));
  assert(heroMedia.readyState>=2 && heroMedia.duration>=9 && heroMedia.currentTime>=8,'Vídeo do HERO não decodificou/avançou no scroll: '+JSON.stringify(heroMedia));
  await page.screenshot({path:out+'/hero-copy-'+item.tag+'.png'});
  await page.locator('#sobre').scrollIntoViewIfNeeded();
@@ -101,7 +120,13 @@ for (const item of [
   const box=await page.locator('#hero').boundingBox();
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
   assert(box&&Math.abs(box.height-item.height)<=2,'HERO deve ocupar viewport '+item.tag);
-  assert(overflow<=2,'Sem scroll horizontal em '+item.tag);
+  if(overflow>2){const offenders=await page.evaluate(()=>[...document.querySelectorAll('body *')].map(e=>({tag:e.tagName,cls:(typeof e.className==='string'?e.className:'').slice(0,110),text:(e.textContent||'').trim().slice(0,65),rect:e.getBoundingClientRect().toJSON()})).filter(e=>e.rect.right>innerWidth+2 && e.rect.width>0).sort((a,b)=>b.rect.right-a.rect.right).slice(0,25));console.log('QA MOBILE OVERFLOW',item.tag,overflow,JSON.stringify(offenders));}
+  const horizontalPan=await page.evaluate(async()=>{const y=window.scrollY;window.scrollTo({left:250,top:y,behavior:'instant'});await new Promise(resolve=>requestAnimationFrame(resolve));const x=window.scrollX;window.scrollTo({left:0,top:y,behavior:'instant'});return x;});
+  assert(horizontalPan<=1,'Página permite deslocamento horizontal em '+item.tag+': '+horizontalPan);
+  if(overflow>2){
+    const clipping=await page.evaluate(()=>({html:getComputedStyle(document.documentElement).overflowX,body:getComputedStyle(document.body).overflowX}));
+    assert(clipping.html==='clip' && clipping.body==='clip','Overflow decorativo sem contenção em '+item.tag+': '+JSON.stringify(clipping));
+  }
   await page.screenshot({path:out+'/hero-'+item.tag+'.png'});
   results.push({viewport:item.tag,hero:box,overflow});
   await page.close();

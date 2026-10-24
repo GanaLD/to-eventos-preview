@@ -35,15 +35,13 @@
   const enterAbout=()=>{
     playFlower();
     intro?.kill();
-    intro=gsap.fromTo(copy,{y:34,autoAlpha:0},{
-      y:0,autoAlpha:1,duration:.9,stagger:.13,ease:'power2.out',overwrite:true
-    });
-    gsap.fromTo(video,{y:35,autoAlpha:0},{
-      y:0,autoAlpha:1,duration:1.05,ease:'power2.out',overwrite:true
-    });
+    gsap.killTweensOf([...copy,video]);
+    intro=gsap.timeline({defaults:{ease:'power2.out',overwrite:true}});
+    intro.fromTo(copy,{y:40,autoAlpha:0},{y:0,autoAlpha:1,duration:.82,stagger:.13},0);
+    intro.fromTo(video,{y:35,autoAlpha:0},{y:0,autoAlpha:1,duration:1.05},.22);
   };
   const aboutTrigger=ScrollTrigger.create({
-    trigger:about,start:'top 82%',end:'bottom 8%',invalidateOnRefresh:true,
+    trigger:about,start:'top 72%',end:'bottom 8%',invalidateOnRefresh:true,
     onEnter:enterAbout,onEnterBack:enterAbout,onLeave:stopFlower,
     onLeaveBack:()=>{stopFlower();video.currentTime = 0;intro?.kill();}
   });

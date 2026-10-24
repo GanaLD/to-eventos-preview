@@ -1,15 +1,15 @@
 /* TO EVENTOS V7 — somente os cinco ajustes aprovados.
    Todas as mídias preservam sua proporção original. */
-:root{--to-orange:#FF4D00;--to-paper:#F4F4F2;--to-graphite:#1A1A1A}
+:root{--to-orange:#FF4D00;--to-paper:#F4F4F2;--to-graphite:#1A1A1A;--to-hero-ambient:#ff6108}
 .hero-scroll-stage .hero{height:100vh;height:100dvh;min-height:100vh;min-height:100dvh;max-height:100dvh}
-.hero-scroll-stage .hero-film-screen{background:var(--to-orange);overflow:hidden}
-.hero-scroll-stage .hero-film-screen video{width:100%;height:100%;object-fit:contain;object-position:center center;background:var(--to-orange);aspect-ratio:auto}
+.hero-scroll-stage .hero-film-screen{background:var(--to-hero-ambient);overflow:hidden}
+.hero-scroll-stage .hero-film-screen video{width:100%;height:100%;object-fit:contain;object-position:center center;background:var(--to-hero-ambient);aspect-ratio:auto}
 .hero-scroll-stage .hero-visual video{object-fit:contain;object-position:center center}
-.to-hero-scroll-cue{position:absolute;z-index:12;left:50%;bottom:46px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;opacity:1;filter:drop-shadow(0 0 12px rgba(255,77,0,.25));padding:12px 22px 14px;border:1px solid rgba(244,244,242,.3);border-radius:18px;background:rgba(26,26,26,.88);box-shadow:0 8px 28px rgba(26,26,26,.27)}
-.to-cue-label{font:700 11px/1.25 var(--font-ui,Inter,sans-serif);letter-spacing:.16em;text-transform:uppercase;color:var(--to-orange);text-shadow:0 0 10px rgba(26,26,26,.28);white-space:nowrap}
-.to-cue-mouse{position:relative;width:34px;height:52px;border:1.7px solid var(--to-paper);border-radius:20px;background:rgba(26,26,26,.32);box-shadow:0 0 18px rgba(255,77,0,.21)}
-.to-cue-wheel{position:absolute;left:50%;top:8px;width:4px;height:10px;border-radius:999px;background:var(--to-orange);transform:translateX(-50%);box-shadow:0 0 12px rgba(255,77,0,.78);animation:to-cue-wheel 1.25s ease-in-out infinite}
-.to-cue-direction{width:7px;height:7px;border-right:2px solid var(--to-orange);border-bottom:2px solid var(--to-orange);transform:rotate(45deg);margin-top:-2px}
+.to-hero-scroll-cue{position:absolute;z-index:12;left:50%;bottom:46px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;opacity:1;padding:0;background:transparent;border:0;box-shadow:none;border-radius:0;filter:none}
+.to-cue-label{font:700 11px/1.25 var(--font-ui,Inter,sans-serif);letter-spacing:.16em;text-transform:uppercase;color:var(--to-graphite);text-shadow:none;white-space:nowrap}
+.to-cue-mouse{position:relative;width:34px;height:52px;border:1.7px solid var(--to-graphite);border-radius:20px;background:transparent;box-shadow:none}
+.to-cue-wheel{position:absolute;left:50%;top:8px;width:4px;height:10px;border-radius:999px;background:var(--to-graphite);transform:translateX(-50%);box-shadow:none;animation:to-cue-wheel 1.25s ease-in-out infinite}
+.to-cue-direction{width:7px;height:7px;border-right:2px solid var(--to-graphite);border-bottom:2px solid var(--to-graphite);transform:rotate(45deg);margin-top:-2px}
 @keyframes to-cue-wheel{0%,100%{opacity:.32;top:8px}45%{opacity:1;top:25px}}
 /* Sobre: não alterar o grid. O GSAP controla somente transform/opacity dos filhos da cópia. */
 #sobre .about-copy{min-width:0}
@@ -67,3 +67,14 @@
   .to-hero-scroll-cue{display:none}
   .florals-enhanced #solucoes .solutions-floral{opacity:1;transform:none}
 }
+
+/* Preserve document width while floral images are lazy-loaded and animated. */
+#solucoes .solutions-florals{overflow:hidden;contain:paint}
+
+/* Hard containment for the ornamental layers, including lazy images on 360px screens. */
+#solucoes{overflow:hidden;contain:paint}
+#solucoes .solutions-floral-left{aspect-ratio:720/1613}
+#solucoes .solutions-floral-right{aspect-ratio:706/1527}
+
+/* Decorative offscreen GSAP travel must never enable page-level horizontal panning. */
+html,body{overflow-x:clip;max-width:100%}

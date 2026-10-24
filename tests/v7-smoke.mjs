@@ -9,10 +9,18 @@ const about=html.slice(html.indexOf('id="sobre"'),html.indexOf('id="solucoes"'))
 const solutions=html.slice(html.indexOf('id="solucoes"'),html.indexOf('id="projetos"'));
 const projects=html.slice(html.indexOf('id="projetos"'),html.indexOf('id="contato"'));
 assert(html.includes('v7.css')&&html.includes('v7.js'),'Arquivos de UI V7 devem carregar');
+assert((hero.match(/class="to-hero-scroll-cue"/g)||[]).length===1,'Somente um indicador de scroll deve existir no HERO');
+assert(!orig.includes('createElement(\'div\')'),'Indicador não pode ser duplicado por JavaScript');
+assert(!html.includes('<script defer src="florais-v6.js"></script>'),'Evitar duas instâncias GSAP para os mesmos florais');
 assert(hero.includes('to-hero-scroll-cue')&&hero.includes('ROLE PARA CONTROLAR'),'Mouse deve orientar o scroll do HERO');
+assert(/\.to-hero-scroll-cue\{[^}]*background:transparent[^}]*border:0[^}]*box-shadow:none/s.test(css),'Indicador do mouse não pode ter cartão, moldura ou sombra');
+assert(/\.hero-film-screen video\{[^}]*object-fit:contain[^}]*background:\s*var\(--to-hero-ambient\)/s.test(css),'O frame integral do HERO deve permanecer sem corte e com preenchimento na cor do vídeo');
+assert(css.includes('--to-hero-ambient:#ff6108'),'Eliminar a diferença de cor entre as faixas laterais e o primeiro frame de vídeo');
 assert(css.includes('object-fit:contain')&&css.includes('100dvh'),'Vídeo HERO integral sem cortes ou deformação');
 assert(orig.includes('videoPhaseEnd = 0.7')&&orig.includes('revealStart = 85'),'Vídeo antes dos textos no HERO');
 assert(about.includes('animacao-papoulas.mp4')&&about.includes('class="about-copy"'),'Conteúdo Sobre deve permanecer');
+assert(solutions.includes('width="720" height="1613"')&&solutions.includes('width="706" height="1527"'),'Dimensões alfa garantem layout mesmo antes do lazy load');
+assert(css.includes('.solutions-florals{overflow:hidden;contain:paint}'),'Camada ornamental deve conter transformações laterais');
 assert(solutions.includes('papoula-3-esquerda-crop.webp')&&solutions.includes('papoula-2-direita-crop.webp'),'Papoulas precisam usar recorte transparente correto');
 assert(/\b(ST|ScrollTrigger)\.create\(/.test(js)&&js.includes('onEnterBack')&&js.includes('onLeaveBack'),'Ativar e desativar ao atravessar a seção');
 assert(js.includes('power2.out')&&js.includes('about-copy')&&js.includes('microproof'),'Sequência animada de textos em Sobre');

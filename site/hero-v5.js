@@ -8,6 +8,8 @@
   const destination = hero?.querySelector('.hero-visual');
   const copy = [...(hero?.querySelector('.hero-copy')?.children ?? [])];
   const foot = hero?.querySelector('.hero-foot');
+  // Reuse the single scroll indicator authored in index.html.
+  const cue = hero?.querySelector('.to-hero-scroll-cue');
   const gsap = window.gsap;
   const ScrollTrigger = window.ScrollTrigger;
   if (!stage || !hero || !film || !video || !destination || !gsap || !ScrollTrigger) return;
@@ -93,6 +95,7 @@
       refreshPriority: 8,
       onUpdate: self => {
         timeline.progress(self.progress);
+        if (cue) { cue.style.opacity = String(Math.max(0, 1 - self.progress/.075)); cue.style.visibility = self.progress > .075 ? 'hidden' : 'visible'; }
         scheduleSeek(Math.min(1, self.progress / videoPhaseEnd) * (duration - .015));
       }
     });
@@ -122,6 +125,7 @@
       invalidateOnRefresh: true, anticipatePin: 1, refreshPriority: 8,
       onUpdate: self => {
         timeline.progress(self.progress);
+        if (cue) { cue.style.opacity = String(Math.max(0, 1 - self.progress/.075)); cue.style.visibility = self.progress > .075 ? 'hidden' : 'visible'; }
         scheduleSeek(Math.min(1, self.progress / videoPhaseEnd) * (duration - .015));
       }
     });
