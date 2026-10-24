@@ -26,6 +26,18 @@
     if (containerAnimation) opts.containerAnimation=containerAnimation;
     const trigger=ST.create(opts);
     activeTriggers.push(trigger);
+    // Fallback crucial: a user can scroll over a short trigger zone in one frame.
+    // IntersectionObserver recognizes an actually visible section/panel without
+    // hiding or restarting content when revisiting it.
+    if ('IntersectionObserver' in window) {
+      const io=new IntersectionObserver(entries=>{
+        if (entries.some(entry=>entry.isIntersecting)){
+          playOnce();
+          io.disconnect();
+        }
+      },{threshold:0.05});
+      io.observe(element);
+    }
     return trigger;
   };
 
