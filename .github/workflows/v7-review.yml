@@ -39,8 +39,9 @@ jobs:
         env:
           TO_PREVIEW_URL: http://127.0.0.1:8765/?v7-branch
         run: |
-          python3 -m http.server 8765 --bind 127.0.0.1 --directory site > /tmp/v7-static-server.log 2>&1 &
+          node tests/v7-range-server.mjs > /tmp/v7-range-server.log 2>&1 &
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/ -o /dev/null && break || sleep 1; done
+          curl -sSI -H 'Range: bytes=0-63' http://127.0.0.1:8765/assets/media/motion-hero.mp4 | grep -q '206 Partial Content'
           node tests/v7-visual.mjs
       - name: Arquivar capturas e relatório
         if: always()
@@ -51,4 +52,4 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
-# QA iteration 4
+# QA iteration 5
