@@ -34,7 +34,8 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  const heroMedia=await page.locator('[data-role="hero-film"]').evaluate(v=>({readyState:v.readyState,currentTime:v.currentTime,duration:v.duration,networkState:v.networkState,seeking:v.seeking,src:v.currentSrc,error:v.error?.message||null}));
  await page.screenshot({path:out+'/hero-copy-'+item.tag+'.png'});
  await page.locator('#sobre').scrollIntoViewIfNeeded();
- await page.waitForTimeout(1400);
+ await page.waitForTimeout(4700);
+ const aboutMedia=await page.locator('.about-floral-video').evaluate(v=>({readyState:v.readyState,currentTime:v.currentTime,duration:v.duration,paused:v.paused,networkState:v.networkState,error:v.error?.message||null}));
  await page.screenshot({path:out+'/sobre-'+item.tag+'.png'});
  await page.locator('#solucoes').scrollIntoViewIfNeeded();
  await page.waitForTimeout(1400);
@@ -81,7 +82,7 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  assert.equal((await pdf.locator('.to-pdf-counter').textContent())?.trim(),'01 / 13','PDF deve permitir voltar');
  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
  assert(overflow<=2,'Overflow horizontal de '+overflow+'px no '+item.tag);
- results.push({viewport:item.tag,hero,heroMedia,mediaResponses,floral,mediaSrc,overflow,pdf:'01/13 -> 02/13 -> 01/13',pageErrors:errors});
+ results.push({viewport:item.tag,hero,heroMedia,aboutMedia,mediaResponses,floral,mediaSrc,overflow,pdf:'01/13 -> 02/13 -> 01/13',pageErrors:errors});
  await page.close();
 }
 await fs.writeFile(out+'/resultados.json',JSON.stringify(results,null,2));
