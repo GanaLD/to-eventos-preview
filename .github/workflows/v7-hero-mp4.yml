@@ -1,0 +1,30 @@
+name: V7 — Prepare seekable HERO MP4 (temporary)
+on:
+  push:
+    branches: [to-eventos-v7-implementation]
+    paths: ['.github/workflows/v7-hero-mp4.yml']
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: to-eventos-v7-implementation
+      - name: Encode seekable MP4 for scroll HERO
+        run: |
+          set -euo pipefail
+          mkdir -p site/assets/media
+          curl -fsSL --retry 3 --max-time 90 'https://d2ol7oe51mr4n9.cloudfront.net/user_2wayxIrYymbrFzIPfYY8jkYgTU2/0541ee43-65c7-4f9e-b054-2796ac3aeaab.mp4' -o /tmp/to-hero-source.mp4
+          if ! command -v ffmpeg >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          ffmpeg -nostdin -hide_banner -loglevel error -i /tmp/to-hero-source.mp4 -c:v libx264 -preset medium -crf 21 -g 12 -keyint_min 12 -sc_threshold 0 -pix_fmt yuv420p -an -movflags +faststart -y site/assets/media/motion-hero.mp4
+          test "$(stat -c %s site/assets/media/motion-hero.mp4)" -gt 100000
+          ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,duration,nb_frames -of json site/assets/media/motion-hero.mp4
+      - name: Commit seekable MP4 on V7 branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/assets/media/motion-hero.mp4
+          git commit -m 'assets(v7): seek-optimized HERO MP4 for browser scroll' || exit 0
+          git push origin HEAD:to-eventos-v7-implementation
