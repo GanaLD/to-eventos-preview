@@ -33,6 +33,8 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  await page.waitForTimeout(2100);
  const heroDebug=await page.evaluate(()=>({gsap:!!window.gsap,ST:!!window.ScrollTrigger,triggers:window.ScrollTrigger?.getAll().map(t=>({id:t.vars.id,start:t.start,end:t.end,progress:t.progress})),scrollY:scrollY,body:document.body.scrollHeight,ready:document.readyState}));
  console.log('QA HERO DEBUG '+item.tag,JSON.stringify(heroDebug),'pageErrors',JSON.stringify(errors));
+ const manualSeek=await page.locator('[data-role="hero-film"]').evaluate(async video=>{const before=video.currentTime;let error=null;try{video.currentTime=5;}catch(e){error=e.message;}await new Promise(resolve=>setTimeout(resolve,1000));return {before,after:video.currentTime,seeking:video.seeking,error,seekable:video.seekable.length?{start:video.seekable.start(0),end:video.seekable.end(0)}:null};});
+ console.log('QA MANUAL SEEK',JSON.stringify(manualSeek));
  const heroMedia=await page.locator('[data-role="hero-film"]').evaluate(v=>({readyState:v.readyState,currentTime:v.currentTime,duration:v.duration,networkState:v.networkState,seeking:v.seeking,src:v.currentSrc,error:v.error?.message||null}));
  assert(heroMedia.readyState>=2 && heroMedia.duration>=9 && heroMedia.currentTime>=8,'Vídeo do HERO não decodificou/avançou no scroll: '+JSON.stringify(heroMedia));
  await page.screenshot({path:out+'/hero-copy-'+item.tag+'.png'});
