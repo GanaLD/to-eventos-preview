@@ -22,8 +22,10 @@ jobs:
       - name: Validar regressões da V4
         run: |
           node tests/v4-smoke.mjs
+          node tests/v41-smoke.mjs
           node --check site/main.js
           node --check site/ui-v4.js
+          node --check site/ui-v41.js
       - name: Preparar GitHub Pages
         uses: actions/configure-pages@v5
         with:
