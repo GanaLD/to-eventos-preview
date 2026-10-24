@@ -9,7 +9,7 @@ for(const name of ['papoula-2-direita.png','papoula-3-esquerda.png','animacao-pa
 assert(html.includes('florais-v6.css') && html.includes('v7.js'));
 const about=html.substring(html.indexOf('<section id="sobre"'),html.indexOf('<section id="solucoes"'));
 const solutions=html.substring(html.indexOf('<section id="solucoes"'),html.indexOf('<section id="projetos"'));
-assert(about.includes('src="assets/media/animacao-papoulas.mp4"'));
+assert(about.includes('data-original-source="assets/media/animacao-papoulas.mp4"') && about.includes('src="assets/media/animacao-papoulas-editorial-v72.mp4"'),'Fonte original preservada e enquadramento editorial corrigido');
 assert(!about.includes('papoulas-preview.webp'));
 assert(about.includes('playsinline') && about.includes('muted'));
 assert(solutions.includes('src="assets/media/papoula-3-esquerda-crop.webp"'));
