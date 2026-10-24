@@ -15,6 +15,7 @@
     const playOnce=()=>{
       if (played) return;
       played=true;
+      element.dataset.toMotionPlayed='yes';
       timeline.play(0);
     };
     const opts = {
