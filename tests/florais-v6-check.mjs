@@ -14,7 +14,7 @@ assert(!about.includes('papoulas-preview.webp'));
 assert(about.includes('playsinline') && about.includes('muted'));
 assert(solutions.includes('src="assets/media/papoula-3-esquerda.png"'));
 assert(solutions.includes('src="assets/media/papoula-2-direita.png"'));
-assert(css.includes('object-fit: contain') && css.includes('pointer-events: none'));
+assert(/object-fit:\s*contain/.test(css) && /pointer-events:\s*none/.test(css));
 assert(js.includes('ScrollTrigger.create') && js.includes('onEnterBack') && js.includes('onLeaveBack'));
 assert(js.includes('play()') && js.includes('currentTime = 0'));
 assert(js.includes('gsap.fromTo') && js.includes('prefers-reduced-motion'));
