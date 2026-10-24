@@ -125,3 +125,8 @@
     transform:none;
   }
 }
+/* V7: cropped transparent PNG derivatives; dimensions refer to visible artwork. */
+#solucoes .solutions-floral{aspect-ratio:auto;object-fit:contain}
+#solucoes .solutions-floral-left{top:5%;left:-42px;width:clamp(120px,10.5vw,175px)}
+#solucoes .solutions-floral-right{top:38%;right:-48px;width:clamp(140px,12vw,205px)}
+@media(max-width:720px){#solucoes .solutions-floral-left{top:5%;left:-34px;width:125px}#solucoes .solutions-floral-right{top:39%;right:-40px;width:145px}}
