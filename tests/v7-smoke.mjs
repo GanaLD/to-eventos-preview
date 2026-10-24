@@ -14,7 +14,7 @@ assert(css.includes('object-fit:contain')&&css.includes('100dvh'),'Vídeo HERO i
 assert(orig.includes('videoPhaseEnd = 0.7')&&orig.includes('revealStart = 85'),'Vídeo antes dos textos no HERO');
 assert(about.includes('animacao-papoulas.mp4')&&about.includes('class="about-copy"'),'Conteúdo Sobre deve permanecer');
 assert(solutions.includes('papoula-3-esquerda-crop.webp')&&solutions.includes('papoula-2-direita-crop.webp'),'Papoulas precisam usar recorte transparente correto');
-assert(js.includes('ScrollTrigger.create')&&js.includes('onEnterBack')&&js.includes('onLeaveBack'),'Ativar e desativar ao atravessar a seção');
+assert(/\b(ST|ScrollTrigger)\.create\(/.test(js)&&js.includes('onEnterBack')&&js.includes('onLeaveBack'),'Ativar e desativar ao atravessar a seção');
 assert(js.includes('power2.out')&&js.includes('about-copy')&&js.includes('microproof'),'Sequência animada de textos em Sobre');
 assert(projects.includes('connect-web.mp4')&&projects.includes('connect-poster.webp'),'Projeto deve conter vídeo Connect com poster autêntico');
 assert(projects.includes('controls')&&projects.includes('preload="metadata"')&&projects.includes('playsinline'),'Reprodução acessível e sob demanda');
