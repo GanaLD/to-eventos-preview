@@ -38,6 +38,12 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  assert.equal(visualHero.filmBackground,visualHero.videoBackground,'Bordas sem contraste de cor com a mídia');
  assert.equal(visualHero.fit,'contain','Não cortar o vídeo para preencher a tela');
  assert(Math.abs(visualHero.filmWidth-item.width)<2,'Vídeo precisa preencher toda a largura da viewport');
+ const cuePosition=await page.evaluate(()=>{
+   const r=document.querySelector('.to-hero-scroll-cue').getBoundingClientRect();
+   return {centerX:r.left+r.width/2,centerY:r.top+r.height/2,width:innerWidth,height:innerHeight};
+ });
+ assert(Math.abs(cuePosition.centerX-cuePosition.width/2)<2, 'Mouse precisa estar centralizado horizontalmente: '+JSON.stringify(cuePosition));
+ assert(Math.abs(cuePosition.centerY-cuePosition.height/2)<3, 'Mouse precisa estar centralizado verticalmente: '+JSON.stringify(cuePosition));
 
  await page.screenshot({path:out+'/hero-'+item.tag+'.png'});
  const heroTriggerId=item.tag==='mobile'?'to-hero-mobile-film-and-copy':'to-hero-film-and-copy';
