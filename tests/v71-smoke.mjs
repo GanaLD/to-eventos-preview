@@ -19,7 +19,7 @@ assert(projects.includes('connect-web.mp4')&&projects.includes('to-pdf-showcase'
 assert(contact.includes('contact-aside')&&contact.includes('footer'),'Contato e rodapé preservados');
 assert(motion.includes('containerAnimation'),'Animations tied to GSAP horizontal carousel');
 assert(motion.includes('prefers-reduced-motion'),'Redução de movimento respeitada');
-assert(motion.includes('aria-label')&&motion.includes('to-type-char'),'Digitação acessível sem substituir texto por frames');
+assert(motion.includes('aria-label')&&motion.includes('to-v71-type-char'),'Digitação acessível sem substituir texto por frames');
 assert(motion.includes('to-v71-contact'),'Animação de rodapé vinculada à seção de Contato');
 assert(motion.includes('to-v71-solutions'),'Revelação nas competências com papoulas laterais');
 assert(motion.includes('to-v71-projects'),'Motion de Experiência em Ação');
