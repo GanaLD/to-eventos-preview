@@ -32,10 +32,12 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  await locate(page,heroTriggerId,.92);
  await page.waitForTimeout(2100);
  const heroMedia=await page.locator('[data-role="hero-film"]').evaluate(v=>({readyState:v.readyState,currentTime:v.currentTime,duration:v.duration,networkState:v.networkState,seeking:v.seeking,src:v.currentSrc,error:v.error?.message||null}));
+ assert(heroMedia.readyState>=2 && heroMedia.duration>=9 && heroMedia.currentTime>=8,'Vídeo do HERO não decodificou/avançou no scroll: '+JSON.stringify(heroMedia));
  await page.screenshot({path:out+'/hero-copy-'+item.tag+'.png'});
  await page.locator('#sobre').scrollIntoViewIfNeeded();
  await page.waitForTimeout(4700);
  const aboutMedia=await page.locator('.about-floral-video').evaluate(v=>({readyState:v.readyState,currentTime:v.currentTime,duration:v.duration,paused:v.paused,networkState:v.networkState,error:v.error?.message||null}));
+ assert(aboutMedia.readyState>=2 && aboutMedia.duration>=5 && aboutMedia.currentTime>=2,'Vídeo das papoulas não tocou ao entrar na seção: '+JSON.stringify(aboutMedia));
  await page.screenshot({path:out+'/sobre-'+item.tag+'.png'});
  await page.locator('#solucoes').scrollIntoViewIfNeeded();
  await page.waitForTimeout(1400);
