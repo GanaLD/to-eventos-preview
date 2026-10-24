@@ -16,35 +16,31 @@
     copy.querySelector('.microproof')
   ].filter(Boolean):[];
 
+  let entered=false;
   const playFlower=()=>{
-    if(!botanicalVideo)return;
-    botanicalVideo.pause();
-    try{botanicalVideo.currentTime=0;}catch(_){}
+    if(!botanicalVideo || botanicalVideo.ended)return;
     const promise=botanicalVideo.play();
     promise?.catch?.(()=>{});
   };
   if(about&&botanicalVideo&&copyParts.length && !reduce && gsap&&ST){
     gsap.registerPlugin(ST);
-    gsap.set(copyParts,{y:40,autoAlpha:0});
-    gsap.set(botanicalVideo,{y:32,autoAlpha:0});
+    // Esconde apenas antes do primeiro reveal. Nunca reseta ao scroll reverso.
+    gsap.set(copyParts,{y:32,autoAlpha:0});
+    gsap.set(botanicalVideo,{y:0,autoAlpha:0});
     let reveal;
     const enter=()=>{
-      reveal?.kill();
-      gsap.set(copyParts,{y:40,autoAlpha:0});
-      gsap.set(botanicalVideo,{y:32,autoAlpha:0});
+      if(entered){
+        playFlower();
+        return;
+      }
+      entered=true;
       reveal=gsap.timeline({defaults:{ease:'power2.out'}});
-      reveal.to(copyParts,{y:0,autoAlpha:1,duration:1.32,stagger:.21},0);
-      reveal.to(botanicalVideo,{y:0,autoAlpha:1,duration:1.35},.28);
+      reveal.to(copyParts,{y:0,autoAlpha:1,duration:1.28,stagger:.21},0);
+      reveal.to(botanicalVideo,{y:0,autoAlpha:1,duration:1.35},.25);
+      // Reprodução começa uma vez, sem pular para 0 na volta à seção.
       playFlower();
     };
-    const exitTop=()=>{
-      botanicalVideo.pause();
-      reveal?.kill();
-      gsap.set(copyParts,{y:40,autoAlpha:0});
-      gsap.set(botanicalVideo,{y:32,autoAlpha:0});
-      try{botanicalVideo.currentTime=0;}catch(_){}
-    };
-    const trigger=ST.create({
+    ST.create({
       id:'to-v7-sobre-intro',
       trigger:about,
       start:'top 82%',
@@ -53,12 +49,12 @@
       onEnter:enter,
       onEnterBack:enter,
       onLeave:()=>botanicalVideo.pause(),
-      onLeaveBack:exitTop
+      onLeaveBack:()=>botanicalVideo.pause()
     });
-    // Abertura por #sobre, histórico ou recarga não pode deixar o texto oculto.
+    // Abertura por #sobre e restauração pelo histórico.
     const reconcile=()=>{
       const r=about.getBoundingClientRect();
-      if(r.top<innerHeight*.82&&r.bottom>innerHeight*.15&&(!reveal||reveal.progress()===0))enter();
+      if(!entered && r.top<innerHeight*.82 && r.bottom>innerHeight*.15)enter();
     };
     requestAnimationFrame(()=>requestAnimationFrame(reconcile));
     document.fonts?.ready?.then(()=>{ST.refresh();reconcile();});

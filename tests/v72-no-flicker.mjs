@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const html=read('site/index.html'), motion=read('site/motion-v71.js'), about=read('site/v7.js'), css=read('site/motion-v71.css');
+const flower=html.slice(html.indexOf('id="sobre"'),html.indexOf('id="solucoes"'));
+assert(flower.includes('animacao-papoulas-editorial-v72.mp4'),'Sobre deve usar vídeo editorial sem recorte abrupto');
+assert(!flower.includes('animacao-papoulas.webm'),'Não trocar automaticamente para versão anterior cortada');
+assert(/aria-label="[^"]*papoula/i.test(flower),'Vídeo floral precisa de descrição acessível');
+assert(motion.includes('let played=false') && motion.includes('if (played) return'),'Revelação precisa executar só uma vez, sem piscar no scroll inverso');
+assert(!motion.includes('timeline.restart()'),'Proibir restart que faz textos desaparecerem e reaparecerem');
+assert(motion.includes('to-v72-type-line') && !motion.includes('to-v71-type-char'),'Digitação deve revelar linhas com máscara, nunca piscar caracteres');
+assert(motion.includes('clipPath') && !motion.includes('opacity:0},{opacity:1,duration:.02'),'Typewriter não pode alternar opacidade dos caracteres');
+assert(about.includes('let entered=false') && about.includes('if(entered)'),'Sobre revela texto uma vez e não reseta em ScrollTrigger');
+assert(!about.includes('reveal?.kill();') && !about.includes('const exitTop=()=>'),'Não matar e reiniciar a timeline da seção Sobre');
+assert(css.includes('.to-v72-type-line') && css.includes('will-change:clip-path'),'Digitação deve manter o espaço natural dos títulos');
+console.log('V7.2: regressão de piscadas, digitação e enquadramento floral: OK');

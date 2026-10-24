@@ -1,54 +1,66 @@
-/* TO Eventos V7.1 — editorial motion only; never alter HERO or pin geometry. */
+/* TO Eventos V7.2 — composição floral integrada e motion sem piscadas.
+   Ninguém reinicia o texto no scroll reverso; não há alteração no HERO. */
 #sobre .botanical-motion{
   box-sizing:border-box;
-  padding-inline:clamp(16px,1.25vw,24px);
+  grid-column:2;
   min-width:0;
+  width:min(100%,370px);
+  max-width:370px;
+  margin-inline:auto;
+  padding:0;
   overflow:visible;
-  justify-self:center;
   align-self:center;
+  justify-self:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:transparent;
 }
 #sobre .botanical-motion .about-floral-video{
   display:block;
   width:100%;
+  max-width:100%;
   height:auto;
-  max-width:400px;
   aspect-ratio:9 / 16;
   object-fit:contain;
   object-position:center center;
   margin:0 auto;
-  overflow:visible;
+  padding:0;
+  border:0;
+  box-shadow:none;
+  background:#F4F4F2;
 }
 #sobre .botanical-motion figcaption{display:none!important}
-.project-panel-cases .project-panel-inner{
-  justify-content:center;
-}
-.project-panel-cases .case-layout{
-  margin-block:0;
-}
-.to-v71-type-word{
+.project-panel-cases .project-panel-inner{justify-content:center}
+.project-panel-cases .case-layout{margin-block:0}
+/* Somente o título do card cinza usa reveal de digitação: sem opacity por letra. */
+.project-panel-cases .case-text:not(.case-text-contrast) .to-v72-type-line{
   display:inline-block;
   white-space:nowrap;
+  clip-path:inset(0 100% 0 0);
+  will-change:clip-path;
 }
-.to-v71-type-char{
-  display:inline;
-  opacity:1;
-  will-change:opacity;
+@media(max-width:900px){
+  #sobre .botanical-motion{
+    grid-column:auto;
+    max-width:min(100%,335px);
+    margin:32px auto 0;
+    padding:0;
+  }
 }
 @media(max-width:720px){
   #sobre .botanical-motion{
-    width:min(100%,340px);
-    padding-inline:clamp(12px,4vw,20px);
-    margin-top:36px;
+    width:min(100%,300px);
+    max-width:300px;
+    padding:0;
+    margin:32px auto 0;
   }
   #sobre .botanical-motion .about-floral-video{
-    max-width:100%;
     height:auto;
     aspect-ratio:9 / 16;
-    object-fit:contain;
   }
-  .project-panel-cases .project-panel-inner{justify-content:center}
 }
 @media(prefers-reduced-motion:reduce){
-  .to-v71-type-char{opacity:1!important}
+  .to-v72-type-line{clip-path:none!important;will-change:auto!important}
   #sobre .botanical-motion .about-floral-video{transform:none!important}
 }
