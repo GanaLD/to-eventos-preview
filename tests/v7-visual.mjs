@@ -29,13 +29,14 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
    const film=document.querySelector('.hero-film-screen');
    const video=document.querySelector('.hero-film-screen video');
    const c=cue?getComputedStyle(cue):null;
-   return {cueBackground:c?.backgroundColor,cueBorder:c?.borderTopWidth,cueShadow:c?.boxShadow,filmBackground:film?getComputedStyle(film).backgroundColor:null,videoBackground:video?getComputedStyle(video).backgroundColor:null,fit:video?getComputedStyle(video).objectFit:null,filmWidth:film?.getBoundingClientRect().width,innerWidth:innerWidth};
+   return {cueBackground:c?.backgroundColor,cueBorder:c?.borderTopWidth,cueShadow:c?.boxShadow,filmBackground:film?getComputedStyle(film).backgroundColor:null,videoBackground:video?getComputedStyle(video).backgroundColor:null,fit:video?getComputedStyle(video).objectFit:null,filmWidth:film?.getBoundingClientRect().width,innerWidth:innerWidth,edgeCanvas:!!film?.querySelector('.hero-edge-canvas')};
  });
  assert.equal(visualHero.cueBackground,'rgba(0, 0, 0, 0)','A caixa do mouse deve ser totalmente transparente');
  assert.equal(visualHero.cueBorder,'0px','Mouse scroll sem borda de cartão');
  assert.equal(visualHero.cueShadow,'none','Mouse scroll sem sombra de cartão');
  assert.equal(visualHero.filmBackground,'rgb(255, 97, 8)','Bordas laterais devem ter a cor do vídeo');
- assert.equal(visualHero.filmBackground,visualHero.videoBackground,'Bordas sem contraste de cor com a mídia');
+ assert.equal(visualHero.videoBackground,'rgba(0, 0, 0, 0)','O vídeo deve ter letterbox transparente para revelar bordas dinâmicas');
+ assert(visualHero.edgeCanvas,'O canvas deve completar somente as faixas laterais/verticais');
  assert.equal(visualHero.fit,'contain','Não cortar o vídeo para preencher a tela');
  assert(Math.abs(visualHero.filmWidth-item.width)<2,'Vídeo precisa preencher toda a largura da viewport');
  const cuePosition=await page.evaluate(()=>{
@@ -133,8 +134,27 @@ for (const item of [
     const clipping=await page.evaluate(()=>({html:getComputedStyle(document.documentElement).overflowX,body:getComputedStyle(document.body).overflowX}));
     assert(clipping.html==='clip' && clipping.body==='clip','Overflow decorativo sem contenção em '+item.tag+': '+JSON.stringify(clipping));
   }
-  await page.screenshot({path:out+'/hero-'+item.tag+'.png'});
-  results.push({viewport:item.tag,hero:box,overflow});
+  if(item.tag==='referencia'){
+    await locate(page,'to-hero-film-and-copy',.55);
+    await page.waitForFunction(()=>document.querySelector('.hero-edge-canvas')?.dataset.frameRendered==='true',{timeout:10000}).catch(()=>{});
+    const edge=await page.evaluate(()=>{
+      const c=document.querySelector('.hero-edge-canvas');const v=document.querySelector('[data-role="hero-film"]');
+      if(!c)return null;
+      const ctx=c.getContext('2d');const x=Math.max(1,Math.floor(c.width*.015));
+      const unique=new Set();
+      for(let i=0;i<20;i++){
+        const y=Math.min(c.height-1,Math.floor(c.height*(.05+i*.045)));
+        const p=ctx.getImageData(x,y,1,1).data;
+        unique.add(p[0]+','+p[1]+','+p[2]);
+      }
+      return {mode:c.dataset.bleedMode,rendered:c.dataset.frameRendered,unique:unique.size,fit:getComputedStyle(v).objectFit,aspect:v.videoWidth/v.videoHeight};
+    });
+    assert(edge && edge.mode==='sides' && edge.rendered==='true','Em tela larga, prolongar lateralmente o frame inteiro: '+JSON.stringify(edge));
+    assert(edge.unique>=3,'Bordas não podem continuar sendo uma faixa laranja chapada: '+JSON.stringify(edge));
+    assert(edge.fit==='contain' && Math.abs(edge.aspect-16/9)<.02,'Vídeo central sem cortes ou distorção: '+JSON.stringify(edge));
+ }
+ await page.screenshot({path:out+'/hero-'+item.tag+'.png'});
+ results.push({viewport:item.tag,hero:box,overflow});
   await page.close();
 }
 await fs.writeFile(out+'/resultados.json',JSON.stringify(results,null,2));
