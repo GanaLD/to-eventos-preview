@@ -75,3 +75,6 @@
 #solucoes{overflow:hidden;contain:paint}
 #solucoes .solutions-floral-left{aspect-ratio:720/1613}
 #solucoes .solutions-floral-right{aspect-ratio:706/1527}
+
+/* Decorative offscreen GSAP travel must never enable page-level horizontal panning. */
+html,body{overflow-x:clip;max-width:100%}
