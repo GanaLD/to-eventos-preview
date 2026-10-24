@@ -5,7 +5,7 @@ import fs from 'node:fs/promises';
 const base=process.env.TO_SITE_URL || 'http://127.0.0.1:8765/';
 const out='qa-hero-v73';
 await fs.mkdir(out,{recursive:true});
-const browser=await chromium.launch({headless:true,args:['--disable-dev-shm-usage','--no-sandbox']});
+const browser=await chromium.launch({channel:'chrome',headless:true,args:['--disable-dev-shm-usage','--no-sandbox']});
 const results=[];
 try {
   for (const view of [
