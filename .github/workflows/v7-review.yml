@@ -2,7 +2,7 @@ name: V7 QA completo (branch de revisão)
 on:
   push:
     branches: [to-eventos-v7-implementation]
-    paths: ['.github/workflows/v7-review.yml']
+    # Run on every V7 branch change to catch CSS and responsive regressions.
 permissions:
   contents: read
 jobs:
