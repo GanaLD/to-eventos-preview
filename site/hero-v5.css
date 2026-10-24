@@ -1,0 +1,119 @@
+/* HERO V5 — sequência cinematográfica editorial TO Eventos.
+   HERO é a primeira dobra: o cabeçalho fica oculto nesta versão. */
+.site-header{display:none !important}
+.hero-scroll-stage{
+  position:relative;
+  isolation:isolate;
+  width:100%;
+  background:var(--graphite);
+}
+.hero-scroll-stage .hero{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-height:100svh;
+  height:100svh;
+  padding:0;
+  overflow:hidden;
+  background:var(--graphite);
+}
+.hero-scroll-stage .hero-grid{
+  width:var(--shell);
+  display:grid;
+  grid-template-columns:minmax(0,1.03fr) minmax(0,1fr);
+  align-items:center;
+  gap:clamp(50px,6vw,110px);
+  padding:clamp(26px,5vh,60px) 0;
+  flex:1;
+}
+.hero-scroll-stage .hero-copy{min-width:0;align-self:center}
+.hero-scroll-stage .hero-title{
+  font-size:clamp(48px,4.75vw,86px);
+  line-height:1.08;
+  max-width:100%;
+  overflow-wrap:normal;
+  margin:clamp(18px,3.5vh,37px) 0 clamp(22px,3.5vh,35px);
+}
+.hero-scroll-stage .hero-visual{
+  display:block;
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  height:auto;
+  max-height:none;
+  min-height:0;
+  padding:0;
+  border:1px solid rgba(244,244,242,.18);
+  background:#FF4D00;
+}
+.hero-scroll-stage .hero-visual::after,
+.hero-scroll-stage .hero-visual-line,
+.hero-scroll-stage .hero-pending,
+.hero-scroll-stage .hero-visual-foot{display:none}
+.hero-scroll-stage .hero-film-screen{
+  display:none;
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:6;
+  background:#FF4D00;
+  overflow:hidden;
+  border:0 solid rgba(244,244,242,.18);
+  pointer-events:none;
+}
+.hero-scroll-stage.is-motion-hero .hero-film-screen{display:block}
+.hero-scroll-stage .hero-film-screen video,
+.hero-scroll-stage .hero-visual video{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center center;
+  background:#FF4D00;
+}
+.hero-scroll-stage .hero-visual video{height:auto;aspect-ratio:16/9}
+.hero-scroll-stage .hero-foot{
+  width:var(--shell);
+  padding-bottom:clamp(16px,3vh,32px);
+  flex-shrink:0;
+}
+.hero-scroll-stage.is-motion-hero .hero-copy,
+.hero-scroll-stage.is-motion-hero .hero-foot{position:relative;z-index:1}
+@media(max-width:899px){
+  .hero-scroll-stage .hero{min-height:100svh;height:100svh;padding:0;overflow:hidden}
+  .hero-scroll-stage .hero-grid{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:stretch;
+    gap:0;
+    min-height:0;
+    padding:clamp(25px,5vh,45px) 0;
+  }
+  .hero-scroll-stage .hero-copy{align-self:auto}
+  .hero-scroll-stage .hero-copy .eyebrow{font-size:clamp(12px,2.5vw,16px)}
+  .hero-scroll-stage .hero-title{
+    font-size:clamp(39px,9.2vw,69px);
+    line-height:1.09;
+    margin:clamp(14px,3vh,28px) 0 clamp(17px,3vh,28px);
+  }
+  .hero-scroll-stage .hero-copy>p{font-size:clamp(14px,3.35vw,18px);max-width:45ch}
+  .hero-scroll-stage .hero-visual{display:none}
+  .hero-scroll-stage .hero-foot{padding-bottom:16px;font-size:10px;gap:12px}
+  .hero-scroll-stage .hero-film-screen video{object-fit:contain}
+}
+@media(max-width:430px){
+  .hero-scroll-stage .hero-title{font-size:clamp(34px,9.4vw,45px)}
+  .hero-scroll-stage .hero-copy>p{font-size:15px;line-height:1.45}
+  .hero-scroll-stage .button-accent{padding:14px 16px}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-scroll-stage .hero-film-screen{display:none}
+  .hero-scroll-stage .hero-visual{display:block}
+  .hero-scroll-stage .hero{height:auto;min-height:100svh}
+  .hero-scroll-stage .hero-copy{opacity:1!important;transform:none!important}
+  .hero-scroll-stage .hero-visual video{pointer-events:auto}
+}
