@@ -1,0 +1,37 @@
+name: Import V7 originals (temporary)
+on:
+  push:
+    branches: [to-eventos-v7-implementation]
+    paths: ['.github/workflows/import-v7-originals.yml']
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: to-eventos-v7-implementation
+          persist-credentials: true
+      - name: Download original user-supplied media
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p site/assets/media
+          curl -fLsS --retry 3 --max-time 240 'https://at.adobe.com/pNGDtcRmNIA4rUTi' -o site/assets/media/connect-reduzido.mp4
+          curl -fLsS --retry 3 --max-time 180 'https://at.adobe.com/YDNkz25i7jEaRppR' -o site/assets/media/portfolio-thais-ortiz.pdf
+          curl -fLsS --retry 3 --max-time 90 'https://at.adobe.com/Pa37ShN4ZVrZj5QF' -o site/assets/media/papoula-direita-v7.png
+          curl -fLsS --retry 3 --max-time 90 'https://at.adobe.com/fxBoZHaGa6XPP0JX' -o site/assets/media/papoula-esquerda-v7.png
+          file site/assets/media/connect-reduzido.mp4 site/assets/media/portfolio-thais-ortiz.pdf site/assets/media/papoula-direita-v7.png site/assets/media/papoula-esquerda-v7.png
+          test "$(stat -c%s site/assets/media/connect-reduzido.mp4)" -gt 40000000
+          test "$(stat -c%s site/assets/media/portfolio-thais-ortiz.pdf)" -gt 10000000
+          head -c 4 site/assets/media/portfolio-thais-ortiz.pdf | grep -q '%PDF'
+          file site/assets/media/papoula-direita-v7.png | grep -q 'PNG image'
+          file site/assets/media/papoula-esquerda-v7.png | grep -q 'PNG image'
+      - name: Commit permanent originals to V7 branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/assets/media/connect-reduzido.mp4 site/assets/media/portfolio-thais-ortiz.pdf site/assets/media/papoula-direita-v7.png site/assets/media/papoula-esquerda-v7.png
+          git commit -m "assets(v7): archive Connect, corporate PDF, and cropped original poppies" || exit 0
+          git push origin HEAD:to-eventos-v7-implementation
