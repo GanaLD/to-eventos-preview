@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [main]
 permissions:
-  contents: read
+  contents: write
 jobs:
   hero-qa:
     runs-on: ubuntu-latest
@@ -31,6 +31,11 @@ jobs:
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/ -o /dev/null && break || sleep 1; done
           curl -sSI -H 'Range: bytes=0-63' http://127.0.0.1:8765/assets/media/motion-hero.mp4 | grep -q '206 Partial Content'
           node tests/hero-responsive-v73-visual.mjs
+      - name: Registrar previews visuais como blobs temporários (sem alterar branch)
+        if: github.event_name == 'push'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node tests/upload-hero-v73-review.mjs
       - name: Capturas do HERO e JSON de resultados
         if: always()
         uses: actions/upload-artifact@v4
