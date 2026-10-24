@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const target='https://ganald.github.io/to-eventos-preview/?v=7-qa';
 const out='qa-artifacts';await fs.mkdir(out,{recursive:true});
-const browser=await chromium.launch({headless:true,args:['--disable-dev-shm-usage','--no-sandbox']});
+const browser=await chromium.launch({channel:'chrome',headless:true,args:['--disable-dev-shm-usage','--no-sandbox']});
 let results=[];
 async function locate(page,id,at){
   await page.evaluate(({id,at})=>{
