@@ -15,7 +15,7 @@ for(const label of ['Sobre','Soluções','Projetos','Contato']) {
 assert(/@media\s*\(min-width:\s*901px\)/.test(css), 'O menu superior deve ser restaurado no desktop');
 assert(/\.site-header\s+\.nav\s*\{\s*display:\s*flex/.test(css), 'Menu superior desktop precisa ter display:flex');
 assert(/\.site-header\s+\.nav-contact\s*\{[^}]*background:\s*var\(--orange\)/s.test(css), 'CTA do cabeçalho deve ser laranja TO Eventos');
-assert(css.includes('.to-whatsapp-float'), 'Botão flutuante original não deve ser removido');
+assert(html.includes('class="to-whatsapp-float"'), 'Botão flutuante original não deve ser removido');
 assert(/matchMedia|matchMedia\(/.test(js), 'Movimento deve considerar breakpoints e redução de movimento');
 assert(js.includes("getElementById('sobre')") && js.includes("getElementById('solucoes')"), 'Transição deve ocorrer apenas entre Sobre e Soluções');
 assert(js.includes('ScrollTrigger.create'), 'Transição deve usar ScrollTrigger');
