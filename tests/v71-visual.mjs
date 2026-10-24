@@ -21,8 +21,8 @@ const scan=async page=>page.evaluate(()=>{
       proof:opacity('#sobre .microproof'),video:opacity('#sobre .about-floral-video')},
     project:{heading:opacity('#projetos-heading'),caption:opacity('.project-panel-summit .case-caption h3')},
     cases:{
-      chars:document.querySelectorAll('.to-v71-type-char').length,
-      first:opacity('.to-v71-type-char:first-child'),
+      lines:document.querySelectorAll('.to-v72-type-line').length,
+      first:opacity('.to-v72-type-line:first-child'),
       text:document.querySelector('.project-panel-cases .case-text:not(.case-text-contrast) h3')?.getAttribute('aria-label')
     },
     contact:{heading:opacity('#contato-heading'),cta:opacity('#contato .button-accent'),aside:opacity('#contato .contact-aside a'),foot:opacity('#contato .footer a')},
@@ -53,7 +53,7 @@ try {
     assert.equal(await page.locator('.project-asset-note').count(),0,'Nota de produção interna removida');
     const type=page.locator('.case-text:not(.case-text-contrast) h3');
     assert((await type.getAttribute('aria-label'))?.includes('Convenções corporativas'),'Título acessível intacto');
-    assert(await page.locator('.to-v71-type-char').count()>20,'Digitação visual tem caracteres individuais');
+    assert.equal(await page.locator('.to-v72-type-line').count(),2,'Apenas as duas linhas do título cinza recebem digitação suave');
     const flowerStyle=await page.locator('.about-floral-video').evaluate(video=>{
       const rect=video.getBoundingClientRect();
       const figure=video.closest('figure').getBoundingClientRect();
@@ -63,7 +63,8 @@ try {
     });
     assert.equal(flowerStyle.fit,'contain','Vídeo de papoulas deve ser exibido inteiro');
     assert(Math.abs(flowerStyle.ratio-.5625)<.025,'Vídeo floral não deve ser deformado: '+JSON.stringify(flowerStyle));
-    assert(flowerStyle.leftPadding>8&&flowerStyle.rightPadding>8,'Pétalas precisam de margem interna: '+JSON.stringify(flowerStyle));
+    assert(flowerStyle.width<=370,'Vídeo floral deve preservar proporção e escala editorial reduzida: '+JSON.stringify(flowerStyle));
+    assert((await page.locator('.about-floral-video source').first().getAttribute('src')).includes('editorial-v72.mp4'),'Vídeo floral deve usar o novo enquadramento com bordas suaves');
 
     await page.locator('#sobre').scrollIntoViewIfNeeded();
     await page.waitForTimeout(2600);
@@ -71,6 +72,12 @@ try {
     assert(about.about.headline>.95&&about.about.proof>.95&&about.about.video>.95,
       'Textos de Sobre e vídeo precisam estar visíveis depois da revelação: '+JSON.stringify(about.about));
     await page.screenshot({path:directory+'/sobre-'+v.key+'.png'});
+    await page.locator('#solucoes').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(350);
+    await page.locator('#sobre').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(180);
+    const opacityReturn=await page.locator('#sobre-heading').evaluate(e=>+getComputedStyle(e).opacity);
+    assert(opacityReturn>.98,'Retornar à Sobre não pode piscar nem ocultar o título: '+opacityReturn);
 
     await page.locator('#solucoes').scrollIntoViewIfNeeded();
     await page.waitForTimeout(3200);
@@ -91,10 +98,15 @@ try {
       await jumpGallery(page,.51);
       await page.waitForTimeout(3800);
       const cards=await scan(page);
-      assert(cards.cases.chars>20&&cards.cases.text==='Convenções corporativas',
+      assert(cards.cases.lines===2&&cards.cases.text==='Convenções corporativas',
         'Cabeçalho em letras com rótulo acessível íntegro');
-      const lastChar=await page.locator('.to-v71-type-char').last().evaluate(e=>+getComputedStyle(e).opacity);
-      assert(lastChar>.95,'Digitação deve concluir no painel cinza: '+JSON.stringify(cards));
+      const lastClip=await page.locator('.to-v72-type-line').last().evaluate(e=>getComputedStyle(e).clipPath);
+      assert(!lastClip.includes('100%'),'Digitação deve concluir com título integralmente visível: '+lastClip);
+      await jumpGallery(page,.81);
+      await jumpGallery(page,.51);
+      await page.waitForTimeout(350);
+      const backClip=await page.locator('.to-v72-type-line').last().evaluate(e=>getComputedStyle(e).clipPath);
+      assert(!backClip.includes('100%'),'Scroll reverso não pode ocultar o título ou reiniciar a digitação: '+backClip);
       await page.screenshot({path:directory+'/operacoes-digitacao-'+v.key+'.png'});
     }else{
       await page.locator('.project-panel-summit').scrollIntoViewIfNeeded();
@@ -104,8 +116,8 @@ try {
       await page.screenshot({path:directory+'/connect-'+v.key+'.png'});
       await page.locator('.project-panel-cases').scrollIntoViewIfNeeded();
       await page.waitForTimeout(3500);
-      const lastChar=await page.locator('.to-v71-type-char').last().evaluate(e=>+getComputedStyle(e).opacity);
-      assert(lastChar>.95,'Digitação no mobile deve concluir');
+      const lastClip=await page.locator('.to-v72-type-line').last().evaluate(e=>getComputedStyle(e).clipPath);
+      assert(!lastClip.includes('100%'),'Digitação no mobile deve concluir: '+lastClip);
       await page.screenshot({path:directory+'/operacoes-digitacao-'+v.key+'.png'});
     }
 
