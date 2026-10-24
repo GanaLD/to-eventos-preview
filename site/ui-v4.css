@@ -83,3 +83,6 @@
 .footer{padding-bottom:95px}
 }
 @media(prefers-reduced-motion:reduce){.to-section-nav,.to-section-nav *, .to-whatsapp-float,.nav-contact{transition:none;scroll-behavior:auto}}
+
+/* Evitar que o estilo antigo pinte o texto do WhatsApp de laranja. */
+.nav-contact span{margin-left:0;color:inherit}
