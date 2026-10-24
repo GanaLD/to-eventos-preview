@@ -1,0 +1,42 @@
+name: QA mobile HeroScroll e mídias V8
+on:
+  push:
+    branches: ['fix/mobile-heroscroll-media-v8']
+    paths:
+      - 'site/index.html'
+      - 'site/hero-v5.js'
+      - 'site/main.js'
+      - 'site/mobile-v8.css'
+      - 'tests/mobile-v8-*'
+      - '.github/workflows/mobile-v8-qa.yml'
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  mobile-browser:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar Playwright compatível com container
+        run: npm install --no-save playwright@1.56.1
+      - name: Validar sintaxe e regressão estrutural
+        run: |
+          node --check site/hero-v5.js
+          node --check site/main.js
+          node tests/mobile-v8-smoke.mjs
+      - name: Abrir LP em servidor local e testar experiência responsiva
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory site >/tmp/to-mobile-http.log 2>&1 &
+          sleep 2
+          node tests/mobile-v8-visual.mjs
+      - name: Salvar capturas e evidências
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: to-eventos-mobile-v8-qa
+          path: qa-mobile-v8/
+          if-no-files-found: warn

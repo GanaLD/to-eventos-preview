@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const read=path=>fs.readFileSync(new URL('../'+path,import.meta.url),'utf8');
+const html=read('site/index.html');
+const hero=read('site/hero-v5.js');
+const gallery=read('site/main.js');
+const css=read('site/mobile-v8.css');
+const style=read('site/hero-v5.css');
+
+assert(html.includes('<link rel="stylesheet" href="mobile-v8.css">'),'A folha mobile deve carregar APÓS V7');
+assert(html.indexOf('v7.css')<html.indexOf('mobile-v8.css'),'A correção mobile deve vencer o cascade legado');
+assert(hero.includes("to-hero-mobile-film-and-copy"),'Mobile mantém um único ScrollTrigger de HERO');
+assert(!/timeline\.to\(film,\s*\{autoAlpha:\s*0/.test(hero),'O vídeo original não deve desaparecer no fechamento mobile');
+assert(/const slot = \(\) => \{[\s\S]*destination\.getBoundingClientRect\(\)/.test(hero),'Hero mobile calcula o enquadramento real do vídeo');
+assert(hero.includes('width: () => slot().width') && hero.includes('height: () => slot().height'),'Hero móvel anima tamanho e posição sem distorcer mídia');
+assert(hero.includes("video.removeAttribute('aria-hidden')"),'Mídia de fallback acessível sem GSAP');
+assert(/\.hero-scroll-stage \.hero-visual\s*\{\s*display:block/.test(css),'Frame final do hero precisa ser visível no mobile');
+assert(css.includes('aspect-ratio:16/9')&&css.includes('object-fit:contain'),'Enquadramento de mídia 16:9 com contain');
+assert(gallery.includes("if (track && pin && area)"),'Gallery horizontal GSAP não pode excluir mobile');
+assert(gallery.includes('isMobile() ? Math.max'),'Scrub precisa permitir percurso touch mais controlado');
+assert(css.includes('.is-gsap-active #projetos .projects-track')&&css.includes('flex-direction:row'),'Com GSAP, painéis permanecem em linha no mobile');
+assert(css.includes('.is-gsap-active #projetos .project-panel-inner'),'Conteúdo interno adapta-se ao viewport sem cortar mídias');
+assert(style.includes("prefers-reduced-motion:reduce"),'Fallback de movimento reduzido continua disponível');
+console.log('TO Eventos V8 — regressões mobile HeroScroll e mídia: estrutura aprovada');
