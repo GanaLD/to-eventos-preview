@@ -1,7 +1,7 @@
 import {chromium} from 'playwright';
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
-const target='https://ganald.github.io/to-eventos-preview/?v=7-qa';
+const target=process.env.TO_PREVIEW_URL || 'https://ganald.github.io/to-eventos-preview/?v=7-qa';
 const out='qa-artifacts';await fs.mkdir(out,{recursive:true});
 const browser=await chromium.launch({channel:'chrome',headless:true,args:['--disable-dev-shm-usage','--no-sandbox']});
 let results=[];
