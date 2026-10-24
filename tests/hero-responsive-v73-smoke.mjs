@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const html=read('site/index.html');
+const css=read('site/v7.css');
+const heroCSS=read('site/hero-v5.css');
+const heroJS=read('site/hero-v5.js');
+const section=html.slice(html.indexOf('id="hero"'),html.indexOf('id="sobre"'));
+
+assert.equal((section.match(/data-role="hero-film"/g)||[]).length,1,'HERO usa uma única mídia original');
+assert(!html.includes('hero-edge-canvas'),'O canvas com espelhamento não pode ficar no DOM');
+assert(!html.includes('hero-bleed.js'),'Script de repetição das bordas deve ser desconectado');
+assert(!css.includes('HERO FULL BLEED V7.2'),'Remover estilos antigos da extensão espelhada');
+assert(!css.includes('.hero-edge-canvas'),'Nenhum resquício de canvas nas regras do hero');
+assert(/object-fit:\s*cover/.test(css),'Desktop utiliza cover real, sem replicar pixels');
+assert(/object-fit:\s*contain/.test(css),'Portrait usa enquadramento integral e composição adaptativa');
+assert(css.includes('--to-hero-ambient:#ff6108') || css.includes('--to-hero-ambient: #ff6108'),'Laranja ambiental corresponde à mídia original, não a uma cor arbitrária');
+assert(heroJS.includes('to-hero-mobile-film-and-copy'),'Scroll mobile preservado');
+assert(!/timeline\.to\(film,\s*\{autoAlpha:\s*0/.test(heroJS),'O vídeo no mobile não deve desaparecer no fim');
+assert(/\.hero-scroll-stage \.hero-visual\s*\{[^}]*display:\s*block/s.test(heroCSS),'Slot da mídia final precisa ficar visível em mobile');
+console.log('PASS: HERO usa mídia única, sem espelhamento, com cover desktop e adaptação vertical.');
