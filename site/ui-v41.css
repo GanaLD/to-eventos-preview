@@ -90,15 +90,23 @@
   .site-header .nav-contact{display:none}
 }
 
-/* Page-turn: a seção branca fica fixada pelo GSAP e a seção grafite
-   entra por cima dela pelo avanço NATIVO do scroll + sutil y via ScrollTrigger.
-   pinSpacing:false impede alturas fantasmas entre as seções. */
-#sobre{position:relative;z-index:1}
-#solucoes{position:relative;z-index:2}
+/* CORREÇÃO V4.1.1 — SEM pinSpacing:false.
+   A estrutura contém APENAS Sobre/Papoulas + Soluções/Competências.
+   CSS sticky mantém o fundo branco até o grafite subir; GSAP controla a subida.
+   A altura dos elementos no documento permanece intacta: não há salto para o HERO. */
+.to-page-turn{position:relative;isolation:isolate}
+.to-page-turn>#sobre,.to-page-turn>#solucoes{width:100%}
+.to-page-turn>#sobre{z-index:1}
+.to-page-turn>#solucoes{position:relative;z-index:2}
 @media(min-width:901px) and (prefers-reduced-motion:no-preference){
-  #solucoes{will-change:transform;backface-visibility:hidden}
+  .to-page-turn>#sobre{
+    position:sticky;
+    top:min(0px,calc(100svh - var(--to-about-height,100svh)));
+    min-height:100svh;
+  }
+  .to-page-turn>#solucoes{will-change:transform}
 }
-/* Sem pin para telas pequenas ou pessoas com movimento reduzido. */
 @media(max-width:900px),(prefers-reduced-motion:reduce){
-  #solucoes{will-change:auto}
+  .to-page-turn>#sobre{position:relative;top:auto;min-height:0}
+  .to-page-turn>#solucoes{will-change:auto;transform:none}
 }
