@@ -13,6 +13,10 @@ assert((hero.match(/class="to-hero-scroll-cue"/g)||[]).length===1,'Somente um in
 assert(!orig.includes('createElement(\'div\')'),'Indicador não pode ser duplicado por JavaScript');
 assert(!html.includes('<script defer src="florais-v6.js"></script>'),'Evitar duas instâncias GSAP para os mesmos florais');
 assert(hero.includes('to-hero-scroll-cue')&&hero.includes('ROLE PARA CONTROLAR'),'Mouse deve orientar o scroll do HERO');
+assert(hero.includes('class="hero-edge-canvas"'),'HERO deve incluir plano dinâmico de extensão de imagem');
+assert(html.includes('hero-bleed.js'),'HERO deve carregar composição do vídeo nas bordas');
+assert(/\.hero-film-screen video\{[^}]*background:transparent/s.test(css),'Video 16:9 deve permitir visualizar extensão atrás do contain');
+assert(/\.hero-edge-canvas\{[^}]*position:absolute/s.test(css),'Composição de fundo deve cobrir a viewport sem mudar o vídeo principal');
 assert(/\.to-hero-scroll-cue\{[^}]*top:50%[^}]*bottom:auto[^}]*translate\(-50%,-50%\)/s.test(css),'Indicador e mouse devem ficar no centro real do HERO');
 assert(/\.to-hero-scroll-cue\{[^}]*background:transparent[^}]*border:0[^}]*box-shadow:none/s.test(css),'Indicador do mouse não pode ter cartão, moldura ou sombra');
 assert(/\.hero-film-screen video\{[^}]*object-fit:contain[^}]*background:\s*var\(--to-hero-ambient\)/s.test(css),'O frame integral do HERO deve permanecer sem corte e com preenchimento na cor do vídeo');
