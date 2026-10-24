@@ -13,6 +13,9 @@ assert((hero.match(/class="to-hero-scroll-cue"/g)||[]).length===1,'Somente um in
 assert(!orig.includes('createElement(\'div\')'),'Indicador não pode ser duplicado por JavaScript');
 assert(!html.includes('<script defer src="florais-v6.js"></script>'),'Evitar duas instâncias GSAP para os mesmos florais');
 assert(hero.includes('to-hero-scroll-cue')&&hero.includes('ROLE PARA CONTROLAR'),'Mouse deve orientar o scroll do HERO');
+assert(/\.to-hero-scroll-cue\{[^}]*background:transparent[^}]*border:0[^}]*box-shadow:none/s.test(css),'Indicador do mouse não pode ter cartão, moldura ou sombra');
+assert(/\.hero-film-screen video\{[^}]*object-fit:contain[^}]*background:\s*var\(--to-hero-ambient\)/s.test(css),'O frame integral do HERO deve permanecer sem corte e com preenchimento na cor do vídeo');
+assert(css.includes('--to-hero-ambient:#ff6108'),'Eliminar a diferença de cor entre as faixas laterais e o primeiro frame de vídeo');
 assert(css.includes('object-fit:contain')&&css.includes('100dvh'),'Vídeo HERO integral sem cortes ou deformação');
 assert(orig.includes('videoPhaseEnd = 0.7')&&orig.includes('revealStart = 85'),'Vídeo antes dos textos no HERO');
 assert(about.includes('animacao-papoulas.mp4')&&about.includes('class="about-copy"'),'Conteúdo Sobre deve permanecer');
