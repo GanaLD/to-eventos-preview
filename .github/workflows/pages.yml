@@ -31,7 +31,10 @@ jobs:
       - name: Integrar vídeo autoral do HERO no artefato do Pages
         run: |
           mkdir -p site/assets/media
-          curl --fail --location --retry 3 --connect-timeout 15 --max-time 90 'https://d2ol7oe51mr4n9.cloudfront.net/user_2wayxIrYymbrFzIPfYY8jkYgTU2/0541ee43-65c7-4f9e-b054-2796ac3aeaab.mp4' --output site/assets/media/motion-hero.mp4
+          curl --fail --location --retry 3 --connect-timeout 15 --max-time 90 'https://d2ol7oe51mr4n9.cloudfront.net/user_2wayxIrYymbrFzIPfYY8jkYgTU2/0541ee43-65c7-4f9e-b054-2796ac3aeaab.mp4' --output /tmp/to-eventos-motion-hero-original.mp4
+          test "$(wc -c < /tmp/to-eventos-motion-hero-original.mp4)" -gt 100000
+          # Source MP4 has one keyframe; GOP de 12 (0,5 s a 24 fps) torna seeking por scroll viável.
+          ffmpeg -hide_banner -loglevel error -i /tmp/to-eventos-motion-hero-original.mp4 -c:v libx264 -preset fast -crf 23 -g 12 -keyint_min 12 -sc_threshold 0 -pix_fmt yuv420p -an -movflags +faststart -y site/assets/media/motion-hero.mp4
           test "$(wc -c < site/assets/media/motion-hero.mp4)" -gt 100000
       - name: Preparar GitHub Pages
         uses: actions/configure-pages@v5
