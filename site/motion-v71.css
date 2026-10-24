@@ -1,0 +1,54 @@
+/* TO Eventos V7.1 — editorial motion only; never alter HERO or pin geometry. */
+#sobre .botanical-motion{
+  box-sizing:border-box;
+  padding-inline:clamp(16px,1.25vw,24px);
+  min-width:0;
+  overflow:visible;
+  justify-self:center;
+  align-self:center;
+}
+#sobre .botanical-motion .about-floral-video{
+  display:block;
+  width:100%;
+  height:auto;
+  max-width:400px;
+  aspect-ratio:9 / 16;
+  object-fit:contain;
+  object-position:center center;
+  margin:0 auto;
+  overflow:visible;
+}
+#sobre .botanical-motion figcaption{display:none!important}
+.project-panel-cases .project-panel-inner{
+  justify-content:center;
+}
+.project-panel-cases .case-layout{
+  margin-block:0;
+}
+.to-v71-type-word{
+  display:inline-block;
+  white-space:nowrap;
+}
+.to-v71-type-char{
+  display:inline;
+  opacity:1;
+  will-change:opacity;
+}
+@media(max-width:720px){
+  #sobre .botanical-motion{
+    width:min(100%,340px);
+    padding-inline:clamp(12px,4vw,20px);
+    margin-top:36px;
+  }
+  #sobre .botanical-motion .about-floral-video{
+    max-width:100%;
+    height:auto;
+    aspect-ratio:9 / 16;
+    object-fit:contain;
+  }
+  .project-panel-cases .project-panel-inner{justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){
+  .to-v71-type-char{opacity:1!important}
+  #sobre .botanical-motion .about-floral-video{transform:none!important}
+}

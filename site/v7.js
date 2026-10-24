@@ -33,8 +33,8 @@
       gsap.set(copyParts,{y:40,autoAlpha:0});
       gsap.set(botanicalVideo,{y:32,autoAlpha:0});
       reveal=gsap.timeline({defaults:{ease:'power2.out'}});
-      reveal.to(copyParts,{y:0,autoAlpha:1,duration:.8,stagger:.135},0);
-      reveal.to(botanicalVideo,{y:0,autoAlpha:1,duration:.9},.25);
+      reveal.to(copyParts,{y:0,autoAlpha:1,duration:1.32,stagger:.21},0);
+      reveal.to(botanicalVideo,{y:0,autoAlpha:1,duration:1.35},.28);
       playFlower();
     };
     const exitTop=()=>{
