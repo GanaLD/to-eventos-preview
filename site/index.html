@@ -13,9 +13,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- TT Fors será conectada SOMENTE com arquivo Webfont oficialmente licenciado. -->
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="ui-v4.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script defer src="main.js"></script>
+  <script defer src="ui-v4.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
@@ -24,9 +26,21 @@
     <nav class="nav" id="nav" aria-label="Navegação principal">
       <a href="#sobre">Sobre</a><a href="#solucoes">Soluções</a><a href="#projetos">Projetos</a><a href="#contato">Contato</a>
     </nav>
-    <a class="nav-contact" href="https://wa.me/5567998532167" target="_blank" rel="noopener noreferrer">Iniciar conversa <span aria-hidden="true">↗</span></a>
-    <button class="nav-toggle" type="button" aria-controls="nav" aria-expanded="false" aria-label="Abrir menu">Menu <span aria-hidden="true">☰</span></button>
+    <a class="nav-contact" href="https://wa.me/5567998532167?text=Ol%C3%A1%2C%20Thais%21%20Gostaria%20de%20conversar%20sobre%20um%20evento%20corporativo." target="_blank" rel="noopener noreferrer" aria-label="Conversar com a TO Eventos pelo WhatsApp"><svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.009-.371-.011-.57-.011-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479s1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.626.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.99c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.055 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.69 1.448h.005c6.558 0 11.893-5.335 11.896-11.893a11.821 11.821 0 0 0-3.489-8.413Z"/></svg><span>Iniciar conversa</span></a>
+    <button class="nav-toggle" type="button" aria-controls="nav" aria-expanded="false" aria-label="Abrir menu">Menu</button>
   </header>
+
+  <nav id="to-section-nav" class="to-section-nav" aria-label="Navegação por seções">
+    <span class="to-section-nav-rail" aria-hidden="true"><span id="to-section-progress"></span></span>
+    <ul class="to-section-nav-list">
+      <li><a href="#hero" data-section="hero" aria-label="Início"><span>Início</span><i aria-hidden="true"></i></a></li>
+      <li><a href="#sobre" data-section="sobre" aria-label="Sobre"><span>Sobre</span><i aria-hidden="true"></i></a></li>
+      <li><a href="#solucoes" data-section="solucoes" aria-label="Soluções"><span>Soluções</span><i aria-hidden="true"></i></a></li>
+      <li><a href="#projetos" data-section="projetos" aria-label="Projetos"><span>Projetos</span><i aria-hidden="true"></i></a></li>
+      <li><a href="#contato" data-section="contato" aria-label="Contato"><span>Contato</span><i aria-hidden="true"></i></a></li>
+    </ul>
+  </nav>
+  <a class="to-whatsapp-float" href="https://wa.me/5567998532167?text=Ol%C3%A1%2C%20Thais%21%20Gostaria%20de%20conversar%20sobre%20um%20evento%20corporativo." target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp da TO Eventos"><svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.009-.371-.011-.57-.011-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479s1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.626.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.99c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.055 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.69 1.448h.005c6.558 0 11.893-5.335 11.896-11.893a11.821 11.821 0 0 0-3.489-8.413Z"/></svg></a>
 
   <main id="conteudo">
     <div class="hero-scroll-stage">
@@ -36,24 +50,24 @@
           <div class="eyebrow">TO EVENTOS <span class="eyebrow-line" aria-hidden="true"></span> CURITIBA · BRASIL</div>
           <h1 id="hero-heading" class="hero-title">Experiências<br>que <em>permanecem.</em></h1>
           <p>Estratégia, produção executiva e experiências de marca em eventos corporativos.</p>
-          <a class="button-accent" href="https://wa.me/5567998532167" target="_blank" rel="noopener noreferrer">Vamos construir juntos <span aria-hidden="true">↗</span></a>
+          <a class="button-accent" href="https://wa.me/5567998532167" target="_blank" rel="noopener noreferrer">Vamos construir juntos</a>
         </div>
         <div class="hero-visual" aria-label="Área reservada ao vídeo autoral de Hero Scroll ainda não entregue">
           <!-- FUTURO HERO: adicionar aqui o vídeo original da Thais, SEM substituir pelas mídias do Canva. -->
           <video class="hero-scrub-video" data-role="hero-film" playsinline muted preload="metadata" tabindex="-1" aria-hidden="true" hidden></video>
           <div class="hero-visual-line" aria-hidden="true"></div>
-          <span class="hero-counter">01 / 05</span>
+          
           <div class="hero-pending"><span class="eyebrow">DIREÇÃO AUDIOVISUAL</span><strong>HERO em produção</strong><span>Vídeo original será integrado após a entrega final</span></div>
           <span class="hero-visual-foot">HERO SCROLL · AGUARDANDO VÍDEO ORIGINAL</span>
         </div>
       </div>
-      <div class="hero-foot shell"><span>GESTÃO DE MARCAS & EXPERIÊNCIA EM EVENTOS</span><span>DESÇA PARA EXPLORAR ↓</span></div>
+      <div class="hero-foot shell"><span>GESTÃO DE MARCAS & EXPERIÊNCIA EM EVENTOS</span><span>DESÇA PARA EXPLORAR</span></div>
     </section>
   </div>
 
     <section id="sobre" class="section-light section-space" aria-labelledby="sobre-heading">
       <div class="shell about-grid">
-        <div class="section-number">01 <span>/ POSICIONAMENTO</span></div>
+        
         <div class="about-copy">
           <p class="overline">THAIS ORTIZ · PRODUTORA EXECUTIVA DE EVENTOS</p>
           <h2 id="sobre-heading" class="display-heading">O invisível <em>também comunica.</em></h2>
@@ -67,12 +81,12 @@
 
     <section id="solucoes" class="section-dark section-space" aria-labelledby="solucoes-heading">
       <div class="shell">
-        <div class="section-kicker"><span class="section-number">02 <span>/ SOLUÇÕES</span></span><span>COMPETÊNCIAS INTEGRADAS</span></div>
+        <div class="section-kicker"><span>COMPETÊNCIAS INTEGRADAS</span></div>
         <h2 id="solucoes-heading" class="display-heading solutions-title">Da estratégia<br><em>à experiência.</em></h2>
         <div class="solutions-list">
-          <article class="solution"><span class="solution-num">01</span><div><h3>Estratégia & gestão</h3><p>Diagnóstico, conceito, planejamento, orçamento, negociação e gestão de relacionamento.</p></div><span class="solution-plus" aria-hidden="true">↗</span></article>
-          <article class="solution"><span class="solution-num">02</span><div><h3>Produção executiva & operação</h3><p>Convenções, feiras, eventos científicos, fornecedores, equipes, logística e execução on-site.</p></div><span class="solution-plus" aria-hidden="true">↗</span></article>
-          <article class="solution"><span class="solution-num">03</span><div><h3>Experiência de marca & hospitalidade</h3><p>Jornada do participante, conteúdo, ativações, hospedagem, transfers, A&B e credenciamento.</p></div><span class="solution-plus" aria-hidden="true">↗</span></article>
+          <article class="solution"><div><h3>Estratégia & gestão</h3><p>Diagnóstico, conceito, planejamento, orçamento, negociação e gestão de relacionamento.</p></div></article>
+          <article class="solution"><div><h3>Produção executiva & operação</h3><p>Convenções, feiras, eventos científicos, fornecedores, equipes, logística e execução on-site.</p></div></article>
+          <article class="solution"><div><h3>Experiência de marca & hospitalidade</h3><p>Jornada do participante, conteúdo, ativações, hospedagem, transfers, A&B e credenciamento.</p></div></article>
         </div>
       </div>
     </section>
@@ -82,39 +96,39 @@
         <div class="projects-track" id="projects-track">
           <article class="project-panel project-panel-summit" aria-label="Primeiro projeto: Summit de Negócios">
             <div class="project-panel-inner shell">
-              <div class="section-kicker"><span class="section-number">03 <span>/ EXPERIÊNCIA</span></span><span>PROJETOS SELECIONADOS · 01 / 03</span></div>
+              <div class="section-kicker"><span>PROJETOS SELECIONADOS</span></div>
               <div class="projects-top"><h2 id="projetos-heading" class="display-heading">Experiência<br><em>em ação.</em></h2><p>Planejamento, execução e relacionamento demonstrados em projetos de diferentes escalas.</p></div>
               <div class="case case-featured">
                 <div class="case-image"><img src="assets/media/summit-frame-apresentacao.webp" alt="Público reunido no Summit de Negócios, frame do vídeo fornecido" width="1050" height="528" loading="lazy"><span>FRAME DO VÍDEO FORNECIDO</span></div>
-                <div class="case-caption"><span>01 / CASE AUTORAL</span><h3>Summit de Negócios</h3><p>Conteúdo, negócios, ativações de marca e experiência do participante em um único ecossistema.</p><strong>300 PARTICIPANTES</strong></div>
+                <div class="case-caption"><span>CASE AUTORAL</span><h3>Summit de Negócios</h3><p>Conteúdo, negócios, ativações de marca e experiência do participante em um único ecossistema.</p><strong>300 PARTICIPANTES</strong></div>
               </div>
             </div>
           </article>
           <article class="project-panel project-panel-cases" aria-label="Convenções corporativas e feiras e exposições">
             <div class="project-panel-inner shell">
-              <div class="section-kicker"><span class="section-number">03 <span>/ PROJETOS</span></span><span>OPERAÇÕES CORPORATIVAS · 02–03 / 03</span></div>
+              <div class="section-kicker"><span>OPERAÇÕES CORPORATIVAS</span></div>
               <div class="case-layout">
-                <article class="case case-text"><span class="case-index">02 / OPERAÇÕES CORPORATIVAS</span><div class="case-text-main"><h3>Convenções<br>corporativas</h3><p>Da chegada dos participantes ao encerramento: planejamento, integração de equipes, logística e operação.</p></div><span class="case-text-foot">PLANEJAMENTO → ENTREGA</span></article>
-                <article class="case case-text case-text-contrast"><span class="case-index">03 / OPERAÇÕES INTERESTADUAIS</span><div class="case-text-main"><h3>Feiras &<br>exposições</h3><p>Gestão de eventos em diferentes escalas e níveis de complexidade.</p></div><div class="case-numbers"><span>ATÉ <b>5.000</b><small>FOZ DO IGUAÇU</small></span><span>ATÉ <b>2.000</b><small>GRAMADO</small></span></div></article>
+                <article class="case case-text"><span class="case-index">OPERAÇÕES CORPORATIVAS</span><div class="case-text-main"><h3>Convenções<br>corporativas</h3><p>Da chegada dos participantes ao encerramento: planejamento, integração de equipes, logística e operação.</p></div><span class="case-text-foot">PLANEJAMENTO E ENTREGA</span></article>
+                <article class="case case-text case-text-contrast"><span class="case-index">OPERAÇÕES INTERESTADUAIS</span><div class="case-text-main"><h3>Feiras &<br>exposições</h3><p>Gestão de eventos em diferentes escalas e níveis de complexidade.</p></div><div class="case-numbers"><span>ATÉ <b>5.000</b><small>FOZ DO IGUAÇU</small></span><span>ATÉ <b>2.000</b><small>GRAMADO</small></span></div></article>
               </div>
               <p class="project-asset-note">Os cases preservam apenas os registros confirmados. Fotos adicionais serão inseridas após acesso aos arquivos originais do Canva.</p>
             </div>
           </article>
           <article class="project-panel project-panel-video" aria-label="Vídeo de apresentação completo" id="video-institucional">
             <div class="project-panel-inner shell">
-              <div class="section-kicker"><span class="section-number">03 <span>/ APRESENTAÇÃO</span></span><span>PORTFÓLIO EM MOVIMENTO · VÍDEO COMPLETO</span></div>
+              <div class="section-kicker"><span>PORTFÓLIO EM MOVIMENTO · VÍDEO COMPLETO</span></div>
               <div class="full-video-block"><div><span class="overline">PROJETOS REAIS · ACERVO ORIGINAL</span><h3>Apresentação<br>completa</h3><p>Assista ao material audiovisual do portfólio. Este conteúdo é independente do futuro HERO cinematográfico.</p></div><video controls preload="none" playsinline poster="assets/media/apresentacao-poster.jpg" aria-label="Vídeo de apresentação completo da TO Eventos"><source src="assets/media/apresentacao-completa.mp4" type="video/mp4">Seu navegador não consegue reproduzir o vídeo. <a href="assets/media/apresentacao-completa.mp4">Acessar arquivo MP4</a>.</video></div>
             </div>
           </article>
         </div>
-        <div class="projects-progress shell" aria-hidden="true"><span>ROLE PARA EXPLORAR OS PROJETOS <b>→</b></span><div class="projects-progress-track"><span class="projects-progress-fill"></span></div><span>01 — 03</span></div>
+        <div class="projects-progress shell" aria-hidden="true"><span>ROLE PARA EXPLORAR OS PROJETOS</span><div class="projects-progress-track"><span class="projects-progress-fill"></span></div></div>
       </div>
     </section>
 
     <section id="contato" class="section-dark contact-section" aria-labelledby="contato-heading">
-      <div class="shell contact-grid"><div><span class="section-number">04 <span>/ CONTATO</span></span><h2 id="contato-heading" class="display-heading">Vamos criar<br><em>algo memorável?</em></h2><p>Estratégia que ganha forma. Experiências que permanecem.</p><a class="button-accent" href="https://wa.me/5567998532167" target="_blank" rel="noopener noreferrer">Conversar sobre um projeto <span aria-hidden="true">↗</span></a></div>
+      <div class="shell contact-grid"><div><h2 id="contato-heading" class="display-heading">Vamos criar<br><em>algo memorável?</em></h2><p>Estratégia que ganha forma. Experiências que permanecem.</p><a class="button-accent" href="https://wa.me/5567998532167" target="_blank" rel="noopener noreferrer">Conversar sobre um projeto</a></div>
       <div class="contact-aside"><p>THAIS ORTIZ</p><a href="mailto:thaiortiz@hotmail.com">thaiortiz@hotmail.com</a><a href="https://wa.me/5567998532167" target="_blank" rel="noopener noreferrer">(67) 99853-2167</a><span>@thaisortiz.co</span><span>Curitiba · Paraná · Brasil</span></div></div>
-      <footer class="footer shell"><span>© TO EVENTOS — PRÉVIA EDITORIAL</span><span>DESENVOLVIMENTO NÃO PUBLICADO</span><a href="#hero">VOLTAR AO INÍCIO ↑</a></footer>
+      <footer class="footer shell"><span>© TO EVENTOS — PRÉVIA EDITORIAL</span><span>DESENVOLVIMENTO NÃO PUBLICADO</span><a href="#hero">VOLTAR AO INÍCIO</a></footer>
     </section>
   </main>
 </body>
