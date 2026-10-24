@@ -25,6 +25,8 @@ jobs:
           node tests/v41-smoke.mjs
           node tests/hero-v5-smoke.mjs
           node tests/florais-v6-check.mjs
+          node tests/v7-smoke.mjs
+          node --check site/v7.js
           node --check site/florais-v6.js
           node --check site/main.js
           node --check site/ui-v4.js
