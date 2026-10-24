@@ -61,6 +61,10 @@ try {
     }));
     assert(during.ready>=2 && during.time>0 && during.duration>1,'MP4 não decodificou ou scrub não avançou em '+view.tag+JSON.stringify(during));
     await page.screenshot({path:`${out}/${view.tag}-video.png`});
+    if (view.tag==='desktop-1440' || view.tag==='mobile-390') {
+      // Prévia compacta para revisão humana da imagem real renderizada.
+      await page.screenshot({path:`${out}/${view.tag}-review.jpg`,type:'jpeg',quality:22});
+    }
 
     await scroll(.96);
     const ending=await page.evaluate(()=>{
