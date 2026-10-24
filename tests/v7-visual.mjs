@@ -56,7 +56,8 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  const connect=await page.locator('.case-featured video').count();
  assert.equal(connect,1,'Vídeo Connect deveria substituir o frame');
  const mediaSrc=await page.locator('.case-featured video source').getAttribute('src');
- assert.equal(mediaSrc,'assets/media/connect-web.mp4');
+ assert.equal(mediaSrc,'assets/media/connect-web.webm');
+ assert.equal(await page.locator('.case-featured video source[type="video/mp4"]').getAttribute('src'),'assets/media/connect-web.mp4');
  if(item.tag==='desktop'){
    await locate(page,'to-v7-lateral-papoulas',.5);
    // O showcase ocupa o último painel do GSAP, acessado pelo final do pin.
