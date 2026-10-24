@@ -57,7 +57,7 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  await page.screenshot({path:out+'/connect-'+item.tag+'.png'});
  const connect=await page.locator('.case-featured video').count();
  assert.equal(connect,1,'Vídeo Connect deveria substituir o frame');
- const mediaSrc=await page.locator('.case-featured video source').getAttribute('src');
+ const mediaSrc=await page.locator('.case-featured video source').first().getAttribute('src');
  assert.equal(mediaSrc,'assets/media/connect-web.webm');
  assert.equal(await page.locator('.case-featured video source[type="video/mp4"]').getAttribute('src'),'assets/media/connect-web.mp4');
  if(item.tag==='desktop'){
@@ -87,6 +87,24 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  assert(overflow<=2,'Overflow horizontal de '+overflow+'px no '+item.tag);
  results.push({viewport:item.tag,hero,heroMedia,aboutMedia,mediaResponses,floral,mediaSrc,overflow,pdf:'01/13 -> 02/13 -> 01/13',pageErrors:errors});
  await page.close();
+}
+for (const item of [
+  {width:1920,height:1080,tag:'fullhd'},
+  {width:1890,height:900,tag:'referencia'},
+  {width:1024,height:768,tag:'tablet-horizontal'},
+  {width:768,height:1024,tag:'tablet-vertical'},
+  {width:360,height:800,tag:'mobile-360'}
+]){
+  const page=await browser.newPage({viewport:{width:item.width,height:item.height}});
+  await page.goto(target,{waitUntil:'domcontentloaded',timeout:90000});
+  await page.waitForTimeout(600);
+  const box=await page.locator('#hero').boundingBox();
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+  assert(box&&Math.abs(box.height-item.height)<=2,'HERO deve ocupar viewport '+item.tag);
+  assert(overflow<=2,'Sem scroll horizontal em '+item.tag);
+  await page.screenshot({path:out+'/hero-'+item.tag+'.png'});
+  results.push({viewport:item.tag,hero:box,overflow});
+  await page.close();
 }
 await fs.writeFile(out+'/resultados.json',JSON.stringify(results,null,2));
 await browser.close();
