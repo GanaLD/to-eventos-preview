@@ -16,7 +16,7 @@ for(const id of ['hero','sobre','solucoes','projetos','contato']){
 }
 assert(html.includes('300 PARTICIPANTES'), 'Métrica real de case deve ser preservada');
 assert(/animacao-papoulas\.mp4/.test(html),'Mídia original deve continuar no layout');
-assert(html.includes('apresentacao-completa.mp4'), 'Apresentação original deve continuar no layout');
+assert(html.includes('portfolio-thais-ortiz.pdf'), 'Showcase do portfólio PDF deve substituir o player da apresentação');
 assert(style.includes('.hero-title{font-size:clamp'), 'HERO deve ter escala tipográfica responsiva');
 assert(style.includes('grid-template-columns:minmax(0,1.03fr) minmax(0,1fr)'), 'HERO deve manter colunas independentes');
 assert(style.includes('--to-rail:#FF4D00'), 'Cor do progresso lateral deve ser laranja TO');
