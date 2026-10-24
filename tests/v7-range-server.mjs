@@ -16,7 +16,7 @@ http.createServer((req,res)=>{
     const st=fs.statSync(filename);
     if(!st.isFile()){res.writeHead(404).end();return;}
     const h={'Content-Type':mime[path.extname(filename)]||'application/octet-stream','Accept-Ranges':'bytes','Cache-Control':'no-store'};
-    const m=/^bytes=(\\d*)-(\\d*)$/i.exec(req.headers.range||'');
+    const m=/^bytes=([0-9]*)-([0-9]*)$/i.exec(req.headers.range||'');
     let start=0,end=st.size-1,status=200;
     if(m){
       start=m[1]?Number(m[1]):(m[2]?Math.max(0,st.size-Number(m[2])):0);
