@@ -21,7 +21,7 @@ assert(js.includes("getElementById('sobre')") && js.includes("getElementById('so
 assert(html.includes('<div class="to-page-turn" id="to-page-turn">'), 'Somente Sobre e Soluções devem estar dentro do palco da transição');
 assert(html.indexOf('id="hero"') < html.indexOf('id="to-page-turn"'), 'HERO não pode participar do palco da transição');
 assert(html.indexOf('id="to-page-turn"') < html.indexOf('id="sobre"') && html.indexOf('id="sobre"') < html.indexOf('id="solucoes"'), 'Ordem das seções precisa ser preservada');
-assert(html.indexOf('<!-- FIM DA TRANSIÇÃO SOBRE → SOLUÇÕES -->') < html.indexOf('id="projetos"'), 'Projetos devem permanecer fora do palco da transição');
+assert(html.indexOf('<!-- FIM DA TRANSIÇÃO SOBRE E SOLUÇÕES -->') < html.indexOf('id="projetos"'), 'Projetos devem permanecer fora do palco da transição');
 assert(css.includes('.to-page-turn{position:relative;isolation:isolate}'), 'Palco precisa ter isolação de empilhamento');
 assert(/#sobre\s*\{[^}]*position:\s*sticky/s.test(css), 'Papoulas devem ficar no fluxo com sticky natural, sem pin com gap artificial');
 assert(!js.includes('pinSpacing: false') && !js.includes('pin: about'), 'NÃO usar pinSpacing:false/pin:true no Sobre: sobrepõe o HERO');
