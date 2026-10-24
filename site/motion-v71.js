@@ -11,11 +11,17 @@
   const activeTriggers = [];
   const createEnterTrigger = ({id,element,timeline,start='top 82%',end='bottom 18%',containerAnimation}) => {
     if (!element || !timeline) return null;
+    let played=false;
+    const playOnce=()=>{
+      if (played) return;
+      played=true;
+      timeline.play(0);
+    };
     const opts = {
       id, trigger:element, start, end,
       invalidateOnRefresh:true,
-      onEnter:()=>timeline.restart(),
-      onEnterBack:()=>timeline.restart()
+      onEnter:playOnce,
+      onEnterBack:playOnce
     };
     if (containerAnimation) opts.containerAnimation=containerAnimation;
     const trigger=ST.create(opts);
@@ -32,8 +38,8 @@
     const groups=[kicker,title,...fields].filter(Boolean);
     if (groups.length) {
       const timeline=gsap.timeline({paused:true,defaults:{ease:'power2.out'}});
-      timeline.fromTo(groups,{y:30,autoAlpha:0},
-        {y:0,autoAlpha:1,duration:.93,stagger:.125,immediateRender:false},0);
+      gsap.set(groups,{y:24,autoAlpha:0});
+      timeline.to(groups,{y:0,autoAlpha:1,duration:1.05,stagger:.14},0);
       createEnterTrigger({
         id:'to-v71-solutions',element:solutions,timeline,
         start:'top 78%',end:'bottom 16%'
@@ -66,8 +72,8 @@
     // Exclusão expressa da mídia Connect para evitar escala/corte do vídeo.
     const groups=[kicker,headline,description,...captions].filter(Boolean);
     const timeline=gsap.timeline({paused:true,defaults:{ease:'power2.out'}});
-    timeline.fromTo(groups,{y:35,autoAlpha:0},
-      {y:0,autoAlpha:1,duration:.98,stagger:.15,immediateRender:false},0);
+    gsap.set(groups,{y:30,autoAlpha:0});
+    timeline.to(groups,{y:0,autoAlpha:1,duration:1.05,stagger:.17},0);
     bindPanel('to-v71-projects',summit,timeline);
   }
 
@@ -79,57 +85,50 @@
       node.nodeName==='BR'?' ':node.textContent).join('').replace(/\s+/g,' ').trim();
     if (!accessibleName) return [];
     heading.setAttribute('aria-label',accessibleName);
-    const chars=[];
-    const textNodes=[...heading.childNodes].filter(node=>node.nodeType===Node.TEXT_NODE);
-    for (const textNode of textNodes) {
-      const fragment=document.createDocumentFragment();
-      const parts=textNode.textContent.split(/(\s+)/u);
-      for (const part of parts) {
-        if (!part) continue;
-        if (/^\s+$/u.test(part)) {
-          fragment.appendChild(document.createTextNode(part));
-          continue;
-        }
-        const word=document.createElement('span');
-        word.className='to-v71-type-word';
-        word.setAttribute('aria-hidden','true');
-        for (const char of Array.from(part)) {
-          const letter=document.createElement('span');
-          letter.className='to-v71-type-char';
-          letter.textContent=char;
-          word.appendChild(letter);
-          chars.push(letter);
-        }
-        fragment.appendChild(word);
-      }
-      textNode.replaceWith(fragment);
+    const lines=[];
+    for(const textNode of [...heading.childNodes].filter(node=>node.nodeType===Node.TEXT_NODE)){
+      if(!textNode.textContent.trim())continue;
+      const wrapper=document.createElement('span');
+      wrapper.className='to-v72-type-line';
+      wrapper.setAttribute('aria-hidden','true');
+      wrapper.textContent=textNode.textContent.trim();
+      textNode.replaceWith(wrapper);
+      lines.push(wrapper);
     }
-    return chars;
+    return lines;
   };
 
   if (cases) {
     const gray=cases.querySelector('.case-text:not(.case-text-contrast)');
     const dark=cases.querySelector('.case-text-contrast');
     const heading=gray?.querySelector('.case-text-main h3');
-    const chars=splitAccessibleTitle(heading);
-    if (gray && chars.length) {
+    const lines=splitAccessibleTitle(heading);
+    if (gray && lines.length) {
       const kicker=gray.querySelector('.case-index');
       const desc=gray.querySelector('.case-text-main p');
       const footer=gray.querySelector('.case-text-foot');
       const darkGroups=dark?[...dark.querySelectorAll('.case-index, .case-text-main h3, .case-text-main p, .case-numbers')]:[];
       const timeline=gsap.timeline({paused:true,defaults:{ease:'power2.out'}});
-      if (kicker) timeline.fromTo(kicker,{y:14,autoAlpha:0},
-        {y:0,autoAlpha:1,duration:.5,immediateRender:false},0);
-      timeline.fromTo(chars,{opacity:0},{opacity:1,duration:.02,stagger:.037,
-        ease:'none',immediateRender:false},.35);
-      const titleEnd=.35+chars.length*.037;
-      if (desc) timeline.fromTo(desc,{y:18,autoAlpha:0},
-        {y:0,autoAlpha:1,duration:.65,immediateRender:false},titleEnd+.15);
-      if (footer) timeline.fromTo(footer,{y:12,autoAlpha:0},
-        {y:0,autoAlpha:1,duration:.55,immediateRender:false},titleEnd+.48);
-      if (darkGroups.length) timeline.fromTo(darkGroups,{y:22,autoAlpha:0},
-        {y:0,autoAlpha:1,duration:.75,stagger:.14,immediateRender:false},.8);
-      bindPanel('to-v71-cases',cases,timeline);
+      gsap.set(lines,{clipPath:'inset(0 100% 0 0)'});
+      const ancillary=[kicker,desc,footer,...darkGroups].filter(Boolean);
+      gsap.set(ancillary,{y:14,autoAlpha:0});
+      if (kicker) timeline.to(kicker,{y:0,autoAlpha:1,duration:.6},0);
+      let titleEnd=.35;
+      lines.forEach((line,i)=>{
+        const duration=Math.max(.45,line.textContent.length*.055);
+        timeline.to(line,{
+          clipPath:'inset(0 0% 0 0)',
+          duration,
+          ease:'steps('+Math.max(2,Array.from(line.textContent).length)+')'
+        },titleEnd);
+        titleEnd+=duration+.1;
+      });
+      if (desc) timeline.to(desc,{y:0,autoAlpha:1,duration:.78},titleEnd+.05);
+      if (footer) timeline.to(footer,{y:0,autoAlpha:1,duration:.65},titleEnd+.30);
+      if (darkGroups.length) timeline.to(darkGroups,{
+        y:0,autoAlpha:1,duration:.86,stagger:.14
+      },.85);
+    bindPanel('to-v71-cases',cases,timeline);
     }
   }
 
@@ -144,8 +143,8 @@
     const foot=[...contact.querySelectorAll('.footer > *')];
     const timeline=gsap.timeline({paused:true,defaults:{ease:'power2.out'}});
     const groups=[heading,paragraph,cta,...aside,...foot].filter(Boolean);
-    timeline.fromTo(groups,{y:32,autoAlpha:0},
-      {y:0,autoAlpha:1,duration:.95,stagger:.16,immediateRender:false},0);
+    gsap.set(groups,{y:28,autoAlpha:0});
+    timeline.to(groups,{y:0,autoAlpha:1,duration:1.05,stagger:.16},0);
     createEnterTrigger({
       id:'to-v71-contact',element:contact,timeline,
       start:'top 80%',end:'bottom 10%'
