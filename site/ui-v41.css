@@ -1,0 +1,104 @@
+/* TO EVENTOS V4.1
+   Escopo: restaurar navegação superior, CTA WhatsApp laranja, passagem editorial Sobre → Soluções.
+   NÃO altera o botão flutuante verde de WhatsApp ou o sistema de navegação lateral. */
+.site-header .nav-contact{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  background:var(--orange);
+  color:var(--graphite);
+  border:1px solid var(--orange);
+  border-radius:999px;
+  padding:12px 18px;
+  font:700 12px/1.15 var(--font-ui);
+  text-decoration:none;
+}
+.site-header .nav-contact span{color:inherit;margin-left:0}
+.site-header .nav-contact:hover{
+  background:#ff7035;
+  border-color:#ff7035;
+  color:var(--graphite);
+  filter:none;
+  transform:translateY(-1px)
+}
+.site-header .nav-contact:active{transform:translateY(0);filter:brightness(.97)}
+.site-header .nav-contact:focus-visible{
+  outline:3px solid var(--offwhite);
+  outline-offset:4px
+}
+.site-header .nav-contact .wa-icon{fill:currentColor}
+
+/* O menu de topo é complementar ao trilho lateral, não substituído por ele. */
+@media(min-width:901px){
+  .site-header .nav{
+    display:flex;
+    position:static;
+    flex-direction:row;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(13px,1.8vw,29px);
+    min-width:0;
+    margin-inline:auto;
+    padding:0;
+    background:none;
+    border:0;
+  }
+  .site-header .nav a{
+    white-space:nowrap;
+    font:600 clamp(10px,.8vw,12px)/1.2 var(--font-ui);
+    letter-spacing:.09em;
+    text-transform:uppercase;
+  }
+  .site-header{gap:clamp(13px,2.2vw,32px)}
+  .site-header .nav-toggle{display:none}
+}
+@media(min-width:901px) and (max-width:1110px){
+  .site-header{padding-inline:30px;gap:15px}
+  .site-header .nav{gap:clamp(10px,1.2vw,16px)}
+  .site-header .nav-contact{padding:11px 13px;font-size:11px}
+  .site-header .wordmark{font-size:clamp(26px,2.5vw,33px)}
+}
+@media(min-width:721px) and (max-width:900px){
+  .site-header .nav{display:none}
+  .site-header .nav-toggle{
+    display:flex;
+    align-items:center;
+    background:none;
+    color:var(--offwhite);
+    border:0;
+    cursor:pointer;
+    font:600 12px var(--font-ui);
+    letter-spacing:.09em;
+    text-transform:uppercase;
+  }
+  .site-header .nav.is-open{
+    display:flex;
+    position:absolute;
+    left:0;
+    right:0;
+    top:100%;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:22px;
+    padding:24px 32px;
+    background:var(--graphite);
+    border-bottom:1px solid var(--dark-border);
+  }
+}
+@media(max-width:720px){
+  .site-header .nav-contact{display:none}
+}
+
+/* Page-turn: a seção branca fica fixada pelo GSAP e a seção grafite
+   entra por cima dela pelo avanço NATIVO do scroll + sutil y via ScrollTrigger.
+   pinSpacing:false impede alturas fantasmas entre as seções. */
+#sobre{position:relative;z-index:1}
+#solucoes{position:relative;z-index:2}
+@media(min-width:901px) and (prefers-reduced-motion:no-preference){
+  #solucoes{will-change:transform;backface-visibility:hidden}
+}
+/* Sem pin para telas pequenas ou pessoas com movimento reduzido. */
+@media(max-width:900px),(prefers-reduced-motion:reduce){
+  #solucoes{will-change:auto}
+}
