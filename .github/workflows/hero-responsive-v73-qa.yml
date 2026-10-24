@@ -32,7 +32,7 @@ jobs:
           curl -sSI -H 'Range: bytes=0-63' http://127.0.0.1:8765/assets/media/motion-hero.mp4 | grep -q '206 Partial Content'
           node tests/hero-responsive-v73-visual.mjs
       - name: Registrar previews visuais como blobs temporários (sem alterar branch)
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: node tests/upload-hero-v73-review.mjs
