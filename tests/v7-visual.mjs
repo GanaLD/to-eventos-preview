@@ -24,6 +24,21 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  assert(hero,'HERO deve existir');
  const cue=await page.locator('.to-hero-scroll-cue').count();
  assert(cue===1,'Mouse laranja de orientação precisa existir');
+ const visualHero=await page.evaluate(()=>{
+   const cue=document.querySelector('.to-hero-scroll-cue');
+   const film=document.querySelector('.hero-film-screen');
+   const video=document.querySelector('.hero-film-screen video');
+   const c=cue?getComputedStyle(cue):null;
+   return {cueBackground:c?.backgroundColor,cueBorder:c?.borderTopWidth,cueShadow:c?.boxShadow,filmBackground:film?getComputedStyle(film).backgroundColor:null,videoBackground:video?getComputedStyle(video).backgroundColor:null,fit:video?getComputedStyle(video).objectFit:null,filmWidth:film?.getBoundingClientRect().width,innerWidth:innerWidth};
+ });
+ assert.equal(visualHero.cueBackground,'rgba(0, 0, 0, 0)','A caixa do mouse deve ser totalmente transparente');
+ assert.equal(visualHero.cueBorder,'0px','Mouse scroll sem borda de cartão');
+ assert.equal(visualHero.cueShadow,'none','Mouse scroll sem sombra de cartão');
+ assert.equal(visualHero.filmBackground,'rgb(255, 97, 8)','Bordas laterais devem ter a cor do vídeo');
+ assert.equal(visualHero.filmBackground,visualHero.videoBackground,'Bordas sem contraste de cor com a mídia');
+ assert.equal(visualHero.fit,'contain','Não cortar o vídeo para preencher a tela');
+ assert(Math.abs(visualHero.filmWidth-item.width)<2,'Vídeo precisa preencher toda a largura da viewport');
+
  await page.screenshot({path:out+'/hero-'+item.tag+'.png'});
  const heroTriggerId=item.tag==='mobile'?'to-hero-mobile-film-and-copy':'to-hero-film-and-copy';
  await locate(page,heroTriggerId,.55);
