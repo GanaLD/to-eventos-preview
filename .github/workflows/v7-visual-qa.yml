@@ -9,16 +9,13 @@ jobs:
   browser-qa:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Instalar Playwright e Chromium
-        run: |
-          npm install --no-save playwright@1.56.1
-          npx playwright install --with-deps chromium
+      - name: Preparar biblioteca Playwright (Chromium já vem no container)
+        run: npm install --no-save playwright@1.56.1
       - name: Inspecionar e registrar screenshots da LP publicada
         run: node tests/v7-visual.mjs
       - name: Disponibilizar capturas desktop e mobile
