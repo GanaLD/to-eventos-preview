@@ -16,7 +16,7 @@
   document.addEventListener('keydown', event=>{if(event.key==='Escape')closeMenu();});
 
   const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
-  const desktop = window.matchMedia?.('(min-width: 900px)').matches ?? false;
+  const mobile = window.matchMedia?.('(max-width: 899px)').matches ?? false;
   const gsap = window.gsap;
   const ScrollTrigger = window.ScrollTrigger;
   // Sem GSAP ou com movimento reduzido, todo o conteúdo permanece navegável e legível.
@@ -28,12 +28,14 @@
   const pin = document.getElementById('projects-pin');
   const area = document.getElementById('projetos');
   const progress = document.querySelector('.projects-progress-fill');
-  if (track && pin && area && desktop) {
+  if (track && pin && area) {
     const travel = () => Math.max(0,track.scrollWidth-pin.clientWidth);
     document.documentElement.classList.add('is-gsap-active');
+    // A galeria mantém o mesmo percurso horizontal em touch e desktop.
+    // Em telas estreitas, a duração de scroll é ampliada para maior controle gestual.
     const gallery = gsap.to(track,{
       x:()=>-travel(),ease:'none',
-      scrollTrigger:{trigger:area,start:'top top',end:()=>'+='+travel(),
+      scrollTrigger:{trigger:area,start:'top top',end:()=>'+='+(mobile ? Math.max(Math.round(travel()*1.35),Math.round(innerHeight*2)) : Math.round(travel())),
         pin:true,scrub:1,invalidateOnRefresh:true,anticipatePin:1,
         onUpdate:self=>{if(progress)progress.style.transform=`scaleX(${self.progress})`;}
       }
