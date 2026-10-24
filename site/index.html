@@ -17,13 +17,15 @@
   <link rel="stylesheet" href="ui-v41.css">
   <link rel="stylesheet" href="hero-v5.css">
   <link rel="stylesheet" href="florais-v6.css">
+  <link rel="stylesheet" href="v7.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script defer src="main.js"></script>
   <script defer src="ui-v4.js"></script>
   <script defer src="ui-v41.js"></script>
   <script defer src="hero-v5.js"></script>
-  <script defer src="florais-v6.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script defer src="v7.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
@@ -53,6 +55,11 @@
     <section id="hero" class="hero section-dark" aria-labelledby="hero-heading">
       <div class="hero-film-screen" aria-label="Vídeo original de abertura da TO Eventos, controlado pelo movimento da página">
         <video class="hero-scrub-video" data-role="hero-film" src="assets/media/motion-hero.mp4" muted playsinline preload="auto" tabindex="-1" aria-hidden="true" disablepictureinpicture></video>
+      </div>
+      <div class="to-hero-scroll-cue" aria-label="Role a página para controlar o vídeo de abertura">
+        <span class="to-cue-label">ROLE PARA CONTROLAR</span>
+        <span class="to-cue-mouse" aria-hidden="true"><span class="to-cue-wheel"></span></span>
+        <span class="to-cue-direction" aria-hidden="true"></span>
       </div>
       <div class="shell hero-grid">
         <div class="hero-copy">
@@ -84,8 +91,8 @@
 
     <section id="solucoes" class="section-dark section-space" aria-labelledby="solucoes-heading">
       <div class="solutions-florals" aria-hidden="true">
-        <img class="solutions-floral solutions-floral-left" src="assets/media/papoula-3-esquerda.png" width="1536" height="2048" loading="lazy" decoding="async" alt="">
-        <img class="solutions-floral solutions-floral-right" src="assets/media/papoula-2-direita.png" width="1536" height="2048" loading="lazy" decoding="async" alt="">
+        <img class="solutions-floral solutions-floral-left" src="assets/media/papoula-3-esquerda-crop.webp" loading="lazy" decoding="async" alt="">
+        <img class="solutions-floral solutions-floral-right" src="assets/media/papoula-2-direita-crop.webp" loading="lazy" decoding="async" alt="">
       </div>
       <div class="shell">
         <div class="section-kicker"><span>COMPETÊNCIAS INTEGRADAS</span></div>
@@ -107,7 +114,12 @@
               <div class="section-kicker"><span>PROJETOS SELECIONADOS</span></div>
               <div class="projects-top"><h2 id="projetos-heading" class="display-heading">Experiência<br><em>em ação.</em></h2><p>Planejamento, execução e relacionamento demonstrados em projetos de diferentes escalas.</p></div>
               <div class="case case-featured">
-                <div class="case-image"><img src="assets/media/summit-frame-apresentacao.webp" alt="Público reunido no Summit de Negócios, frame do vídeo fornecido" width="1050" height="528" loading="lazy"><span>FRAME DO VÍDEO FORNECIDO</span></div>
+                <div class="case-image">
+                  <video controls playsinline preload="metadata" poster="assets/media/connect-poster.webp" aria-label="Vídeo Connect — cobertura audiovisual do evento">
+                    <source src="assets/media/connect-web.mp4" type="video/mp4">
+                    Seu navegador não suporta vídeo MP4. <a href="assets/media/connect-web.mp4" target="_blank" rel="noopener noreferrer">Abrir vídeo Connect</a>.
+                  </video>
+                </div>
                 <div class="case-caption"><span>CASE AUTORAL</span><h3>Summit de Negócios</h3><p>Conteúdo, negócios, ativações de marca e experiência do participante em um único ecossistema.</p><strong>300 PARTICIPANTES</strong></div>
               </div>
             </div>
@@ -122,10 +134,31 @@
               <p class="project-asset-note">Os cases preservam apenas os registros confirmados. Fotos adicionais serão inseridas após acesso aos arquivos originais do Canva.</p>
             </div>
           </article>
-          <article class="project-panel project-panel-video" aria-label="Vídeo de apresentação completo" id="video-institucional">
+          <article class="project-panel project-panel-video" aria-label="Portfólio PDF completo" id="video-institucional">
             <div class="project-panel-inner shell">
-              <div class="section-kicker"><span>PORTFÓLIO EM MOVIMENTO · VÍDEO COMPLETO</span></div>
-              <div class="full-video-block"><div><span class="overline">PROJETOS REAIS · ACERVO ORIGINAL</span><h3>Apresentação<br>completa</h3><p>Assista ao material audiovisual do portfólio. Este conteúdo é independente do futuro HERO cinematográfico.</p></div><video controls preload="none" playsinline poster="assets/media/apresentacao-poster.jpg" aria-label="Vídeo de apresentação completo da TO Eventos"><source src="assets/media/apresentacao-completa.mp4" type="video/mp4">Seu navegador não consegue reproduzir o vídeo. <a href="assets/media/apresentacao-completa.mp4">Acessar arquivo MP4</a>.</video></div>
+              <div class="section-kicker"><span>PORTFÓLIO CORPORATIVO · DOCUMENTO ORIGINAL</span></div>
+              <div class="full-video-block">
+                <div>
+                  <span class="overline">PROJETOS REAIS · ACERVO ORIGINAL</span>
+                  <h3>Apresentação<br>completa</h3>
+                  <p>Explore os projetos, experiências e competências apresentados no portfólio institucional de Thais Ortiz.</p>
+                </div>
+                <div id="to-pdf-showcase" class="to-pdf-showcase" data-pdf="assets/docs/portfolio-thais-ortiz.pdf" role="region" aria-label="Visualizador de 13 páginas do portfólio de Thais Ortiz">
+                  <div class="to-pdf-stage">
+                    <div class="to-pdf-loading" role="status">Carregando portfólio…</div>
+                    <canvas aria-label="Página atual do portfólio PDF" role="img"></canvas>
+                    <iframe class="to-pdf-fallback" title="Portfólio PDF da TO Eventos" loading="lazy"></iframe>
+                  </div>
+                  <div class="to-pdf-controls" aria-label="Controles do portfólio">
+                    <button type="button" data-pdf-action="previous" aria-label="Página anterior" disabled>Anterior</button>
+                    <output class="to-pdf-counter" aria-live="polite">01 / 13</output>
+                    <button type="button" data-pdf-action="next" aria-label="Próxima página">Próxima</button>
+                    <button type="button" class="to-pdf-fullscreen" data-pdf-action="fullscreen">Tela cheia</button>
+                    <a href="assets/docs/portfolio-thais-ortiz.pdf" download="Portfolio-Thais-Ortiz-Eventos-Corporativos.pdf">Baixar PDF</a>
+                    <a href="assets/docs/portfolio-thais-ortiz.pdf" target="_blank" rel="noopener noreferrer">Abrir PDF</a>
+                  </div>
+                </div>
+              </div>
             </div>
           </article>
         </div>
