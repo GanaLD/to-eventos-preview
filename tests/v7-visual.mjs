@@ -17,7 +17,7 @@ async function locate(page,id,at){
 }
 for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,tag:'mobile'}]){
  const page=await browser.newPage({viewport:{width:item.width,height:item.height},deviceScaleFactor:1,hasTouch:item.tag==='mobile'});
- const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const errors=[];const mediaResponses=[];page.on('pageerror',e=>errors.push(e.message));page.on('response',response=>{if(response.url().includes('motion-hero.mp4'))mediaResponses.push({status:response.status(),url:response.url()})});
  await page.goto(target,{waitUntil:'domcontentloaded',timeout:90000});
  await page.waitForTimeout(1500);
  const hero=await page.locator('#hero').boundingBox();
@@ -25,7 +25,13 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  const cue=await page.locator('.to-hero-scroll-cue').count();
  assert(cue===1,'Mouse laranja de orientação precisa existir');
  await page.screenshot({path:out+'/hero-'+item.tag+'.png'});
- await locate(page,item.tag==='mobile'?'to-hero-mobile-film-and-copy':'to-hero-film-and-copy',.92);
+ const heroTriggerId=item.tag==='mobile'?'to-hero-mobile-film-and-copy':'to-hero-film-and-copy';
+ await locate(page,heroTriggerId,.55);
+ await page.waitForTimeout(1800);
+ await page.screenshot({path:out+'/hero-mid-'+item.tag+'.png'});
+ await locate(page,heroTriggerId,.92);
+ await page.waitForTimeout(2100);
+ const heroMedia=await page.locator('[data-role="hero-film"]').evaluate(v=>({readyState:v.readyState,currentTime:v.currentTime,duration:v.duration,networkState:v.networkState,seeking:v.seeking,src:v.currentSrc,error:v.error?.message||null}));
  await page.screenshot({path:out+'/hero-copy-'+item.tag+'.png'});
  await page.locator('#sobre').scrollIntoViewIfNeeded();
  await page.waitForTimeout(1400);
@@ -75,7 +81,7 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  assert.equal((await pdf.locator('.to-pdf-counter').textContent())?.trim(),'01 / 13','PDF deve permitir voltar');
  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
  assert(overflow<=2,'Overflow horizontal de '+overflow+'px no '+item.tag);
- results.push({viewport:item.tag,hero,floral,mediaSrc,overflow,pdf:'01/13 -> 02/13 -> 01/13',pageErrors:errors});
+ results.push({viewport:item.tag,hero,heroMedia,mediaResponses,floral,mediaSrc,overflow,pdf:'01/13 -> 02/13 -> 01/13',pageErrors:errors});
  await page.close();
 }
 await fs.writeFile(out+'/resultados.json',JSON.stringify(results,null,2));
