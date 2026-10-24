@@ -184,3 +184,15 @@
   .is-gsap-active #projetos .case-featured .case-image video{max-height:25dvh}
 }
 /* Movimento reduzido e ausência de GSAP: a fallback vertical mantém leitura e controles. */
+
+@media(max-width:899px) and (prefers-reduced-motion:reduce) {
+  .hero-scroll-stage .hero{
+    height:auto;
+    min-height:100svh;
+    max-height:none;
+    overflow:visible;
+  }
+  .hero-scroll-stage .hero-grid{gap:20px;padding-block:32px}
+  .hero-scroll-stage .hero-copy,.hero-scroll-stage .hero-copy>*{opacity:1!important;transform:none!important}
+  .hero-scroll-stage .hero-visual video{pointer-events:auto}
+}
