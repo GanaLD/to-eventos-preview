@@ -1,0 +1,47 @@
+name: Preparar recortes fiéis das papoulas V7
+on:
+  push:
+    paths: ['.github/workflows/crop-v7-florals.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  recortar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar processamento de imagens
+        run: python3 -m pip install --quiet pillow
+      - name: Recortar exclusivamente margens alfa transparentes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          base=Path('site/assets/media')
+          for original, output in [
+            ('papoula-3-esquerda.png','papoula-3-esquerda-crop.webp'),
+            ('papoula-2-direita.png','papoula-2-direita-crop.webp')]:
+              image=Image.open(base/original).convert('RGBA')
+              bbox=image.getchannel('A').getbbox()
+              assert bbox and bbox[2]>bbox[0] and bbox[3]>bbox[1], original
+              left,top,right,bottom=bbox
+              border=3
+              bounds=(max(0,left-border),max(0,top-border),
+                      min(image.width,right+border),min(image.height,bottom+border))
+              cropped=image.crop(bounds)
+              cropped.save(base/output,'WEBP',lossless=True,method=5)
+              check=Image.open(base/output)
+              assert check.size==cropped.size and check.getchannel('A').getbbox(), output
+              print(original, bbox, '-->', output, cropped.size)
+          PY
+      - name: Salvar derivados sem alterar originais
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/assets/media/papoula-3-esquerda-crop.webp site/assets/media/papoula-2-direita-crop.webp
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(v7): recortes transparentes sem deformar papoulas originais"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
