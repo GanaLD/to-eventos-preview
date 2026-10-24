@@ -4,20 +4,6 @@
   const gsap=window.gsap, ST=window.ScrollTrigger;
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // CUE DO HERO: apenas instrução visual; sem controlador paralelo do vídeo.
-  const cue=document.querySelector('.to-hero-scroll-cue');
-  if(cue){
-    const updateCue=()=>{
-      const trigger=ST?.getById('to-hero-film-and-copy')||ST?.getById('to-hero-mobile-film-and-copy');
-      const p=trigger?.progress || 0;
-      cue.style.opacity=String(Math.max(0,Math.min(1,1-p/.075)));
-      cue.style.visibility=p>.075?'hidden':'visible';
-    };
-    window.addEventListener('scroll',updateCue,{passive:true});
-    window.addEventListener('resize',updateCue,{passive:true});
-    updateCue();
-  }
-
   // SOBRE — animar os cinco grupos reais em ordem, após entrada da seção.
   const about=document.getElementById('sobre');
   const copy=about?.querySelector('.about-copy');
