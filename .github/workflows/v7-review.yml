@@ -1,0 +1,52 @@
+name: V7 QA completo (branch de revisão)
+on:
+  push:
+    branches: [to-eventos-v7-implementation]
+    paths: ['.github/workflows/v7-review.yml']
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Obter V7
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testar HTML, mídia e regressões
+        run: |
+          node tests/v4-smoke.mjs
+          node tests/v41-smoke.mjs
+          node tests/hero-v5-smoke.mjs
+          node tests/florais-v6-check.mjs
+          node tests/v7-smoke.mjs
+          node --check site/main.js
+          node --check site/hero-v5.js
+          node --check site/v7.js
+          node --check site/ui-v4.js
+          node --check site/ui-v41.js
+          node --check site/florais-v6.js
+          file site/assets/docs/portfolio-thais-ortiz.pdf site/assets/media/connect-web.mp4 site/assets/media/papoula-2-direita-crop.webp
+          test "$(stat -c %s site/assets/docs/portfolio-thais-ortiz.pdf)" -gt 10000000
+          test "$(stat -c %s site/assets/media/connect-web.mp4)" -gt 10000000
+      - name: Instalar navegador para QA
+        run: |
+          npm install --no-save --no-package-lock playwright@1.57.0
+      - name: Inspecionar V7 com Chrome em 7 viewports
+        env:
+          TO_PREVIEW_URL: http://127.0.0.1:8765/?v7-branch
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory site > /tmp/v7-static-server.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/ -o /dev/null && break || sleep 1; done
+          node tests/v7-visual.mjs
+      - name: Arquivar capturas e relatório
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: to-eventos-v7-capturas-qa
+          path: qa-artifacts/
+          if-no-files-found: warn
+          retention-days: 30
