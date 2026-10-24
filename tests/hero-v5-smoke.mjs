@@ -10,7 +10,7 @@ const workflow=read('.github/workflows/pages.yml');
 
 assert(html.includes('hero-v5.css') && html.includes('hero-v5.js'), 'HERO V5 CSS/JS devem carregar');
 assert(html.includes('class="hero-film-screen"'), 'Vídeo de abertura precisa preencher o primeiro bloco');
-assert(html.includes('src="assets/media/motion-hero.webm"') && html.includes('src="assets/media/motion-hero.mp4"'), 'Hero mantém WebM e MP4 servidos pelo Pages');
+assert(html.includes('motion-hero.mp4') && !html.includes('motion-hero.webm'), 'HERO exige MP4 otimizado para scroll');
 assert(/id="hero"[\s\S]*hero-film-screen/.test(html), 'Vídeo dentro do #hero');
 assert(css.includes('.site-header{display:none'), 'Barra superior não deve existir na versão atual');
 assert(/\.hero-visual\s*\{[^}]*aspect-ratio:\s*16\/9/s.test(css), 'Último enquadramento deve preservar 16:9');
