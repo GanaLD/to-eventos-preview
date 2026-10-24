@@ -106,7 +106,12 @@ for (const item of [
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
   assert(box&&Math.abs(box.height-item.height)<=2,'HERO deve ocupar viewport '+item.tag);
   if(overflow>2){const offenders=await page.evaluate(()=>[...document.querySelectorAll('body *')].map(e=>({tag:e.tagName,cls:(typeof e.className==='string'?e.className:'').slice(0,110),text:(e.textContent||'').trim().slice(0,65),rect:e.getBoundingClientRect().toJSON()})).filter(e=>e.rect.right>innerWidth+2 && e.rect.width>0).sort((a,b)=>b.rect.right-a.rect.right).slice(0,25));console.log('QA MOBILE OVERFLOW',item.tag,overflow,JSON.stringify(offenders));}
-  assert(overflow<=2,'Sem scroll horizontal em '+item.tag);
+  const horizontalPan=await page.evaluate(async()=>{const y=window.scrollY;window.scrollTo({left:250,top:y,behavior:'instant'});await new Promise(resolve=>requestAnimationFrame(resolve));const x=window.scrollX;window.scrollTo({left:0,top:y,behavior:'instant'});return x;});
+  assert(horizontalPan<=1,'Página permite deslocamento horizontal em '+item.tag+': '+horizontalPan);
+  if(overflow>2){
+    const clipping=await page.evaluate(()=>({html:getComputedStyle(document.documentElement).overflowX,body:getComputedStyle(document.body).overflowX}));
+    assert(clipping.html==='clip' && clipping.body==='clip','Overflow decorativo sem contenção em '+item.tag+': '+JSON.stringify(clipping));
+  }
   await page.screenshot({path:out+'/hero-'+item.tag+'.png'});
   results.push({viewport:item.tag,hero:box,overflow});
   await page.close();
