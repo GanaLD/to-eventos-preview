@@ -67,3 +67,6 @@
   .to-hero-scroll-cue{display:none}
   .florals-enhanced #solucoes .solutions-floral{opacity:1;transform:none}
 }
+
+/* Preserve document width while floral images are lazy-loaded and animated. */
+#solucoes .solutions-florals{overflow:hidden;contain:paint}
