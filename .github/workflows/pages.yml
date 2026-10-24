@@ -19,6 +19,11 @@ jobs:
     steps:
       - name: Obter código
         uses: actions/checkout@v4
+      - name: Validar regressões da V4
+        run: |
+          node tests/v4-smoke.mjs
+          node --check site/main.js
+          node --check site/ui-v4.js
       - name: Preparar GitHub Pages
         uses: actions/configure-pages@v5
         with:
