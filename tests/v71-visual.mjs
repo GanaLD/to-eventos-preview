@@ -101,6 +101,14 @@ try {
       assert(cards.cases.lines===2&&cards.cases.text==='Convenções corporativas',
         'Cabeçalho em letras com rótulo acessível íntegro');
       const lastClip=await page.locator('.to-v72-type-line').last().evaluate(e=>getComputedStyle(e).clipPath);
+      console.log('TO V72 CASE DEBUG',JSON.stringify(await page.evaluate(()=>{
+        const cases=document.querySelector('.project-panel-cases');
+        const t=window.ScrollTrigger?.getById('to-v71-cases');
+        const lines=[...document.querySelectorAll('.to-v72-type-line')];
+        return {played:cases?.dataset.toMotionPlayed,rect:cases?.getBoundingClientRect().toJSON(),
+          trigger:t?{progress:t.progress,isActive:t.isActive,start:t.start,end:t.end}:null,
+          clips:lines.map(e=>getComputedStyle(e).clipPath),opacity:getComputedStyle(cases.querySelector('.case-index')).opacity};
+      })));
       assert(!lastClip.includes('100%'),'Digitação deve concluir com título integralmente visível: '+lastClip);
       await jumpGallery(page,.81);
       await jumpGallery(page,.51);
