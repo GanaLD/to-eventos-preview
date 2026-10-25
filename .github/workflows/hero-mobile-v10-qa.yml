@@ -21,6 +21,11 @@ jobs:
       - name: Teste estrutural mobile
         run: |
           node --check site/hero-v5.js
+          node tests/v4-smoke.mjs
+          node tests/v41-smoke.mjs
+          node tests/hero-v5-smoke.mjs
+          node tests/florais-v6-check.mjs
+          node tests/v7-smoke.mjs
           node tests/hero-mobile-v10-smoke.mjs
       - name: Teste real com vídeo e touch
         run: |
