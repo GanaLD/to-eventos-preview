@@ -23,6 +23,7 @@
   <!-- Camada floral opcional: overlay independente, Hero V5 intocado. -->
   <link rel="stylesheet" href="moldura-overlay.css?v=11">
   <link rel="stylesheet" href="hero-mobile-v10.css">
+  <link rel="stylesheet" href="staggered-menu.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script defer src="main.js"></script>
@@ -34,17 +35,34 @@
   <script defer src="v7.js"></script>
   <script defer src="motion-v71.js"></script>
   <script defer src="moldura-overlay.js?v=11"></script>
+  <script defer src="staggered-menu.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
   <header class="site-header">
     <a class="wordmark" href="#hero" aria-label="Thais Ortiz, início">thais <span>ortiz</span><i>.</i></a>
-    <nav class="nav" id="nav" aria-label="Navegação principal">
-      <a href="#sobre">Sobre</a><a href="#solucoes">Soluções</a><a href="#projetos">Projetos</a><a href="#contato">Contato</a>
-    </nav>
     <a class="nav-contact" href="https://wa.me/5567998532167?text=Ol%C3%A1%2C%20Thais%21%20Gostaria%20de%20conversar%20sobre%20um%20evento%20corporativo." target="_blank" rel="noopener noreferrer" aria-label="Conversar com a TO Eventos pelo WhatsApp"><svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.009-.371-.011-.57-.011-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479s1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.626.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.99c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.055 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.69 1.448h.005c6.558 0 11.893-5.335 11.896-11.893a11.821 11.821 0 0 0-3.489-8.413Z"/></svg><span>Iniciar conversa</span></a>
-    <button class="nav-toggle" type="button" aria-controls="nav" aria-expanded="false" aria-label="Abrir menu">Menu</button>
   </header>
+  <!-- Menu editorial StaggeredMenu: adaptação sem React para o site estático, usando GSAP existente. -->
+  <div class="to-sm" data-to-menu>
+    <div class="to-sm-scrim" aria-hidden="true"></div>
+    <div class="to-sm-prelayers" aria-hidden="true">
+      <div class="to-sm-layer to-sm-layer-orange"></div>
+      <div class="to-sm-layer to-sm-layer-graphite"></div>
+    </div>
+    <nav class="to-sm-panel" id="to-staggered-panel" aria-label="Menu principal" aria-hidden="true" inert>
+      <div class="to-sm-panel-top"><span>TO EVENTOS</span><span>THAIS ORTIZ®</span></div>
+      <ol class="to-sm-list">
+        <li><a class="to-sm-item" data-to-menu-item="HOME" href="./#hero" aria-label="Página inicial"><span class="to-sm-number">01</span><span class="to-sm-item-label">HOME</span></a></li>
+        <li><button class="to-sm-item to-sm-item-disabled" data-to-menu-item="PRODUCT" type="button" disabled aria-disabled="true"><span class="to-sm-number">02</span><span class="to-sm-item-label">PRODUCT</span></button></li>
+      </ol>
+      <p class="to-sm-panel-foot">GESTÃO DE MARCAS <span aria-hidden="true">/</span> EXPERIÊNCIA EM EVENTOS</p>
+    </nav>
+    <button class="to-sm-toggle" type="button" aria-controls="to-staggered-panel" aria-expanded="false" aria-label="Abrir menu">
+      <span class="to-sm-toggle-label" aria-hidden="true">MENU</span>
+      <span class="to-sm-icon" aria-hidden="true"><span class="to-sm-icon-line"></span><span class="to-sm-icon-line to-sm-icon-vertical"></span></span>
+    </button>
+  </div>
 
   <nav id="to-section-nav" class="to-section-nav" aria-label="Navegação por seções">
     <span class="to-section-nav-rail" aria-hidden="true"><span id="to-section-progress"></span></span>
