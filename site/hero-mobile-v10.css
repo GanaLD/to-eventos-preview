@@ -1,0 +1,59 @@
+/* TO Eventos · HERO mobile v10.
+   Fonte 9:16 derivada do MP4 editorial: um só vídeo, sem repetição ou máscara.
+   O scroll controla seus quadros; o frame final também é retrato. */
+@media (max-width:899px) and (orientation:portrait){
+  .hero-scroll-stage .hero-film-screen{
+    background:#ff6108;
+    overflow:hidden;
+  }
+  .hero-scroll-stage .hero-film-screen video{
+    position:absolute;
+    inset:0;
+    top:0;left:0;
+    width:100%;
+    height:100%;
+    aspect-ratio:auto;
+    max-width:none;
+    display:block;
+    object-fit:cover;
+    object-position:center center;
+    transform:none;
+    -webkit-mask-image:none;
+    mask-image:none;
+    background:#ff6108;
+  }
+  /* A mídia NÃO some: o mesmo vídeo recolhe para uma janela vertical. */
+  .hero-scroll-stage .hero-visual{
+    display:block;
+    width:min(45vw,35dvh,240px);
+    height:auto;
+    aspect-ratio:9/16;
+    flex:0 0 auto;
+    min-width:0;
+    max-height:40dvh;
+    min-height:0;
+    align-self:center;
+    overflow:hidden;
+    padding:0;
+  }
+  .hero-scroll-stage.is-hero-framed .hero-film-screen video{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    object-position:center;
+    transform:none;
+    -webkit-mask-image:none;
+    mask-image:none;
+  }
+}
+@media(max-width:899px) and (orientation:portrait) and (max-height:690px){
+  .hero-scroll-stage .hero-visual{width:min(35vw,28dvh,190px);max-height:32dvh}
+  .hero-scroll-stage .hero-grid{gap:10px;padding:10px 0}
+  .hero-scroll-stage .hero-title{font-size:clamp(30px,7.7vw,36px);margin:8px 0}
+}
+@media(max-width:899px) and (orientation:portrait) and (prefers-reduced-motion:reduce){
+  .hero-scroll-stage .hero-film-screen{display:none}
+  .hero-scroll-stage .hero-visual{width:min(60vw,36dvh);max-height:none}
+}

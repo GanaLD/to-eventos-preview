@@ -147,7 +147,7 @@
     const trigger = ScrollTrigger.create({
       id: 'to-hero-mobile-film-and-copy',
       trigger: stage, start: 'top top',
-      end: () => '+=' + Math.round(innerHeight * 2.9),
+      end: () => '+=' + Math.round(innerHeight * 1.9),
       scrub: .3, pin: true, pinSpacing: true,
       invalidateOnRefresh: true, anticipatePin: 1, refreshPriority: 8,
       onUpdate: self => {
