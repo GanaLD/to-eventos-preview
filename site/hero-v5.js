@@ -12,12 +12,14 @@
   const cue = hero?.querySelector('.to-hero-scroll-cue');
   const gsap = window.gsap;
   const ScrollTrigger = window.ScrollTrigger;
-  if (!stage || !hero || !film || !video || !destination || !gsap || !ScrollTrigger) return;
+  if (!stage || !hero || !film || !video || !destination) return;
 
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduceMotion) {
+  if (reduceMotion || !gsap || !ScrollTrigger) {
+    stage.classList.add('is-static-hero');
     destination.appendChild(video);
     video.controls = true;
+    video.removeAttribute('aria-hidden');
     video.removeAttribute('tabindex');
     film.remove();
     return;
@@ -95,6 +97,8 @@
       refreshPriority: 8,
       onUpdate: self => {
         timeline.progress(self.progress);
+        // O vídeo só muda de 'cover' para 'contain' quando o quadro 16:9 está formado.
+        stage.classList.toggle('is-hero-framed', self.progress >= .84);
         if (cue) { cue.style.opacity = String(Math.max(0, 1 - self.progress/.075)); cue.style.visibility = self.progress > .075 ? 'hidden' : 'visible'; }
         scheduleSeek(Math.min(1, self.progress / videoPhaseEnd) * (duration - .015));
       }
@@ -103,6 +107,7 @@
     return () => {
       trigger.kill();
       timeline.kill();
+      stage.classList.remove('is-hero-framed');
       gsap.set([...copy, foot, film], {clearProps: 'all'});
     };
   });
@@ -110,13 +115,35 @@
   mm.add('(max-width: 899px) and (prefers-reduced-motion: no-preference)', () => {
     gsap.set(copy, {y: 44, opacity: 0});
     gsap.set(foot, {opacity: 0});
-    gsap.set(film, {top: 0, left: 0, width: '100%', height: '100%', autoAlpha: 1});
+    gsap.set(film, {top: 0, left: 0, width: '100%', height: '100%', opacity: 1, visibility: 'visible'});
+
+    // Mesmo enquadramento que o desktop: o vídeo termina em seu card,
+    // sem fade e sem alterar a proporção da arte original.
+    const slot = () => {
+      const outer = hero.getBoundingClientRect();
+      const rect = destination.getBoundingClientRect();
+      return {
+        left: rect.left - outer.left,
+        top: rect.top - outer.top,
+        width: rect.width,
+        height: rect.height
+      };
+    };
     const proxy = {hold: 0};
     const timeline = gsap.timeline({paused: true, defaults: {ease: 'none'}});
     timeline.to(proxy, {hold: 1, duration: 70}, 0);
-    timeline.to(film, {autoAlpha: 0, duration: 13}, 70);
+    timeline.to(film, {
+      left: () => slot().left,
+      top: () => slot().top,
+      width: () => slot().width,
+      height: () => slot().height,
+      duration: 14,
+      ease: 'power2.inOut',
+      borderWidth: 1
+    }, 70);
     timeline.to(copy, {y: 0, opacity: 1, duration: 11, stagger: 1.1, ease: 'power2.out'}, revealStart);
     timeline.to(foot, {opacity: 1, duration: 7}, 91);
+
     const trigger = ScrollTrigger.create({
       id: 'to-hero-mobile-film-and-copy',
       trigger: stage, start: 'top top',
@@ -125,6 +152,7 @@
       invalidateOnRefresh: true, anticipatePin: 1, refreshPriority: 8,
       onUpdate: self => {
         timeline.progress(self.progress);
+        stage.classList.toggle('is-hero-framed', self.progress >= .84);
         if (cue) { cue.style.opacity = String(Math.max(0, 1 - self.progress/.075)); cue.style.visibility = self.progress > .075 ? 'hidden' : 'visible'; }
         scheduleSeek(Math.min(1, self.progress / videoPhaseEnd) * (duration - .015));
       }
@@ -132,6 +160,7 @@
     return () => {
       trigger.kill();
       timeline.kill();
+      stage.classList.remove('is-hero-framed');
       gsap.set([...copy, foot, film], {clearProps: 'all'});
     };
   });
