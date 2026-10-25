@@ -37,7 +37,7 @@ async function panelProgress(page, progress){
  return exists;
 }
 try{
-for (const v of [{w:1440,h:900,k:'desktop'},{w:390,h:844,k:'mobile'},{w:360,h:800,k:'mobile-360'}]){
+for (const v of [{w:1440,h:900,k:'desktop'},{w:390,h:844,k:'mobile'}]){
  const page=await browser.newPage({viewport:{width:v.w,height:v.h},deviceScaleFactor:1});
  const errors=[];
  page.on('pageerror',e=>errors.push(e.message));
@@ -85,6 +85,8 @@ for (const v of [{w:1440,h:900,k:'desktop'},{w:390,h:844,k:'mobile'},{w:360,h:80
  if(v.k==='desktop'){
    assert(await panelProgress(page,.12),'Galeria horizontal deve funcionar no desktop');
    await sleep(3900);
+   const offscreenCase=await page.locator('.project-panel-cases').evaluate(e=>({left:e.getBoundingClientRect().left,played:e.dataset.toV74Revealed}));
+   if (offscreenCase.left>v.w) assert(!offscreenCase.played,'A digitação do card cinza não pode acontecer antes de chegar ao painel');
    await page.screenshot({path:root+'/experiencia-digitacao-'+v.k+'.png'});
    const proj=await page.locator('#projetos-heading .to-v74-type-line').last().evaluate(e=>getComputedStyle(e).clipPath);
    assert(!proj.includes('100%'),'Experiência em Ação deve revelar o título: '+proj);
@@ -111,7 +113,7 @@ for (const v of [{w:1440,h:900,k:'desktop'},{w:390,h:844,k:'mobile'},{w:360,h:80
  report.push({viewport:v.k,initial,midway,done,frame,contactClip,errors});
  await page.close();
 }
-for(const v of [{w:1920,h:1080},{w:1890,h:900},{w:1024,h:768},{w:768,h:1024}]){
+for(const v of [{w:1920,h:1080},{w:1890,h:900},{w:1024,h:768},{w:768,h:1024},{w:360,h:800}]){
  const page=await browser.newPage({viewport:{width:v.w,height:v.h}});
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:90000});
  assert.equal(await page.locator('.about-floral-video source').first().getAttribute('src'),'assets/media/papoulas-seamless-v74.mp4');
