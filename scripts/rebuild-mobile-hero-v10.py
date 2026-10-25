@@ -32,19 +32,30 @@ def region(x1,y1,x2,y2):
 # Bordas autorais (fileiras/faixas) estão FORA das caixas.
 # Recortes estreitos evitam trazer letras de outro grupo ou barras laterais.
 left =region(.066,.255,.493,.825)
-right=region(.499,.330,.881,.812)
+right=region(.515,.330,.882,.812)
 def crop(r):return f'crop={r[0]}:{r[1]}:{r[2]}:{r[3]}'
 # Key removendo SOMENTE o laranja do backing, preservando os pixels
 # e a animação das letras brancas/pretas do vídeo original.
-def panel(tag,r,out):
-    return (f'[{tag}]{crop(r)},'
-            'scale=610:-2:flags=lanczos,'
-            'format=rgba,colorkey=0xff6108:0.20:0.07,'
+def panel(tag,r,out,mode):
+    common=(f'[{tag}]{crop(r)},')
+    if mode=='white':
+        # A parte superior contém SOMENTE tipografia branca. Rejeitar
+        # tanto o laranja quanto o preto das barras decorativas do master.
+        # A alpha ramp preserva o antialiasing da letra original.
+        alpha="255*max(0\\,min(1\\,(r(X\\,Y)+g(X\\,Y)+b(X\\,Y)-540)/185))"
+        return (common+'scale=556:-2:flags=lanczos,format=rgba,'
+                f"geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='{alpha}',"
+                f'format=yuva420p[{out}]')
+    # Parte inferior inclui letras pretas e brancas do mesmo frame.
+    # Crop menor elimina bordas; escala reduzida não corta a legenda.
+    return (common+'scale=530:-2:flags=lanczos,format=rgba,'
+            'colorkey=0xff6108:0.20:0.07,'
             f'format=yuva420p[{out}]')
+
 graph=(
     '[0:v]fps=30,split=2[la][ra];'
-    +panel('la',left,'white')+';'
-    +panel('ra',right,'black')+';'
+    +panel('la',left,'white','white')+';'
+    +panel('ra',right,'black','mixed')+';'
     '[1:v][white]overlay=(W-w)/2:158:shortest=1:format=auto[stage];'
     '[stage][black]overlay=(W-w)/2:680:shortest=1:format=auto,'
     'format=yuv420p[out]'
