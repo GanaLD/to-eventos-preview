@@ -1,0 +1,38 @@
+name: Gerar HERO 9x16 responsivo (sem espelhamento)
+on:
+  push:
+    branches: [fix/hero-responsive-single-video-v73]
+    paths:
+      - scripts/build-mobile-hero-v73.py
+      - .github/workflows/build-hero-mobile-v73.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  render:
+    if: github.ref_name == 'fix/hero-responsive-single-video-v73'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Verificar FFmpeg e original MP4
+        run: |
+          ffmpeg -hide_banner -version | head -2
+          test -s site/assets/media/motion-hero.mp4
+          ffprobe -v error -show_entries stream=width,height,codec_name -show_entries format=duration -of json site/assets/media/motion-hero.mp4
+      - name: Gerar mídia mobile sem repetir elementos
+        run: python3 scripts/build-mobile-hero-v73.py
+      - name: Registrar asset derivado na branch (sem publicar)
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/assets/media/motion-hero-mobile.mp4
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(hero): versão retrato 9x16 derivada do MP4 original"
+            git pull --rebase origin fix/hero-responsive-single-video-v73
+            git push origin HEAD:fix/hero-responsive-single-video-v73
+          fi
