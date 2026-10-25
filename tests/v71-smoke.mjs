@@ -10,7 +10,7 @@ const projects=html.slice(html.indexOf('id="projetos"'),html.indexOf('id="contat
 const contact=html.slice(html.indexOf('id="contato"'));
 assert(html.includes('motion-v71.js')&&html.includes('motion-v71.css'),'Módulo V7.1 deve ser carregado');
 assert(!about.includes('<figcaption>'),'Vídeo floral sem legenda abaixo');
-assert(about.includes('about-floral-video')&&about.includes('animacao-papoulas.mp4'),'Vídeo floral original intacto');
+assert(about.includes('about-floral-video')&&about.includes('papoulas-completas-v8.mp4'),'Vídeo floral original intacto');
 assert(/#sobre\s+\.botanical-motion\s+\.about-floral-video/.test(css)&&css.includes('object-fit:contain'),'Vídeo floral inteiro e com respiro');
 assert((cases.match(/OPERAÇÕES CORPORATIVAS/g)||[]).length===1,'Identificação Operações Corporativas não pode repetir');
 assert(!cases.includes('project-asset-note'),'Nota interna de produção não deve aparecer no site');
