@@ -1,0 +1,46 @@
+name: Promote approved site to Hostinger
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hostinger-production
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Copy the approved site into the production branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_sha="$(git rev-parse HEAD)"
+          git fetch origin hostinger-production
+          git checkout -B hostinger-production origin/hostinger-production
+          git rm -r --quiet -- .
+          git archive "${source_sha}:site" | tar -x
+          python3 - <<'PY'
+          from pathlib import Path
+          for path in (Path("index.html"), Path("sobre/index.html")):
+              content = path.read_text(encoding="utf-8")
+              preview_tag = '<meta name="robots" content="noindex,nofollow">'
+              if content.count(preview_tag) != 1:
+                  raise SystemExit(f"Expected one preview robots tag in {path}")
+              path.write_text(content.replace(preview_tag, '<meta name="robots" content="index,follow">'), encoding="utf-8")
+          PY
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Production already matches site/ at ${source_sha}"
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "deploy: sync site/ from ${source_sha}"
+          git push origin HEAD:hostinger-production
