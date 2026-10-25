@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const html=read('site/index.html'), motion=read('site/motion-v71.js'), about=read('site/v7.js'), css=read('site/motion-v71.css');
 const flower=html.slice(html.indexOf('id="sobre"'),html.indexOf('id="solucoes"'));
-assert(flower.includes('animacao-papoulas-editorial-v72.mp4'),'Sobre deve usar vídeo editorial sem recorte abrupto');
+assert(flower.includes('papoulas-completas-v8.mp4'),'Sobre deve usar arte integral em novo vídeo editorial');
 assert(!flower.includes('animacao-papoulas.webm'),'Não trocar automaticamente para versão anterior cortada');
 assert(/aria-label="[^"]*papoula/i.test(flower),'Vídeo floral precisa de descrição acessível');
 assert(motion.includes('let played=false') && motion.includes('if (played) return'),'Revelação precisa executar só uma vez, sem piscar no scroll inverso');
