@@ -39,7 +39,7 @@ try {
     });
     assert.equal(initial.canvas,0,'Nenhum canvas espelhado pode existir');
     assert.equal(initial.numberOfVideos,1,'Uma única mídia no HERO');
-    const expectedFit=view.width/view.height>1.5?'cover':'contain';
+    const expectedFit=(view.width<900 && view.height>view.width)||view.width/view.height>1.5?'cover':'contain';
     assert.equal(initial.fit,expectedFit,'A escolha de crop em '+view.tag);
     assert.equal(initial.filmBackground,'rgb(255, 97, 8)','Laranja do ambiente deve ser coerente');
     await page.screenshot({path:`${out}/${view.tag}-inicio.png`});
