@@ -53,6 +53,17 @@
       }
     });
   }
+  // Safari/iOS: o primeiro gesto permite inicializar o decoder inline.
+  // O vídeo permanece PAUSADO; somente currentTime pode avançar pelo scroll.
+  video.addEventListener('loadeddata', () => scheduleSeek(wantedTime));
+  stage.addEventListener('touchstart', () => {
+    if (video.networkState === video.NETWORK_EMPTY) video.load();
+    const attempt = video.play();
+    video.pause();
+    attempt?.catch?.(() => {});
+    scheduleSeek(wantedTime);
+  }, {once: true, passive: true});
+
   video.addEventListener('seeked', () => {
     if (Math.abs(video.currentTime - wantedTime) > 1 / 28) scheduleSeek(wantedTime);
   });

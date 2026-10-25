@@ -1,0 +1,35 @@
+name: Recompor vídeo HeroScroll mobile V11
+on:
+  push:
+    branches: [fix/mobile-heroscroll-real-v10]
+    paths:
+      - scripts/build-hero-mobile-v11.py
+      - .github/workflows/rebuild-hero-mobile-v11.yml
+permissions:
+  contents: write
+jobs:
+  recompose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Preparar FFmpeg e biblioteca de edição de quadros
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python3 -m venv .venv
+          .venv/bin/pip -q install numpy opencv-python-headless
+      - name: Recriar mídia 9:16 com todos os elementos sem cortes
+        run: |
+          .venv/bin/python scripts/build-hero-mobile-v11.py
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,duration -of csv=p=0 site/assets/media/motion-hero-mobile.mp4
+      - name: Versionar mídia revisada apenas nesta branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/assets/media/motion-hero-mobile.mp4
+          git commit -m "assets(hero): corrigir arte mobile original sem cortes"
+          git pull --rebase origin fix/mobile-heroscroll-real-v10
+          git push origin HEAD:fix/mobile-heroscroll-real-v10

@@ -1,0 +1,31 @@
+name: Importar mídia mobile 9x16 HERO V10
+on:
+  push:
+    branches: [fix/mobile-heroscroll-real-v10]
+    paths: [.github/workflows/import-hero-mobile-v10.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Restaurar mídia 9x16 já produzida a partir da fonte original
+        run: |
+          git fetch --depth=1 origin fix/hero-responsive-single-video-v73
+          mkdir -p site/assets/media
+          git show FETCH_HEAD:site/assets/media/motion-hero-mobile.mp4 > site/assets/media/motion-hero-mobile.mp4
+          test "$(wc -c < site/assets/media/motion-hero-mobile.mp4)" -gt 300000
+          file site/assets/media/motion-hero-mobile.mp4
+      - name: Versionar somente o arquivo de vídeo na branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/assets/media/motion-hero-mobile.mp4
+          git commit -m "assets(hero): disponibilizar motion original adaptado 9x16 para o mobile"
+          git pull --rebase origin fix/mobile-heroscroll-real-v10
+          git push origin HEAD:fix/mobile-heroscroll-real-v10
