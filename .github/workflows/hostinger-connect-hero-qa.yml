@@ -1,0 +1,20 @@
+name: QA - paridade Hostinger Connect e HERO cinza
+on:
+  push:
+    branches: [fix/connect-autoplay-thaiso-background-20261025]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Regression tests
+        run: |
+          node tests/hostinger-connect-visual-smoke.mjs
+          node tests/hero-mobile-v10-smoke.mjs
+          node tests/hostinger-thaiso-background-smoke.mjs
+          node tests/accordion-gallery-v1-smoke.mjs
+          node tests/v7-smoke.mjs

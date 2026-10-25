@@ -24,21 +24,21 @@
   height:100%;
   object-fit:cover;
   object-position:center;
-  filter:saturate(.55) brightness(.65);
-  opacity:.54;
+  filter:saturate(.88) brightness(.93);
+  opacity:.94;
 }
 .hero-scroll-stage .to-hero-thaiso-backdrop::after{
   content:"";
   position:absolute;
   inset:0;
-  background:linear-gradient(90deg,rgba(26,26,26,.88) 0%,rgba(26,26,26,.7) 43%,rgba(26,26,26,.65) 100%);
+  background:linear-gradient(90deg,rgba(26,26,26,.68) 0%,rgba(26,26,26,.34) 43%,rgba(26,26,26,.18) 100%);
 }
 .hero-scroll-stage .hero-grid,
 .hero-scroll-stage .hero-foot{position:relative;z-index:1}
 @media(max-width:899px){
-  .hero-scroll-stage .to-hero-thaiso-backdrop video{opacity:.36;object-position:center}
+  .hero-scroll-stage .to-hero-thaiso-backdrop video{opacity:.88;object-position:center}
   .hero-scroll-stage .to-hero-thaiso-backdrop::after{
-    background:linear-gradient(180deg,rgba(26,26,26,.83),rgba(26,26,26,.67));
+    background:linear-gradient(180deg,rgba(26,26,26,.66),rgba(26,26,26,.30));
   }
 }
 @media(prefers-reduced-motion:reduce){
