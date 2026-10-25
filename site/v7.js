@@ -25,7 +25,7 @@
   if(about&&botanicalVideo&&copyParts.length && !reduce && gsap&&ST){
     gsap.registerPlugin(ST);
     // Esconde apenas antes do primeiro reveal. Nunca reseta ao scroll reverso.
-    gsap.set(copyParts,{y:32,autoAlpha:0});
+    gsap.set(copyParts,{y:48,autoAlpha:0});
     gsap.set(botanicalVideo,{y:0,autoAlpha:0});
     let reveal;
     const enter=()=>{
@@ -35,15 +35,15 @@
       }
       entered=true;
       reveal=gsap.timeline({defaults:{ease:'power2.out'}});
-      reveal.to(copyParts,{y:0,autoAlpha:1,duration:1.28,stagger:.21},0);
-      reveal.to(botanicalVideo,{y:0,autoAlpha:1,duration:1.35},.25);
+      reveal.to(copyParts,{y:0,autoAlpha:1,duration:1.75,stagger:.45},0);
+      reveal.to(botanicalVideo,{y:0,autoAlpha:1,duration:2.0},.35);
       // Reprodução começa uma vez, sem pular para 0 na volta à seção.
       playFlower();
     };
     ST.create({
       id:'to-v7-sobre-intro',
       trigger:about,
-      start:'top 82%',
+      start:'top 63%',
       end:'bottom 15%',
       invalidateOnRefresh:true,
       onEnter:enter,
@@ -54,7 +54,7 @@
     // Abertura por #sobre e restauração pelo histórico.
     const reconcile=()=>{
       const r=about.getBoundingClientRect();
-      if(!entered && r.top<innerHeight*.82 && r.bottom>innerHeight*.15)enter();
+      if(!entered && r.top<innerHeight*.63 && r.bottom>innerHeight*.15)enter();
     };
     requestAnimationFrame(()=>requestAnimationFrame(reconcile));
     document.fonts?.ready?.then(()=>{ST.refresh();reconcile();});
