@@ -66,7 +66,7 @@
   const summit=projects?.querySelector('.project-panel-summit');
   const cases=projects?.querySelector('.project-panel-cases');
   const gallery=ST.getAll().find(t=>t.trigger===projects && t.animation);
-  const horizontal=window.matchMedia('(min-width:900px)').matches && !!gallery?.animation;
+  const horizontal=!!gallery?.animation; // GSAP lateral também no touch/mobile
   const sharedContainer=horizontal?gallery.animation:null;
   const bindPanel=(id,element,timeline)=>{
     createEnterTrigger({
