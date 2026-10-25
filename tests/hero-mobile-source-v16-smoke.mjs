@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const html=fs.readFileSync(new URL('../site/index.html',import.meta.url),'utf8');
+const helper=fs.readFileSync(new URL('../site/hero-source-mobile-v16.js',import.meta.url),'utf8');
+const original=fs.readFileSync(new URL('../site/hero-v5.js',import.meta.url),'utf8');
+assert(html.includes('hero-source-mobile-v16.js?v=16'),'Paginacao deve carregar seletor responsivo');
+assert(html.indexOf('hero-source-mobile-v16.js?v=16')<html.indexOf('hero-v5.js'),'Seletor roda ANTES do controlador original');
+assert(helper.includes('motion-hero-vertical-v11.mp4'),'Arquivo vertical precisa ser forçado no mobile');
+assert(helper.includes('video.setAttribute(\'src\', portraitMedia)'), 'Fonte portrait precisa prevalecer sobre source HTML');
+assert(helper.includes('video.removeAttribute(\'src\')'),'Ao retornar ao desktop deve voltar ao source original');
+assert(helper.includes('getBoundingClientRect'),'Detectar preview emulado pela caixa visível');
+assert(original.includes('to-hero-film-and-copy')&&original.includes('to-hero-mobile-film-and-copy'),'ScrollTriggers originais intocados');
+assert(html.includes('motion-hero.mp4')&&html.includes('motion-hero-vertical-v11.mp4'),'Ambos sources preservados');
+console.log('PASS hero mobile portrait V16 source selection and desktop preservation');
