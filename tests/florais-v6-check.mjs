@@ -9,9 +9,9 @@ for(const name of ['papoula-2-direita.png','papoula-3-esquerda.png','animacao-pa
 assert(html.includes('florais-v6.css') && html.includes('v7.js'));
 const about=html.substring(html.indexOf('<section id="sobre"'),html.indexOf('<section id="solucoes"'));
 const solutions=html.substring(html.indexOf('<section id="solucoes"'),html.indexOf('<section id="projetos"'));
-assert(about.includes('data-original-source="assets/media/animacao-papoulas.mp4"') && about.includes('src="assets/media/animacao-papoulas-alpha-v75.webm"'),'Fonte original preservada e enquadramento editorial corrigido');
-assert(!about.includes('papoulas-preview.webp'));
-assert(about.includes('playsinline') && about.includes('muted'));
+assert(about.includes('src="assets/media/papoulas-preview.webp"'),'Papoulas com alfa verdadeiro');
+assert(!about.includes('animacao-papoulas-alpha-v75.webm'),'Remover o vídeo recortado');
+assert(about.includes('floral-reveal') && about.includes('width="800" height="1067"'),'Preservar proporção original');
 assert(solutions.includes('src="assets/media/papoula-3-esquerda-crop.webp"'));
 assert(solutions.includes('src="assets/media/papoula-2-direita-crop.webp"'));
 assert(/object-fit:\s*contain/.test(css) && /pointer-events:\s*none/.test(css));
