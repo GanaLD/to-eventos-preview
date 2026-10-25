@@ -9,7 +9,7 @@ test('Gallery appears after the GSAP PDF and before contact',()=>{
   assert(html.indexOf('id="galeria-editorial"')<html.indexOf('id="contato"'));
   assert(html.includes('data-pdf-action="next"')&&html.includes('data-pdf-action="fullscreen"'));
 });
-test('Five distinct event photos, valid backups and fifth counter',()=>{
+test('Five distinct event photos, valid backups and clean unnumbered cards',()=>{
   const matches=[...gallery.matchAll(/<img[^>]+src="([^"]+)"[^>]*data-ag-fallback="([^"]+)"/g)];
   assert.equal(matches.length,5);
   assert.equal(new Set(matches.map(m=>m[1])).size,5);
@@ -21,7 +21,13 @@ test('Five distinct event photos, valid backups and fifth counter',()=>{
   assert.equal((gallery.match(/data-ag-panel\b/g)||[]).length,5);
   assert.equal((gallery.match(/aria-pressed=/g)||[]).length,5);
   assert(gallery.includes('data-default-index="2"')&&gallery.includes('data-expand-ratio="0.52"'));
-  assert(gallery.includes('01 — 05')&&gallery.includes('IMAGENS ILUSTRATIVAS'));
+  assert(!gallery.includes('ag-panel__top'));
+  assert(!gallery.includes('ag-foot'));
+  assert(!gallery.includes('IMAGENS ILUSTRATIVAS'));
+  assert(!gallery.includes('01 — 05'));
+  assert(!gallery.includes('04 / EXPLORAÇÃO VISUAL'));
+  assert(!css.includes('.ag-panel__top'));
+  assert(!css.includes('.ag-foot'));
 });
 test('GSAP expands active to 52%, offers accessible touch and reduced-motion fallback',()=>{
   assert(css.includes('--ag-radius:16px')&&css.includes('height:460px')&&css.includes('--ag-gap:10px'));

@@ -88,15 +88,6 @@
   opacity:.88;transition:opacity .6s ease;
 }
 #galeria-editorial .ag-panel.is-active .ag-panel__overlay{opacity:1}
-#galeria-editorial .ag-panel__top{
-  position:absolute;z-index:2;left:clamp(12px,1.7vw,23px);top:18px;right:clamp(12px,1.7vw,23px);
-  display:flex;justify-content:space-between;gap:5px;
-  font:400 12px/1 var(--font-bebas,"Bebas Neue",sans-serif);
-  letter-spacing:.10em;color:rgba(255,255,255,.88);
-  text-shadow:0 1px 8px rgba(0,0,0,.5);
-  pointer-events:none;
-}
-#galeria-editorial .ag-panel__top span:last-child{opacity:.65}
 #galeria-editorial .ag-panel__label{
   position:absolute;z-index:2;
   left:clamp(14px,2.3vw,30px);right:clamp(14px,2.3vw,30px);bottom:clamp(19px,2.3vw,32px);
@@ -129,13 +120,6 @@
   font:400 12px/1.45 var(--font-commercial,Inter,sans-serif);
   letter-spacing:.02em;color:rgba(255,255,255,.84);
 }
-#galeria-editorial .ag-foot{
-  display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 28px;
-  margin-top:25px;padding-top:16px;border-top:1px solid rgba(26,26,26,.13);
-  color:#72726e;font:400 12px/1.3 var(--font-bebas,"Bebas Neue",sans-serif);
-  letter-spacing:.15em;
-}
-#galeria-editorial .ag-foot span:first-child{color:var(--ag-accent)}
 @media(max-width:900px){
   #galeria-editorial .ag-heading h2{font-size:clamp(47px,7.4vw,77px)}
   #galeria-editorial .accordion-gallery{height:410px}
@@ -152,12 +136,10 @@
   }
   #galeria-editorial .ag-panel{width:100%;min-height:0;transform:none!important}
   #galeria-editorial .ag-panel__media{width:100%;height:max(100%,var(--ag-media-size))}
-  #galeria-editorial .ag-panel__top{top:11px;left:13px;right:13px;font-size:11px}
   #galeria-editorial .ag-panel__label{left:16px;right:12px;bottom:16px;gap:11px}
   #galeria-editorial .ag-panel__bar{height:60px}
   #galeria-editorial .ag-panel__text{font-size:clamp(22px,6vw,31px)}
   #galeria-editorial .ag-panel__support{font-size:11px}
-  #galeria-editorial .ag-foot{font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){
   #galeria-editorial .ag-panel,#galeria-editorial .ag-panel__media,
