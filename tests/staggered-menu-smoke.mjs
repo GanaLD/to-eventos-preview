@@ -57,3 +57,18 @@ test('menu usa cache bust após correção de animação', () => {
   assert.match(html, /staggered-menu\.css\?v=20261025b/);
   assert.match(html, /staggered-menu\.js\?v=20261025b/);
 });
+
+test('opções HOME e PRODUCT sem numeração visual ou semântica', () => {
+  const html = markup();
+  assert.match(html, /<ul class="to-sm-list">/);
+  assert.doesNotMatch(html, /<ol class="to-sm-list">/);
+  assert.doesNotMatch(html, /class="to-sm-number"/);
+});
+test('tipografia segura contra corte nas laterais e descendentes', () => {
+  const css = read('site/staggered-menu.css');
+  assert.match(css, /\.to-sm-list li\s*\{[^}]*overflow:\s*visible/s);
+  assert.match(css, /\.to-sm-item-label\s*\{[^}]*line-height:\s*1\.(?:1[5-9]|[2-9]\d?)/s);
+  assert.match(css, /\.to-sm-item-label\s*\{[^}]*white-space:\s*nowrap/s);
+  assert.match(css, /\.to-sm-item-label\s*\{[^}]*font-size:\s*clamp\(/s);
+  assert.match(css, /@media\s*\(max-width:\s*720px\)/s);
+});
