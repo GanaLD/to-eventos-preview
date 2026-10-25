@@ -1,0 +1,46 @@
+/* V7.6 — ilustração floral original com canal alfa real.
+   Sem vídeo recortado, matte, canvas, clip-path ou fade nas pétalas. */
+#sobre .botanical-motion{
+  overflow:visible;
+  background:transparent;
+  position:relative;
+  isolation:auto;
+}
+#sobre .botanical-motion .floral-reveal{
+  display:block;
+  width:100%;
+  max-width:400px;
+  margin-inline:auto;
+  overflow:visible;
+  background:transparent;
+}
+#sobre .botanical-motion img.about-floral-video{
+  display:block;
+  width:100%;
+  max-width:100%;
+  height:auto!important;
+  aspect-ratio:auto!important;
+  object-fit:contain;
+  object-position:center center;
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent!important;
+  clip-path:none!important;
+  mask-image:none!important;
+  -webkit-mask-image:none!important;
+  filter:none!important;
+  box-shadow:none;
+  transform-origin:50% 96%;
+  animation:papoula-sway 9s ease-in-out infinite alternate;
+}
+@keyframes papoula-sway{
+  0%{transform:rotate(-1.1deg) translate3d(-2px,0,0)}
+  100%{transform:rotate(1.1deg) translate3d(2px,-3px,0)}
+}
+@media (prefers-reduced-motion:reduce){
+  #sobre .botanical-motion img.about-floral-video{
+    animation:none!important;
+    transform:none!important;
+  }
+}
