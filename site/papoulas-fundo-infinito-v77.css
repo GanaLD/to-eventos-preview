@@ -1,0 +1,58 @@
+/* V7.7 — vídeo ORIGINAL, completo, com fundo contínuo igual à seção.
+   NÃO há máscaras, chromakey em tempo real, fade ou clip de pétalas. */
+#sobre{
+  background:#F4F4F2;
+}
+#sobre .botanical-motion{
+  position:relative;
+  overflow:visible;
+  background:#F4F4F2;
+  align-self:center;
+  justify-self:center;
+}
+#sobre .botanical-motion .floral-reveal{
+  display:flex;
+  width:100%;
+  min-width:0;
+  justify-content:center;
+  align-items:center;
+  margin:0 auto;
+  padding:0;
+  overflow:visible;
+  background:#F4F4F2;
+}
+#sobre .botanical-motion video.about-floral-video{
+  display:block;
+  flex:none;
+  width:min(122%, calc(100vw - 16px));
+  max-width:none;
+  min-width:0;
+  height:auto!important;
+  aspect-ratio:auto!important;
+  object-fit:contain!important;
+  object-position:center center;
+  background:#F4F4F2!important;
+  border:0;
+  margin:0;
+  padding:0;
+  border-radius:0;
+  box-shadow:none;
+  outline:0;
+  clip-path:none!important;
+  mask-image:none!important;
+  -webkit-mask-image:none!important;
+  filter:none!important;
+  mix-blend-mode:normal!important;
+}
+/* O vídeo contém respiro real; nada invade a área do texto. */
+@media(max-width:720px){
+  #sobre .botanical-motion{
+    width:min(100%,300px);
+    max-width:300px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #sobre .botanical-motion video.about-floral-video{
+    animation:none!important;
+  }
+}
