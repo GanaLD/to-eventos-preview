@@ -16,7 +16,7 @@ try{
     const page=await browser.newPage({viewport:{width,height},deviceScaleFactor:1});
     const errors=[];
     page.on('pageerror',e=>errors.push(e.message));
-    await page.goto('http://127.0.0.1:8765/sobre/',{waitUntil:'domcontentloaded'});
+    await page.goto('http://127.0.0.1:8765/sobre/index.html',{waitUntil:'domcontentloaded'});
     await page.waitForTimeout(1300);
     await page.evaluate(()=>document.fonts?.ready);
     await page.waitForTimeout(500);

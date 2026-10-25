@@ -24,7 +24,7 @@ jobs:
           node tests/sobre-motion-smoke.mjs
           node --check site/sobre/sobre-motion.js
           node tests/v7-range-server.mjs >/tmp/site-sobre.log 2>&1 &
-          for i in $(seq 1 25); do curl -fsS http://127.0.0.1:8765/sobre/ -o /dev/null && break || sleep 1; done
+          for i in $(seq 1 25); do curl -fsS http://127.0.0.1:8765/sobre/index.html -o /dev/null && break || sleep 1; done
           node tests/sobre-motion-visual.mjs
       - name: Arquivar capturas e medidas
         if: always()
