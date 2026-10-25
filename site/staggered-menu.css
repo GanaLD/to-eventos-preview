@@ -118,3 +118,14 @@
 @media (prefers-reduced-motion: reduce) {
   .to-sm-scrim, .to-sm-toggle, .to-sm-item { transition: none !important; }
 }
+
+/* Corrige o conflito: GSAP usa xPercent, enquanto o CSS base usava translateX(105%). */
+.to-sm.has-gsap .to-sm-layer,
+.to-sm.has-gsap .to-sm-panel {
+  transform: none;
+}
+/* Fallback CSS para abertura sem a engine GSAP. */
+.to-sm:not(.has-gsap).is-open .to-sm-layer,
+.to-sm:not(.has-gsap).is-open .to-sm-panel {
+  transform: translateX(0);
+}
