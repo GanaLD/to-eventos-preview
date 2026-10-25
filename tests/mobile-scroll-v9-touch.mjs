@@ -28,7 +28,25 @@ async function jumpToProgress(page,id,p){
     return true;
   },{id,p});
   assert(exists,'ScrollTrigger não encontrado: '+id);
-  await page.waitForTimeout(1100);
+  // Após um touch anterior, o compositor ainda pode carregar inércia por
+  // alguns frames. O teste só compara o slot quando a timeline estabilizou.
+  await page.waitForTimeout(400);
+  for(let i=0;i<4;i++){
+    const current=await page.evaluate(id=>window.ScrollTrigger?.getById(id)?.progress,id);
+    if(Number.isFinite(current)&&Math.abs(current-p)<.015)break;
+    await page.evaluate(({id,p})=>{
+      const t=window.ScrollTrigger.getById(id);
+      window.scrollTo({top:t.start+(t.end-t.start)*p,behavior:'instant'});
+      window.ScrollTrigger.update();
+    },{id,p});
+    await page.waitForTimeout(380);
+  }
+  const resolved=await page.evaluate(id=>{
+    const t=window.ScrollTrigger?.getById(id);
+    return {progress:t?.progress,scrollY:scrollY,start:t?.start,end:t?.end};
+  },id);
+  assert(Math.abs(resolved.progress-p)<.025,'Timeline não estabilizou: '+JSON.stringify({id,p,resolved}));
+  await page.waitForTimeout(400);
 }
 
 try {
@@ -62,7 +80,9 @@ try {
       const film=document.querySelector('.hero-film-screen').getBoundingClientRect();
       const target=document.querySelector('.hero-visual').getBoundingClientRect();
       const rect=r=>({x:r.x,y:r.y,w:r.width,h:r.height});
+      const heroTrigger=window.ScrollTrigger?.getById('to-hero-mobile-film-and-copy');
       return {
+        progress:heroTrigger?.progress,scrollY:scrollY,
         film:rect(film),slot:rect(target),fit:getComputedStyle(video).objectFit,
         time:video.currentTime,duration:video.duration,ready:video.readyState,
         opacity:parseFloat(getComputedStyle(document.querySelector('#hero-heading')).opacity)
