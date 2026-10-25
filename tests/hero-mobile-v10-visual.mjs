@@ -33,9 +33,9 @@ for(const [width,height] of [[390,844],[360,800],[768,1024]]){
  return {src:v.currentSrc,width:v.videoWidth,height:v.videoHeight,fit:getComputedStyle(v).objectFit,
         visibleWidth:r.width,visibleHeight:r.height,filmWidth:film.width,filmHeight:film.height};
  });
- assert(initial.src.includes('motion-hero-mobile.mp4'),'Não selecionou fonte vertical: '+JSON.stringify(initial));
+ assert(initial.src.includes('motion-hero-vertical-v11.mp4'),'Não selecionou fonte vertical: '+JSON.stringify(initial));
  assert(Math.abs(initial.width/initial.height-9/16)<.04,'Fonte não é vertical 9:16: '+JSON.stringify(initial));
- assert.equal(initial.fit,'cover','O vídeo inicial não cobre o HERO');
+ assert.equal(initial.fit,'contain','O vídeo vertical inicial não pode ser cortado');
  assert(Math.abs(initial.visibleHeight-height)<3,'Hero não ocupa altura inteira');
  await page.screenshot({path:`${dir}/${width}-inicio.png`});
  await gotoProgress(page,.55);
@@ -66,5 +66,5 @@ for(const [width,height] of [[390,844],[360,800],[768,1024]]){
  await page.close();
 }
 await fs.writeFile(dir+'/report.json',JSON.stringify(output,null,2));
-console.log('PASS REAL HERO MOBILE V10 '+output.map(x=>x.width).join(', '));
+console.log('PASS REAL HERO MOBILE V11 '+output.map(x=>x.width).join(', '));
 }finally{await browser.close();}
