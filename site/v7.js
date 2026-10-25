@@ -88,6 +88,8 @@
   const loading=showcase.querySelector('.to-pdf-loading');
   const pdfjs=window.pdfjsLib;
   let documentPDF=null,pageNumber=1,pageTotal=13,renderTask=null,serial=0;
+  let fallbackFullscreen=false;
+  let fullscreenPlaceholder=null;
 
   const setCounter=()=>{
     counter.textContent=String(pageNumber).padStart(2,'0')+' / '+String(pageTotal).padStart(2,'0');
@@ -137,18 +139,56 @@
   };
   previous?.addEventListener('click',event=>{event.stopPropagation();selectPage(pageNumber-1);});
   next?.addEventListener('click',event=>{event.stopPropagation();selectPage(pageNumber+1);});
-  full?.addEventListener('click',async event=>{
+  const isFullscreen=()=>
+    (document.fullscreenElement||document.webkitFullscreenElement)===showcase || fallbackFullscreen;
+  const enterFallbackFullscreen=()=>{
+    if(!fullscreenPlaceholder&&showcase.parentNode){
+      fullscreenPlaceholder=document.createComment('to-pdf-showcase-position');
+      showcase.parentNode.insertBefore(fullscreenPlaceholder,showcase);
+      document.body.appendChild(showcase);
+    }
+    fallbackFullscreen=true;
+    showcase.classList.add('is-fullscreen-fallback');
+    document.documentElement.classList.add('to-pdf-fallback-active');
+    syncFullscreen();
+  };
+  const exitFallbackFullscreen=()=>{
+    fallbackFullscreen=false;
+    showcase.classList.remove('is-fullscreen-fallback');
+    document.documentElement.classList.remove('to-pdf-fallback-active');
+    if(fullscreenPlaceholder?.parentNode){
+      fullscreenPlaceholder.parentNode.insertBefore(showcase,fullscreenPlaceholder);
+      fullscreenPlaceholder.remove();
+      fullscreenPlaceholder=null;
+    }
+    syncFullscreen();
+  };
+  full?.addEventListener('click',event=>{
     event.stopPropagation();
-    try{
-      if(document.fullscreenElement)await document.exitFullscreen();
-      else if(showcase.requestFullscreen)await showcase.requestFullscreen();
-      else window.open(src,'_blank','noopener');
-    }catch(_){window.open(src,'_blank','noopener');}
+    if(isFullscreen()){
+      if(fallbackFullscreen)exitFallbackFullscreen();
+      else if(document.exitFullscreen)document.exitFullscreen().catch(()=>{});
+      else if(document.webkitExitFullscreen)document.webkitExitFullscreen();
+    }else enterFallbackFullscreen();
   });
-  document.addEventListener('fullscreenchange',()=>{
+  const syncFullscreen=()=>{
+    if(document.fullscreenElement===showcase&&fallbackFullscreen){
+      fallbackFullscreen=false;
+      showcase.classList.remove('is-fullscreen-fallback');
+      document.documentElement.classList.remove('to-pdf-fallback-active');
+    }
+    const active=isFullscreen();
+    full?.setAttribute('aria-pressed',String(active));
+    if(full)full.textContent=active?'Sair da tela cheia':'Tela cheia';
     if(documentPDF)requestAnimationFrame(()=>renderPage());
     ST?.refresh();
+  };
+  document.addEventListener('fullscreenchange',syncFullscreen);
+  document.addEventListener('webkitfullscreenchange',syncFullscreen);
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&fallbackFullscreen)exitFallbackFullscreen();
   });
+  syncFullscreen();
   setCounter();
   if(!pdfjs){renderFallback();return;}
   pdfjs.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';

@@ -37,8 +37,10 @@ jobs:
           node tests/papoulas-fundo-infinito-v77.mjs
           node tests/papoulas-video-novo-v78.mjs
           node --check site/v7.js
+          node --check site/editorial-writing.js
           node tests/v7-smoke.mjs
           node tests/hostinger-connect-visual-smoke.mjs
+          node tests/editorial-writing-smoke.mjs
           node tests/accordion-gallery-v1-smoke.mjs
           node --check site/accordion-gallery.js
           node --check site/v7.js

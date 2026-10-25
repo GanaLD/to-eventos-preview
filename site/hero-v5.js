@@ -5,6 +5,7 @@
   const hero = document.getElementById('hero');
   const film = hero?.querySelector('.hero-film-screen');
   const video = hero?.querySelector('[data-role="hero-film"]');
+  const title = hero?.querySelector('#hero-heading');
   const destination = hero?.querySelector('.hero-visual');
   const copy = [...(hero?.querySelector('.hero-copy')?.children ?? [])];
   const foot = hero?.querySelector('.hero-foot');
@@ -82,6 +83,11 @@
       duration: 14, ease: 'power2.inOut', borderWidth: 1
     }, 70);
     timeline.to(copy, {y: 0, opacity: 1, duration: 11, stagger: 1.1, ease: 'power2.out'}, revealStart);
+    if (title) {
+      const steps = Math.max(12, Math.min(42, [...title.textContent.trim()].length));
+      gsap.set(title, {clipPath: 'inset(0 100% 0 0)'});
+      timeline.to(title, {clipPath: 'inset(0 0% 0 0)', duration: 8, ease: 'steps(' + steps + ')'}, revealStart);
+    }
     timeline.to(foot, {opacity: 1, duration: 7}, 91);
 
     const trigger = ScrollTrigger.create({
@@ -142,6 +148,11 @@
       borderWidth: 1
     }, 70);
     timeline.to(copy, {y: 0, opacity: 1, duration: 11, stagger: 1.1, ease: 'power2.out'}, revealStart);
+    if (title) {
+      const steps = Math.max(12, Math.min(42, [...title.textContent.trim()].length));
+      gsap.set(title, {clipPath: 'inset(0 100% 0 0)'});
+      timeline.to(title, {clipPath: 'inset(0 0% 0 0)', duration: 8, ease: 'steps(' + steps + ')'}, revealStart);
+    }
     timeline.to(foot, {opacity: 1, duration: 7}, 91);
 
     const trigger = ScrollTrigger.create({

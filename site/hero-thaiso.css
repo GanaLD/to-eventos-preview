@@ -12,6 +12,14 @@
   visibility:hidden;
   transition:opacity .55s ease,visibility .55s ease;
 }
+.hero-scroll-stage .to-hero-thaiso-backdrop::before{
+  content:"";
+  position:absolute;
+  inset:-5%;
+  background:#1A1A1A url('assets/media/tke-thaiso-poster.jpg') center / cover no-repeat;
+  filter:blur(24px) saturate(.82) brightness(.7);
+  transform:scale(1.08);
+}
 .hero-scroll-stage.is-hero-framed .to-hero-thaiso-backdrop{
   opacity:1;
   visibility:visible;
@@ -22,7 +30,7 @@
   display:block;
   width:100%;
   height:100%;
-  object-fit:cover;
+  object-fit:contain;
   object-position:center;
   filter:saturate(.88) brightness(.93);
   opacity:.94;
@@ -31,14 +39,14 @@
   content:"";
   position:absolute;
   inset:0;
-  background:linear-gradient(90deg,rgba(26,26,26,.68) 0%,rgba(26,26,26,.34) 43%,rgba(26,26,26,.18) 100%);
+  background:linear-gradient(90deg,rgba(26,26,26,.58) 0%,rgba(26,26,26,.30) 43%,rgba(26,26,26,.22) 100%);
 }
 .hero-scroll-stage .hero-grid,
 .hero-scroll-stage .hero-foot{position:relative;z-index:1}
 @media(max-width:899px){
-  .hero-scroll-stage .to-hero-thaiso-backdrop video{opacity:.88;object-position:center}
+  .hero-scroll-stage .to-hero-thaiso-backdrop video{opacity:.92;object-position:center}
   .hero-scroll-stage .to-hero-thaiso-backdrop::after{
-    background:linear-gradient(180deg,rgba(26,26,26,.66),rgba(26,26,26,.30));
+    background:linear-gradient(180deg,rgba(26,26,26,.50),rgba(26,26,26,.24));
   }
 }
 @media(prefers-reduced-motion:reduce){
