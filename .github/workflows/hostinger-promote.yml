@@ -64,6 +64,9 @@ jobs:
           mkdir -p "$generated_assets"
           cp site/assets/media/motion-hero.mp4 "$generated_assets/"
           cp site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4 "$generated_assets/"
+          # These generated files live inside site/ on the main checkout. Remove them after
+          # copying to the runner temp folder so checkout can replace the site/ tree cleanly.
+          rm -f site/assets/media/motion-hero.mp4 site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4
           git fetch origin hostinger-production
           git checkout -B hostinger-production origin/hostinger-production
           git rm -r --quiet -- .

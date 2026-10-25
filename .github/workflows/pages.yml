@@ -41,6 +41,7 @@ jobs:
           node tests/v7-smoke.mjs
           node tests/hostinger-connect-visual-smoke.mjs
           node tests/editorial-writing-smoke.mjs
+          node tests/hostinger-promote-workflow-smoke.mjs
           node tests/accordion-gallery-v1-smoke.mjs
           node --check site/accordion-gallery.js
           node --check site/v7.js
