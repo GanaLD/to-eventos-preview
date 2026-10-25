@@ -220,3 +220,100 @@
     overscroll-behavior-y:auto;
   }
 }
+
+/* V10 · HERO SCROLL MOBILE VERDADEIRO:
+   MP4 autoral em 9:16 preenche a dobra inteira e cada quadro segue o gesto.
+   Remover o CSS anterior que tratava o vídeo 16:9 como faixa central.
+   Nunca usar duplicação, reflexo, canvas, blur ou máscara na marca. */
+@media (max-width:899px) and (orientation:portrait) {
+  .hero-scroll-stage .hero-film-screen {
+    display:block;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:var(--to-hero-ambient);
+  }
+  .hero-scroll-stage .hero-film-screen video {
+    position:absolute;
+    inset:0;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    max-width:none;
+    aspect-ratio:auto;
+    object-fit:cover;
+    object-position:center center;
+    transform:none;
+    -webkit-mask-image:none;
+    mask-image:none;
+    border:0;
+  }
+  .hero-scroll-stage .hero-visual {
+    /* Enquadramento final também vertical; não reduzir MP4 retrato a uma faixa. */
+    display:block;
+    width:min(46vw,20dvh,190px);
+    aspect-ratio:9/16;
+    max-height:36dvh;
+    min-height:0;
+    align-self:center;
+    background:var(--to-hero-ambient);
+  }
+  .hero-scroll-stage.is-hero-framed .hero-film-screen video {
+    position:absolute;
+    inset:0;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    transform:none;
+    object-fit:contain;
+    object-position:center center;
+    -webkit-mask-image:none;
+    mask-image:none;
+  }
+  .hero-scroll-stage .hero-grid {
+    gap:clamp(10px,1.6dvh,18px);
+    padding-block:clamp(11px,1.8dvh,20px);
+  }
+}
+@media(max-width:899px) and (orientation:portrait) and (max-height:670px) {
+  .hero-scroll-stage .hero-visual{width:min(33vw,17dvh,125px)}
+  .hero-scroll-stage .hero-grid{gap:8px;padding-block:8px}
+  .hero-scroll-stage .hero-copy>p{margin-bottom:10px}
+}
+
+/* V10.1 · scroll cinematográfico mobile sem colisão entre seções.
+   O wrapper reserva 2.9 telas de deslocamento + 1 tela do próprio HERO.
+   Sticky nativo segura o vídeo até o fim; ScrollTrigger sincroniza os frames.
+   Não adicionar pin GSAP ao mesmo elemento: gerava sobreposição com #sobre. */
+.hero-scroll-flow{
+  position:relative;
+  display:block;
+  width:100%;
+}
+@media(max-width:899px) and (prefers-reduced-motion:no-preference){
+  .hero-scroll-flow.is-motion-flow{
+    height:390vh;
+    height:390dvh;
+    min-height:390svh;
+  }
+  .hero-scroll-flow.is-motion-flow>.hero-scroll-stage{
+    position:sticky;
+    top:0;
+    width:100%;
+    height:100vh;
+    height:100dvh;
+    z-index:11;
+    transform:none;
+  }
+  .hero-scroll-flow.is-motion-flow>.hero-scroll-stage>.hero{
+    width:100%;
+    min-height:100dvh;
+    height:100dvh;
+  }
+}
+@media(max-width:899px) and (prefers-reduced-motion:reduce){
+  .hero-scroll-flow{height:auto}
+  .hero-scroll-flow>.hero-scroll-stage{position:relative;height:auto}
+}
