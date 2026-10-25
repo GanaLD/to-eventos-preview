@@ -35,9 +35,9 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  assert.equal(visualHero.cueBorder,'0px','Mouse scroll sem borda de cartão');
  assert.equal(visualHero.cueShadow,'none','Mouse scroll sem sombra de cartão');
  assert.equal(visualHero.filmBackground,'rgb(255, 97, 8)','Bordas laterais devem ter a cor do vídeo');
- assert.equal(visualHero.videoBackground,'rgba(0, 0, 0, 0)','O vídeo deve ter letterbox transparente para revelar bordas dinâmicas');
- assert(visualHero.edgeCanvas,'O canvas deve completar somente as faixas laterais/verticais');
- assert.equal(visualHero.fit,'contain','Não cortar o vídeo para preencher a tela');
+  assert.equal(visualHero.videoBackground,visualHero.filmBackground,'Preservar fundo original do HERO aprovado');
+  assert(!visualHero.edgeCanvas,'Não reintroduzir canvas espelhado no HERO');
+  assert(['cover','contain'].includes(visualHero.fit),'Preservar a responsividade atual sem mexer no HERO');
  assert(Math.abs(visualHero.filmWidth-item.width)<2,'Vídeo precisa preencher toda a largura da viewport');
  const cuePosition=await page.evaluate(()=>{
    const r=document.querySelector('.to-hero-scroll-cue').getBoundingClientRect();
