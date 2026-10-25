@@ -1,0 +1,42 @@
+name: QA HeroScroll mobile vertical V10
+on:
+  push:
+    branches: [fix/hero-mobile-real-portrait-scroll-v10]
+    paths:
+      - 'site/index.html'
+      - 'site/hero-mobile-v10.css'
+      - 'site/assets/media/motion-hero-mobile.mp4'
+      - 'tests/hero-mobile-v10-*'
+      - '.github/workflows/hero-mobile-v10-qa.yml'
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  mobile-hero:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar Chrome com MP4
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install chrome
+      - name: Regressões estruturais
+        run: |
+          node tests/hero-mobile-v10-smoke.mjs
+          node --check site/hero-v5.js
+      - name: Avaliar touch e scroll do vídeo vertical
+        run: |
+          node tests/v7-range-server.mjs >/tmp/site-server.log 2>&1 &
+          for i in $(seq 1 25); do curl -fsS http://127.0.0.1:8765/ -o /dev/null && break || sleep 1; done
+          node tests/hero-mobile-v10-visual.mjs
+      - name: Salvar telas de evidência
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hero-mobile-v10-evidencias
+          path: qa-hero-mobile-v10/
+          if-no-files-found: warn
