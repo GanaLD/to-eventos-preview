@@ -5,10 +5,20 @@ const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-
 const dir='qa-hero-mobile-v10';await fs.mkdir(dir,{recursive:true});
 const output=[];
 async function gotoProgress(page,p){
- await page.evaluate(p=>{
-  const t=ScrollTrigger.getById('to-hero-mobile-film-and-copy');
-  window.scrollTo({top:t.start+(t.end-t.start)*p,behavior:'instant'});
- },p);await page.waitForTimeout(1200);
+ // Fontes e ScrollTriggers da galeria podem mudar o offset depois do load.
+ // Corrigir pela progressão REAL antes de validar a etapa final do hero.
+ for(let attempt=0;attempt<6;attempt++){
+   const actual=await page.evaluate(p=>{
+     const t=ScrollTrigger.getById('to-hero-mobile-film-and-copy');
+     window.scrollTo({top:t.start+(t.end-t.start)*p,behavior:'instant'});
+     ScrollTrigger.update();
+     return t.progress;
+   },p);
+   await page.waitForTimeout(650);
+   const progress=await page.evaluate(()=>ScrollTrigger.getById('to-hero-mobile-film-and-copy').progress);
+   if(Math.abs(progress-p)<.018)break;
+ }
+ await page.waitForTimeout(500);
 }
 try{
 for(const [width,height] of [[390,844],[360,800],[768,1024]]){
