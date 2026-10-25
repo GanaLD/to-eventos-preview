@@ -222,7 +222,7 @@
 }
 
 /* V10 — HERO SCROLL MOBILE REAL
-   Fonte retrato 9:16, quadro inteiro: 100% largura/altura da primeira dobra.
+   Fonte 9:16 ocupa a primeira dobra sem cortar marca em 19.5:9 ou 20:9.
    O ScrollTrigger controla currentTime de forma bidirecional; SEM letterbox
    mascarado, video mirror, blur, pseudo-bg ou repetição do desenho da marca. */
 @media (max-width:899px) and (orientation:portrait) {
@@ -244,7 +244,7 @@
     height:100%;
     max-width:none;
     aspect-ratio:auto;
-    object-fit:cover;
+    object-fit:contain;
     object-position:center center;
     transform:none;
     -webkit-mask-image:none;
