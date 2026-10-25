@@ -1,0 +1,50 @@
+name: TO Eventos V8 - QA cinematografico e mobile
+on:
+  push:
+    branches: [fix/v8-botanical-motion-typing]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verificar fontes, script de vídeo e regressões
+        run: |
+          node tests/v4-smoke.mjs
+          node tests/v41-smoke.mjs
+          node tests/hero-v5-smoke.mjs
+          node tests/florais-v6-check.mjs
+          node tests/v7-smoke.mjs
+          node tests/v71-smoke.mjs
+          node tests/v72-no-flicker.mjs
+          node tests/v8-smoke.mjs
+          node --check site/v7.js
+          node --check site/motion-v71.js
+          node --check tests/v8-visual.mjs
+          ffprobe -v error -show_entries stream=width,height,duration -of default=noprint_wrappers=1 site/assets/media/papoulas-completas-v8.mp4
+          test "$(stat -c %s site/assets/media/papoulas-completas-v8.mp4)" -gt 50000
+      - name: Instalar Playwright
+        run: npm install --no-save --no-package-lock playwright@1.57.0
+      - name: Testar visualmente desktop, tablet e celular
+        env:
+          TO_PREVIEW_URL: http://127.0.0.1:8765/?v8-local
+        run: |
+          node tests/v7-range-server.mjs > /tmp/v8-range.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/ -o /dev/null && break || sleep 1; done
+          curl -sSI -H 'Range: bytes=0-63' http://127.0.0.1:8765/assets/media/papoulas-completas-v8.mp4 | grep -q '206 Partial Content'
+          node tests/v7-visual.mjs
+          node tests/v71-visual.mjs
+          node tests/v8-visual.mjs
+      - name: Capturas e evidências
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: to-eventos-v8-desktop-mobile
+          path: qa-artifacts/
+          if-no-files-found: warn
+          retention-days: 30
