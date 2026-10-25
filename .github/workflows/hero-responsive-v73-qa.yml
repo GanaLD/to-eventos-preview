@@ -21,6 +21,7 @@ jobs:
       - name: Testes estruturais e sintaxe
         run: |
           node tests/hero-responsive-v73-smoke.mjs
+          node tests/mobile-scroll-v74-smoke.mjs
           node --check site/hero-v5.js
           node --check site/main.js
           node --check site/v7.js
