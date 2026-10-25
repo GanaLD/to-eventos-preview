@@ -1,0 +1,33 @@
+name: QA papoulas transparentes V7.3
+on:
+  push:
+    branches:
+      - fix/papoulas-alpha-lettering-v73
+  pull_request:
+    paths:
+      - 'site/papoulas-alpha-v73.js'
+      - 'site/papoulas-alpha-v73.css'
+      - 'site/v7.js'
+      - 'site/index.html'
+      - 'tests/papoulas-alpha-v73-smoke.mjs'
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validar sintaxe
+        run: |
+          node --check site/papoulas-alpha-v73.js
+          node --check site/v7.js
+      - name: Regressões de papoulas, texto e integrações
+        run: |
+          node tests/papoulas-alpha-v73-smoke.mjs
+          node tests/v72-no-flicker.mjs
+          node tests/v71-smoke.mjs
+          node tests/florais-v6-check.mjs
+          node tests/staggered-menu-smoke.mjs
