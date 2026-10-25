@@ -136,24 +136,14 @@ for (const item of [
   }
   if(item.tag==='referencia'){
     await locate(page,'to-hero-film-and-copy',.55);
-    await page.waitForFunction(()=>document.querySelector('.hero-edge-canvas')?.dataset.frameRendered==='true',{timeout:10000}).catch(()=>{});
-    const edge=await page.evaluate(()=>{
-      const c=document.querySelector('.hero-edge-canvas');const v=document.querySelector('[data-role="hero-film"]');
-      if(!c)return null;
-      const ctx=c.getContext('2d');const x=Math.max(1,Math.floor(c.width*.015));
-      const unique=new Set();
-      for(let i=0;i<20;i++){
-        const y=Math.min(c.height-1,Math.floor(c.height*(.05+i*.045)));
-        const p=ctx.getImageData(x,y,1,1).data;
-        unique.add(p[0]+','+p[1]+','+p[2]);
-      }
-      return {mode:c.dataset.bleedMode,rendered:c.dataset.frameRendered,unique:unique.size,fit:getComputedStyle(v).objectFit,aspect:v.videoWidth/v.videoHeight};
-    });
-    assert(edge && edge.mode==='sides' && edge.rendered==='true','Em tela larga, prolongar lateralmente o frame inteiro: '+JSON.stringify(edge));
-    assert(edge.unique>=3,'Bordas não podem continuar sendo uma faixa laranja chapada: '+JSON.stringify(edge));
-    assert(edge.fit==='contain' && Math.abs(edge.aspect-16/9)<.02,'Vídeo central sem cortes ou distorção: '+JSON.stringify(edge));
- }
- await page.screenshot({path:out+'/hero-'+item.tag+'.png'});
+    const framed=await page.locator('[data-role="hero-film"]').evaluate(v=>({
+      width:v.videoWidth,height:v.videoHeight,fit:getComputedStyle(v).objectFit
+    }));
+    assert(!await page.locator('.hero-edge-canvas').count(),'O HERO aprovado não pode espelhar frames por canvas');
+    assert(Math.abs(framed.width/framed.height-16/9)<.02,'Preservar proporção original do HERO');
+    assert(['cover','contain'].includes(framed.fit),'Preservar comportamento responsivo do HERO');
+  }
+  await page.screenshot({path:out+'/hero-'+item.tag+'.png'});
  results.push({viewport:item.tag,hero:box,overflow});
   await page.close();
 }
