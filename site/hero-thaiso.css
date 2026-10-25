@@ -1,0 +1,46 @@
+/* TO Eventos — take THAISO no fundo grafite da etapa FINAL do HERO.
+   Camada isolada: nunca altera ScrollTrigger, vídeo inicial ou proporção 9:16. */
+.hero-scroll-stage .hero{isolation:isolate}
+.hero-scroll-stage .to-hero-thaiso-backdrop{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+  background:#1A1A1A;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .55s ease,visibility .55s ease;
+}
+.hero-scroll-stage.is-hero-framed .to-hero-thaiso-backdrop{
+  opacity:1;
+  visibility:visible;
+}
+.hero-scroll-stage .to-hero-thaiso-backdrop video{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  filter:saturate(.55) brightness(.65);
+  opacity:.54;
+}
+.hero-scroll-stage .to-hero-thaiso-backdrop::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,rgba(26,26,26,.88) 0%,rgba(26,26,26,.7) 43%,rgba(26,26,26,.65) 100%);
+}
+.hero-scroll-stage .hero-grid,
+.hero-scroll-stage .hero-foot{position:relative;z-index:1}
+@media(max-width:899px){
+  .hero-scroll-stage .to-hero-thaiso-backdrop video{opacity:.36;object-position:center}
+  .hero-scroll-stage .to-hero-thaiso-backdrop::after{
+    background:linear-gradient(180deg,rgba(26,26,26,.83),rgba(26,26,26,.67));
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-scroll-stage .to-hero-thaiso-backdrop{display:none!important}
+}
