@@ -10,7 +10,7 @@ assert(html.includes('florais-v6.css') && html.includes('v7.js'));
 const about=html.substring(html.indexOf('<section id="sobre"'),html.indexOf('<section id="solucoes"'));
 const solutions=html.substring(html.indexOf('<section id="solucoes"'),html.indexOf('<section id="projetos"'));
 assert(about.includes('data-original-illustration="assets/media/papoulas-preview.webp"') && about.includes('src="assets/media/animacao-papoulas-inteiras-v73.mp4"'),'Fonte original preservada e enquadramento editorial corrigido');
-assert(!about.includes('papoulas-preview.webp'));
+assert(about.includes('class="about-floral-reduced"'),'Ilustração original apenas como fallback de movimento reduzido');
 assert(about.includes('playsinline') && about.includes('muted'));
 assert(solutions.includes('src="assets/media/papoula-3-esquerda-crop.webp"'));
 assert(solutions.includes('src="assets/media/papoula-2-direita-crop.webp"'));
