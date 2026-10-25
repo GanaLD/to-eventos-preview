@@ -25,10 +25,25 @@ try{
  console.log('PASS desktop inicial',JSON.stringify(await check(page,'landscape')));
  await page.setViewportSize({width:390,height:844});
  console.log('PASS resize desktop→mobile',JSON.stringify(await check(page,'portrait')));
+ await page.waitForFunction(()=>document.getElementById('to-floral-mobile-v15')?.style.display !== 'none',{timeout:30000});
+ const switchedOverlay=await page.evaluate(()=>({
+   mobile:!!document.getElementById('to-floral-mobile-v15'),
+   desktopHidden:!document.getElementById('to-floral-intro-v10') ||
+                 document.getElementById('to-floral-intro-v10').style.display==='none',
+   mobileSrc:document.getElementById('to-floral-mobile-v15-video')?.currentSrc
+ }));
+ assert(switchedOverlay.mobile&&switchedOverlay.desktopHidden,'Overlay desktop persistiu no preview mobile '+JSON.stringify(switchedOverlay));
+ assert(switchedOverlay.mobileSrc.includes('floral-mobile-v14.mp4'),'A moldura vertical nao foi ativada');
  await page.setViewportSize({width:360,height:800});
  console.log('PASS mobile 360px',JSON.stringify(await check(page,'portrait')));
  await page.setViewportSize({width:1440,height:900});
  console.log('PASS resize mobile→desktop',JSON.stringify(await check(page,'landscape')));
+ await page.waitForFunction(()=>!!document.getElementById('to-floral-intro-v10')&&document.getElementById('to-floral-intro-v10').style.display!=='none');
+ const desktopOverlay=await page.evaluate(()=>({
+   desktopSrc:document.querySelector('.to-floral-v10-video-decoder')?.currentSrc,
+   mobileHidden:document.getElementById('to-floral-mobile-v15')?.style.display==='none'
+ }));
+ assert(desktopOverlay.desktopSrc.includes('moldura-v13-screen.mp4')&&desktopOverlay.mobileHidden,'A moldura desktop original não voltou '+JSON.stringify(desktopOverlay));
  await page.close();
  for(const [width,height] of [[390,844],[360,800],[768,1024]]){
   const p=await browser.newPage({viewport:{width,height},hasTouch:true,isMobile:true});
