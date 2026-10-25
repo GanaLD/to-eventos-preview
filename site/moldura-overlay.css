@@ -2,3 +2,20 @@
 #to-floral-intro-v10{position:fixed;inset:0;width:100vw;height:100dvh;display:block;pointer-events:none;z-index:40;opacity:1;mix-blend-mode:screen;contain:layout paint;user-select:none;}
 .to-floral-v10-video-decoder{position:fixed;width:1px;height:1px;left:-10px;top:-10px;opacity:0;pointer-events:none;}
 @media(prefers-reduced-motion:reduce){#to-floral-intro-v10{transition:none!important}}
+
+/* V15: mídia 9:16 real acima do Hero, somente celular em retrato.
+   Screen Blend neutraliza o fundo preto SEM keying. 
+   Mostra a moldura completa nas quatro bordas, sem corte cover nem Canvas. */
+@media (max-width:899px) and (orientation:portrait){
+  #to-floral-mobile-v15{
+    position:fixed;inset:0;width:100vw;height:100dvh;
+    z-index:40;pointer-events:none;overflow:hidden;
+    mix-blend-mode:screen;opacity:1;user-select:none;
+  }
+  #to-floral-mobile-v15-video,
+  #to-floral-mobile-v15-poster{
+    display:block;position:absolute;inset:0;width:100%;height:100%;
+    object-fit:fill;object-position:center;
+    background:transparent;pointer-events:none;transform:none;
+  }
+}
