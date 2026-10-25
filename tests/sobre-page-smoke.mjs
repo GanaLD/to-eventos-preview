@@ -52,3 +52,38 @@ test('metadados e identidade do projeto conferidos',()=>{
   assert.match(about,/meta name="description"/);
   assert.match(about,/#(?:[a-f\d]{6})/i); // works with page's theme-color
 });
+
+test('revisão visual: sem índices de seção e enumerações decorativas',()=>{
+  assert.doesNotMatch(about,/class="sobre-side"|class="sobre-index"/);
+  assert.doesNotMatch(about,/<ol\b|<li>\s*<span>0[1-9]<\/span>/);
+  assert.doesNotMatch(about,/<article>\s*<span>0[1-9]<\/span>/);
+  assert.match(about,/class="sobre-process">/);
+  assert.equal((about.match(/<article>/g)||[]).length,(about.match(/<\/article>/g)||[]).length);
+});
+test('revisão visual: nenhuma seta nas chamadas e nos conteúdos',()=>{
+  assert.doesNotMatch(about,/[↗↖↘↙→←➜➝➡➤⇢⇨]/u);
+  assert.doesNotMatch(about,/class="sobre-inline-link"/);
+});
+test('revisão visual: títulos com espaço e layout adaptável',()=>{
+  const css=read('site/sobre/sobre.css');
+  assert.match(css,/\.sobre-hero h1\s*\{[^}]*line-height:\s*1\.19/s);
+  assert.match(css,/text-wrap:\s*balance/);
+  assert.match(css,/overflow-wrap:\s*break-word/);
+  assert.match(css,/\.sobre-split\s*\{[^}]*display:block/s);
+  assert.match(css,/@media\(max-width:1100px\)/);
+  assert.match(css,/\.sobre-proof-grid\s*\{[^}]*grid-template-columns:\s*repeat\(3,minmax\(0,1fr\)\)/s);
+});
+test('revisão visual: CTAs com iluminação, sombra e texto centralizado',()=>{
+  const css=read('site/sobre/sobre.css');
+  assert.match(css,/\.sobre-page \.button-accent\s*\{[^}]*justify-content:center/s);
+  assert.match(css,/\.sobre-page \.button-accent\s*\{[^}]*text-align:center/s);
+  assert.match(css,/\.sobre-page \.button-accent\s*\{[^}]*box-shadow:/s);
+  assert.match(css,/\.sobre-page \.button-accent:hover/);
+  assert.match(css,/\.sobre-page \.button-accent:focus-visible/);
+  assert.match(about,/class="button-accent sobre-secondary-button"/);
+});
+test('FAQ sem seta nativa de expansão',()=>{
+  const css=read('site/sobre/sobre.css');
+  assert.match(css,/summary::-webkit-details-marker\s*\{display:none\}/);
+  assert.match(css,/\.sobre-questions summary\s*\{[^}]*list-style:none/s);
+});
