@@ -46,7 +46,9 @@ def composite(canvas,src,x,y,w,mode):
 cmd=['ffmpeg','-hide_banner','-loglevel','error','-y',
      '-f','rawvideo','-pix_fmt','bgr24','-s','720x1280','-r','24','-i','-',
      '-an','-c:v','libx264','-preset','veryfast','-crf','19',
-     '-pix_fmt','yuv420p','-g','6','-keyint_min','6','-sc_threshold','0',
+     '-pix_fmt','yuv420p','-color_range','tv',
+     '-colorspace','smpte170m','-color_primaries','bt709',
+     '-color_trc','iec61966-2-1','-g','6','-keyint_min','6','-sc_threshold','0',
      '-movflags','+faststart',str(TARGET)]
 p=subprocess.Popen(cmd,stdin=subprocess.PIPE)
 count=0
