@@ -37,6 +37,23 @@ try {
   assert(initial.source.includes('motion-hero-mobile.mp4'),'HERO mobile carrega MP4 16:9, não 9:16: '+JSON.stringify(initial));
   assert(Math.abs(initial.mediaW/initial.mediaH-9/16)<.02,'Mídia real não é retrato 9:16');
   assert.equal(initial.fit,'contain','O lettering original não pode ser cortado nas laterais');
+  // Exigir correspondência cromática real entre MP4 decodificado e CSS:
+  // sem uma faixa visível onde o vídeo 9:16 termina.
+  const colors=await page.evaluate(()=>{
+    const v=document.querySelector('[data-role="hero-film"]');
+    const canvas=document.createElement('canvas');
+    canvas.width=v.videoWidth; canvas.height=v.videoHeight;
+    const ctx=canvas.getContext('2d',{willReadFrequently:true});
+    ctx.drawImage(v,0,0);
+    const pixel=[...ctx.getImageData(400,700,1,1).data].slice(0,3);
+    const backdrop=getComputedStyle(document.querySelector('.hero-film-screen')).backgroundColor;
+    return {pixel,backdrop};
+  });
+  const rgb=(colors.backdrop.match(/[0-9]+/g)||[]).slice(0,3).map(Number);
+  assert.equal(rgb.length,3,'Background do HERO deve ser RGB sólido');
+  assert(Math.max(...rgb.map((n,i)=>Math.abs(n-colors.pixel[i])))<=8,
+    'Laranja do vídeo diverge da borda CSS: '+JSON.stringify(colors));
+
   assert.equal(initial.mask,'none','Não usar fade para disfarçar barras vazias');
   assert(Math.abs(initial.film.w-width)<3&&Math.abs(initial.film.h-height)<4,'Vídeo HeroScroll não ocupa viewport real');
   await page.screenshot({path:`${output}/${tag}-inicio.jpg`,type:'jpeg',quality:38});
