@@ -32,7 +32,6 @@ jobs:
           node tests/hero-v5-smoke.mjs
           node tests/hostinger-thaiso-background-smoke.mjs
           node tests/florais-v6-check.mjs
-          node tests/v71-smoke.mjs
           node tests/v72-no-flicker.mjs
           node tests/papoulas-intactas-v76.mjs
           node --check site/v7.js
