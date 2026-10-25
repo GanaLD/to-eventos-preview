@@ -1,0 +1,44 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const base = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const read = file => readFileSync(path.join(base, file), 'utf8');
+const markup = () => read('site/index.html');
+
+test('menu possui apenas HOME e PRODUCT, nesta ordem', () => {
+  const labels = [...markup().matchAll(/<(?:a|button)\b[^>]*data-to-menu-item="([^"]+)"/g)].map(m => m[1]);
+  assert.deepEqual(labels, ['HOME', 'PRODUCT']);
+});
+test('HOME aponta para a própria página, inclusive no GitHub Pages em subpasta', () => {
+  assert.match(markup(), /data-to-menu-item="HOME"[^>]*href="\.\/#hero"/);
+});
+test('PRODUCT não possui ação e está nativamente desabilitado', () => {
+  const html = markup();
+  assert.match(html, /<button[^>]*data-to-menu-item="PRODUCT"[^>]*disabled/);
+  assert.doesNotMatch(html, /data-to-menu-item="PRODUCT"[^>]*(?:href=|onclick=)/);
+});
+test('acionador acessível e painel inicialmente fechado', () => {
+  const html = markup();
+  assert.match(html, /aria-controls="to-staggered-panel"/);
+  assert.match(html, /aria-expanded="false"/);
+  assert.match(html, /id="to-staggered-panel"[^>]*aria-hidden="true"[^>]*inert/);
+});
+test('cores da marca e efeito vidro responsivo', () => {
+  const css = read('site/staggered-menu.css');
+  assert.match(css, /#FF4D00/i);
+  assert.match(css, /#1A1A1A/i);
+  assert.match(css, /#F4F4F2/i);
+  assert.match(css, /backdrop-filter:\s*blur\(/);
+  assert.match(css, /@media\s*\(max-width:\s*720px\)/);
+});
+test('GSAP, fallback e fechamento por Escape e clique fora', () => {
+  const js = read('site/staggered-menu.js');
+  assert.match(js, /window\.gsap/);
+  assert.match(js, /prefers-reduced-motion/);
+  assert.match(js, /Escape/);
+  assert.match(js, /addEventListener\('click'/);
+  assert.match(js, /\.inert\s*=/);
+});
