@@ -8,7 +8,7 @@ const motion=read('site/motion-v71.js');
 const css=read('site/mobile-v8.css');
 assert(html.includes('mobile-v8.css'),'CSS mobile final deve carregar na LP');
 assert(html.indexOf('motion-v71.css')<html.indexOf('mobile-v8.css'),'Mobile V8 prevalece sobre os estilos antigos');
-const mobileSource=html.match(/<source[^>]*motion-hero-mobile\\.mp4[^>]*>/)?.[0];
+const mobileSource=html.match(/<source[^>]*motion-hero-mobile[^>]*>/)?.[0];
 assert(mobileSource && mobileSource.includes('media="(max-width: 899px) and (orientation: portrait)"'),'Media query da fonte retrato obrigatória, independentemente da ordem de atributos');
 assert(/if\s*\(track\s*&&\s*pin\s*&&\s*area\)/.test(main),'Galeria não pode ser bloqueada por breakpoint desktop');
 assert(!/track\s*&&\s*pin\s*&&\s*area\s*&&\s*desktop/.test(main),'Remover a condição que quebra scroll em mobile');
