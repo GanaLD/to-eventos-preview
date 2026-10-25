@@ -33,6 +33,7 @@ jobs:
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/ -o /dev/null && break || sleep 1; done
           curl -sSI -H 'Range: bytes=0-63' http://127.0.0.1:8765/assets/media/motion-hero.mp4 | grep -q '206 Partial Content'
           node tests/hero-responsive-v73-visual.mjs
+          node tests/mobile-scroll-v74-visual.mjs
           node tests/mobile-scroll-integration-v8-visual.mjs
       - name: Registrar previews visuais como blobs temporários (sem alterar branch)
         if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
