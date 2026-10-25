@@ -4,6 +4,7 @@ on:
     branches: [fix/hero-mobile-real-portrait-scroll-v10]
     paths:
       - 'site/index.html'
+      - 'site/hero-v5.js'
       - 'site/hero-mobile-v10.css'
       - 'site/assets/media/motion-hero-mobile.mp4'
       - 'tests/hero-mobile-v10-*'
