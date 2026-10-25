@@ -90,6 +90,17 @@ function startMobileFloral() {
   poster.style.display = 'none';
   layer.append(video, poster);
   document.body.appendChild(layer);
+  // Alinhar às bordas reais do Hero (inclusive previews de celular dentro
+  // de um canvas/iframe maior); não usar as bordas do navegador externo.
+  const syncLayerBounds = () => {
+    const rect = hero.getBoundingClientRect();
+    layer.style.inset = 'auto';
+    layer.style.left = rect.left+'px';
+    layer.style.top = rect.top+'px';
+    layer.style.width = rect.width+'px';
+    layer.style.height = rect.height+'px';
+  };
+  syncLayerBounds();
   let introDone = false, scrollStarted = false;
   let wantedTime = null, raf = 0;
   const progress = () => {
@@ -109,6 +120,7 @@ function startMobileFloral() {
     });
   };
   const update = () => {
+    syncLayerBounds();
     const p = progress();
     const reverse = clamp(p / floralReverseEnd);
     layer.style.opacity = String(1 - reverse);
