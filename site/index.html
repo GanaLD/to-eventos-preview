@@ -23,6 +23,7 @@
   <!-- Camada floral opcional: overlay independente, Hero V5 intocado. -->
   <link rel="stylesheet" href="moldura-overlay.css?v=11">
   <link rel="stylesheet" href="hero-mobile-v10.css">
+  <link rel="stylesheet" href="accordion-gallery.css">
   <link rel="stylesheet" href="staggered-menu.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -34,6 +35,7 @@
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script defer src="v7.js"></script>
   <script defer src="motion-v71.js"></script>
+  <script defer src="accordion-gallery.js"></script>
   <script defer src="moldura-overlay.js?v=11"></script>
   <script defer src="staggered-menu.js"></script>
 </head>
@@ -191,6 +193,32 @@
           </article>
         </div>
         <div class="projects-progress shell" aria-hidden="true"><span>ROLE PARA EXPLORAR OS PROJETOS</span><div class="projects-progress-track"><span class="projects-progress-fill"></span></div></div>
+      </div>
+    </section>
+
+    <!-- GALERIA EDITORIAL: depois da trilha GSAP / PDF, antes do contato. -->
+    <section id="galeria-editorial" class="section-light" aria-labelledby="ag-heading">
+      <div class="shell">
+        <div class="ag-kicker"><span>04 / GALERIA EDITORIAL</span><span>PRODUÇÃO &amp; EXPERIÊNCIA</span></div>
+        <div class="ag-heading">
+          <h2 id="ag-heading">Experiências<br><em>em perspectiva.</em></h2>
+          <p>Um olhar sobre encontros, produções e momentos que dão vida aos projetos.</p>
+        </div>
+        <div class="accordion-gallery" data-accordion-gallery data-default-index="1" data-expand-ratio="0.52" role="group" aria-label="Galeria de experiências da TO Eventos">
+          <button type="button" class="ag-panel" data-ag-panel aria-label="Summit de Negócios" aria-pressed="false">
+            <span class="ag-panel__frame"><span class="ag-panel__media"><img src="assets/media/summit-frame-apresentacao.webp" alt="Registro visual do Summit de Negócios" loading="lazy" decoding="async" draggable="false"></span><span class="ag-panel__overlay" aria-hidden="true"></span></span>
+            <span class="ag-panel__label" aria-hidden="true"><span class="ag-panel__bar"></span><span class="ag-panel__text">Summit de Negócios</span></span>
+          </button>
+          <button type="button" class="ag-panel is-active" data-ag-panel aria-label="Connect — evento corporativo" aria-pressed="true">
+            <span class="ag-panel__frame"><span class="ag-panel__media"><img src="assets/media/connect-poster.webp" alt="Frame da cobertura do evento Connect" loading="lazy" decoding="async" draggable="false"></span><span class="ag-panel__overlay" aria-hidden="true"></span></span>
+            <span class="ag-panel__label" aria-hidden="true"><span class="ag-panel__bar"></span><span class="ag-panel__text">Connect</span></span>
+          </button>
+          <button type="button" class="ag-panel" data-ag-panel aria-label="Portfólio institucional de eventos" aria-pressed="false">
+            <span class="ag-panel__frame"><span class="ag-panel__media"><img src="assets/media/apresentacao-poster.jpg" alt="Prévia do portfólio institucional de Thais Ortiz" loading="lazy" decoding="async" draggable="false"></span><span class="ag-panel__overlay" aria-hidden="true"></span></span>
+            <span class="ag-panel__label" aria-hidden="true"><span class="ag-panel__bar"></span><span class="ag-panel__text">Portfólio institucional</span></span>
+          </button>
+        </div>
+        <div class="ag-foot"><span>03 / FRAGMENTOS VISUAIS</span><span>EXPLORE COM O CURSOR OU UM TOQUE</span></div>
       </div>
     </section>
 
