@@ -58,7 +58,10 @@
       io.observe(element);
     }
     const r=element.getBoundingClientRect();
-    if (r.top < innerHeight*.8 && r.bottom > innerHeight*.16) {
+    // A horizontal panel can share the current vertical Y while still entirely
+    // offscreen to the right. Do NOT fire its typewriter before it is visible.
+    const onScreenX=!containerAnimation || (r.left < innerWidth*.84 && r.right > innerWidth*.14);
+    if (onScreenX && r.top < innerHeight*.8 && r.bottom > innerHeight*.16) {
       requestAnimationFrame(launch);
     }
     return launch;
