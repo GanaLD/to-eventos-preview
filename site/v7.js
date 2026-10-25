@@ -7,7 +7,9 @@
   // SOBRE — animar os cinco grupos reais em ordem, após entrada da seção.
   const about=document.getElementById('sobre');
   const copy=about?.querySelector('.about-copy');
-  const botanicalVideo=about?.querySelector('.about-floral-video');
+  // Papoulas originais com transparência nativa: o GSAP revela apenas o conjunto.
+  // A oscilação suave fica no IMG, sem alterar a silhueta por shader ou máscara.
+  const botanicalMedia=about?.querySelector('.floral-reveal');
   const copyParts=copy?[
     copy.querySelector('.overline'),
     copy.querySelector('#sobre-heading'),
@@ -17,61 +19,30 @@
   ].filter(Boolean):[];
 
   let entered=false;
-  const playFlower=()=>{
-    if(!botanicalVideo || botanicalVideo.ended)return;
-    const promise=botanicalVideo.play();
-    promise?.catch?.(()=>{});
-  };
-  if(about&&botanicalVideo&&copyParts.length && !reduce && gsap&&ST){
+  if(about&&botanicalMedia&&copyParts.length&&!reduce&&gsap&&ST){
     gsap.registerPlugin(ST);
-    // Esconde apenas antes do primeiro reveal. Nunca reseta ao scroll reverso.
     gsap.set(copyParts,{y:32,autoAlpha:0});
-    gsap.set(botanicalVideo,{y:0,autoAlpha:0});
-    let reveal;
+    gsap.set(botanicalMedia,{y:0,autoAlpha:0});
     const enter=()=>{
-      if(entered){
-        playFlower();
-        return;
-      }
+      if(entered)return;
       entered=true;
-      reveal=gsap.timeline({defaults:{ease:'power2.out'}});
-      // Letreiro principal desacelera isoladamente; outros textos mantêm o timing anterior.
+      const reveal=gsap.timeline({defaults:{ease:'power2.out'}});
       reveal.to(copyParts,{y:0,autoAlpha:1,
         duration:(index,el)=>el.id==='sobre-heading'?2.1:1.28,
         stagger:.21},0);
-      reveal.to(botanicalVideo,{y:0,autoAlpha:1,duration:1.35},.25);
-      // Reprodução começa uma vez, sem pular para 0 na volta à seção.
-      playFlower();
+      reveal.to(botanicalMedia,{y:0,autoAlpha:1,duration:1.6},.25);
     };
     ST.create({
-      id:'to-v7-sobre-intro',
-      trigger:about,
-      start:'top 82%',
-      end:'bottom 15%',
-      invalidateOnRefresh:true,
-      onEnter:enter,
-      onEnterBack:enter,
-      onLeave:()=>botanicalVideo.pause(),
-      onLeaveBack:()=>botanicalVideo.pause()
+      id:'to-v7-sobre-intro',trigger:about,
+      start:'top 82%',end:'bottom 15%',invalidateOnRefresh:true,
+      onEnter:enter,onEnterBack:enter
     });
-    // Abertura por #sobre e restauração pelo histórico.
     const reconcile=()=>{
       const r=about.getBoundingClientRect();
       if(!entered && r.top<innerHeight*.82 && r.bottom>innerHeight*.15)enter();
     };
     requestAnimationFrame(()=>requestAnimationFrame(reconcile));
     document.fonts?.ready?.then(()=>{ST.refresh();reconcile();});
-    botanicalVideo.addEventListener('loadedmetadata',()=>ST.refresh(),{once:true});
-  }else if(botanicalVideo){
-    // Sem GSAP / movimento reduzido: texto visível e vídeo livre de animações agressivas.
-    botanicalVideo.addEventListener('loadedmetadata',()=>{
-      if(reduce&&botanicalVideo.duration>0){
-        try{botanicalVideo.currentTime=Math.max(0,botanicalVideo.duration-.08);}catch(_){}
-      }
-    },{once:true});
-    if(!reduce&&'IntersectionObserver' in window){
-      new IntersectionObserver(entries=>entries.forEach(e=>e.isIntersecting?playFlower():botanicalVideo.pause()),{threshold:.15}).observe(about);
-    }
   }
 
   // COMPETÊNCIAS — imagens já recortadas pelos limites ALFA reais.
