@@ -15,7 +15,7 @@
     aspect-ratio:auto;
     max-width:none;
     display:block;
-    object-fit:cover;
+    object-fit:contain; /* mobile retrato: mostrar todo o vídeo vertical, sem cortar letras */
     object-position:center center;
     transform:none;
     -webkit-mask-image:none;
