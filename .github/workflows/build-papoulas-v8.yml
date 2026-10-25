@@ -1,0 +1,33 @@
+name: Gerar papoulas completas V8
+on:
+  push:
+    branches: [fix/v8-botanical-motion-typing]
+    paths:
+      - .github/workflows/build-papoulas-v8.yml
+permissions:
+  contents: write
+jobs:
+  media:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/v8-botanical-motion-typing
+          persist-credentials: true
+      - name: Preparar animação autoral
+        run: |
+          python3 -m pip install --break-system-packages --quiet pillow numpy
+          if ! command -v ffmpeg >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          python3 scripts/render-botanical-v8.py
+          test "$(stat -c%s site/assets/media/papoulas-completas-v8.mp4)" -gt 50000
+          ffprobe -v error -show_entries stream=codec_name,width,height,duration -of json site/assets/media/papoulas-completas-v8.mp4
+      - name: Salvar vídeo derivado no branch V8
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/assets/media/papoulas-completas-v8.mp4
+          git commit -m 'assets(botanical): complete uncropped original watercolor growth V8' || exit 0
+          git fetch origin fix/v8-botanical-motion-typing
+          git rebase origin/fix/v8-botanical-motion-typing
+          git push origin HEAD:fix/v8-botanical-motion-typing
