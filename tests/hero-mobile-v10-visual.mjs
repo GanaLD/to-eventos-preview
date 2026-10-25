@@ -80,6 +80,7 @@ try{
   await progress(page,.64);const later=await sample(page);
   await page.screenshot({path:`${dir}/${v.tag}-64.jpg`,type:'jpeg',quality:65});
   assert(later.videoTime>early.videoTime+1,'Tempo do vídeo não acompanha scroll');
+  console.log('DEBUG FRAME',JSON.stringify({tag:v.tag,early:{time:early.videoTime,ready:early.ready,src:early.src},later:{time:later.videoTime,ready:later.ready,src:later.src},delta:pixelDifference(early,later),earlyPixelAvg:Math.round(early.pixels.reduce((s,n)=>s+n,0)/early.pixels.length),laterPixelAvg:Math.round(later.pixels.reduce((s,n)=>s+n,0)/later.pixels.length)}));
   assert(pixelDifference(early,later)>15,'Frames visuais praticamente iguais: não parece HeroScroll');
   await drag(page,v.height*.25,v.height*.76);
   const reverse=await sample(page);
