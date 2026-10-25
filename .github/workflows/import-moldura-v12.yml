@@ -1,0 +1,37 @@
+name: Importar video floral V12 sem alterar Hero
+on:
+  push:
+    branches: [feature/moldura-papoulas-v12]
+    paths:
+      - .github/workflows/import-moldura-v12.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  importar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Importar e validar novas midias
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --connect-timeout 15 --max-time 120 'https://21173d58-3df2-4090-937c-e0b24f748915.sandbox.floot.app/_cdn/static/70adf398-60e4-4bed-97cc-acafb6ddff3e-TO-Eventos-V12-Midias-Papoulas.zip' -o /tmp/papoulas-v12.zip
+          echo '6a589943c5683da71982940f4da1a31c777764c3afbf85ce038afcc5cf327e1f  /tmp/papoulas-v12.zip' | sha256sum --check
+          unzip -p /tmp/papoulas-v12.zip 'site/assets/media/moldura-v12-alpha.webm' > site/assets/media/moldura-v12-alpha.webm
+          unzip -p /tmp/papoulas-v12.zip 'site/assets/media/moldura-v12-final.webp' > site/assets/media/moldura-v12-final.webp
+          test "$(wc -c < site/assets/media/moldura-v12-alpha.webm)" -gt 2000000
+          test "$(wc -c < site/assets/media/moldura-v12-final.webp)" -gt 300000
+          ffprobe -v error -show_entries stream_tags=alpha_mode -of default=noprint_wrappers=1 site/assets/media/moldura-v12-alpha.webm | grep -qi 'alpha_mode=1'
+          node --check site/moldura-overlay.js
+      - name: Commitar apenas as midias novas
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/assets/media/moldura-v12-alpha.webm site/assets/media/moldura-v12-final.webp
+          if ! git diff --cached --quiet; then
+            git commit -m 'assets: substituir moldura floral por midia V12 com alpha'
+            git push origin HEAD:feature/moldura-papoulas-v12
+          fi
