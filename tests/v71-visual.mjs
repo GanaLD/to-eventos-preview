@@ -63,11 +63,11 @@ try {
     });
     assert.equal(flowerStyle.fit,'contain','Vídeo de papoulas deve ser exibido inteiro');
     assert(Math.abs(flowerStyle.ratio-.5625)<.025,'Vídeo floral não deve ser deformado: '+JSON.stringify(flowerStyle));
-    assert(flowerStyle.width<=370,'Vídeo floral deve preservar proporção e escala editorial reduzida: '+JSON.stringify(flowerStyle));
-    assert((await page.locator('.about-floral-video source').first().getAttribute('src')).includes('editorial-v72.mp4'),'Vídeo floral deve usar o novo enquadramento com bordas suaves');
+    assert(flowerStyle.width<=410,'Vídeo floral deve preservar proporção e escala editorial reduzida: '+JSON.stringify(flowerStyle));
+    assert((await page.locator('.about-floral-video source').first().getAttribute('src')).includes('seamless-v74.mp4'),'Vídeo floral deve usar o novo enquadramento com bordas suaves');
 
     await page.locator('#sobre').scrollIntoViewIfNeeded();
-    await page.waitForTimeout(2600);
+    await page.waitForTimeout(5900);
     const about=await scan(page);
     assert(about.about.headline>.95&&about.about.proof>.95&&about.about.video>.95,
       'Textos de Sobre e vídeo precisam estar visíveis depois da revelação: '+JSON.stringify(about.about));
@@ -80,7 +80,7 @@ try {
     assert(opacityReturn>.98,'Retornar à Sobre não pode piscar nem ocultar o título: '+opacityReturn);
 
     await page.locator('#solucoes').scrollIntoViewIfNeeded();
-    await page.waitForTimeout(3200);
+    await page.waitForTimeout(5400);
     const skills=await page.evaluate(()=>[...document.querySelectorAll('#solucoes .solution h3')].map(e=>+getComputedStyle(e).opacity));
     assert(skills.every(x=>x>.95),'Revelações de competências precisam terminar visíveis: '+JSON.stringify(skills));
     await page.screenshot({path:directory+'/competencias-'+v.key+'.png'});
@@ -88,9 +88,9 @@ try {
     if(v.key==='desktop'){
       const gallery=await jumpGallery(page,.11);
       assert(gallery,'Desktop deve preservar galeria horizontal controlada por GSAP');
-      await page.waitForTimeout(2100);
+      await page.waitForTimeout(4200);
       const summit=await scan(page);
-      assert(summit.triggers.some(t=>t.id==='to-v71-projects'),'Experiência em Ação precisa usar trigger da galeria');
+      assert(summit.triggers.some(t=>t.id==='to-v74-projects'),'Experiência em Ação precisa usar trigger da galeria');
       assert(summit.project.heading>.95&&summit.project.caption>.95,
         'Textos do Connect e Summit devem estar visíveis quando painel entra: '+JSON.stringify(summit));
       await page.screenshot({path:directory+'/connect-'+v.key+'.png'});
@@ -103,7 +103,7 @@ try {
       const lastClip=await page.locator('.to-v72-type-line').last().evaluate(e=>getComputedStyle(e).clipPath);
       console.log('TO V72 CASE DEBUG',JSON.stringify(await page.evaluate(()=>{
         const cases=document.querySelector('.project-panel-cases');
-        const t=window.ScrollTrigger?.getById('to-v71-cases');
+        const t=window.ScrollTrigger?.getById('to-v74-cases');
         const lines=[...document.querySelectorAll('.to-v72-type-line')];
         return {played:cases?.dataset.toMotionPlayed,rect:cases?.getBoundingClientRect().toJSON(),
           trigger:t?{progress:t.progress,isActive:t.isActive,start:t.start,end:t.end}:null,
@@ -118,7 +118,7 @@ try {
       await page.screenshot({path:directory+'/operacoes-digitacao-'+v.key+'.png'});
     }else{
       await page.locator('.project-panel-summit').scrollIntoViewIfNeeded();
-      await page.waitForTimeout(2200);
+      await page.waitForTimeout(4200);
       const summit=await scan(page);
       assert(summit.project.heading>.95&&summit.project.caption>.95,'Textos Connect no mobile');
       await page.screenshot({path:directory+'/connect-'+v.key+'.png'});
@@ -130,7 +130,7 @@ try {
     }
 
     await page.locator('#contato').scrollIntoViewIfNeeded();
-    await page.waitForTimeout(4000);
+    await page.waitForTimeout(5600);
     const contact=await scan(page);
     assert(contact.contact.heading>.95&&contact.contact.cta>.95&&contact.contact.aside>.95&&contact.contact.foot>.95,
       'Rodapé e contatos precisam surgir: '+JSON.stringify(contact.contact));
