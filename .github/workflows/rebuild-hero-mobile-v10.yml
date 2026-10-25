@@ -1,0 +1,39 @@
+name: Recriar HERO mobile 9x16 sem emendas
+on:
+  push:
+    branches: ['fix/mobile-real-heroscroll-portrait-v10']
+    paths:
+      - scripts/rebuild-mobile-hero-v10.py
+      - .github/workflows/rebuild-hero-mobile-v10.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Instalar FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Verificar vídeo original
+        run: |
+          test -s site/assets/media/motion-hero.mp4
+          ffprobe -v error -show_entries stream=width,height,codec_name -of json site/assets/media/motion-hero.mp4
+      - name: Renderizar e validar HERO vertical
+        run: python3 scripts/rebuild-mobile-hero-v10.py
+      - name: Enviar novo master mobile para branch de revisão
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/assets/media/motion-hero-mobile.mp4
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(hero): atualizar 9x16 sem costuras e com grupos tipográficos íntegros"
+            git fetch origin fix/mobile-real-heroscroll-portrait-v10
+            git rebase origin/fix/mobile-real-heroscroll-portrait-v10
+            git push origin HEAD:fix/mobile-real-heroscroll-portrait-v10
+          fi
