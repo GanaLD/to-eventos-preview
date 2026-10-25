@@ -56,6 +56,21 @@ jobs:
             cp /tmp/to-eventos-motion-hero-original.mp4 site/assets/media/motion-hero.mp4
           fi
           test "$(wc -c < site/assets/media/motion-hero.mp4)" -gt 100000
+      - name: Preparar Python para o vídeo transparente
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Exportar papoulas animadas com canal alfa real
+        run: |
+          python -m pip install --quiet --disable-pip-version-check numpy opencv-python-headless
+          python scripts/build_papoulas_alpha.py \
+            site/assets/media/animacao-papoulas-editorial-v72.mp4 \
+            site/assets/media/animacao-papoulas-alpha-v75.webm \
+            site/assets/media/papoulas-alpha-poster-v75.png
+          test -s site/assets/media/animacao-papoulas-alpha-v75.webm
+          test -s site/assets/media/papoulas-alpha-poster-v75.png
+          node tests/v72-no-flicker.mjs
+          node tests/florais-v6-check.mjs
       - name: Preparar GitHub Pages
         uses: actions/configure-pages@v5
         with:
