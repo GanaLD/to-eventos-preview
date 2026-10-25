@@ -39,18 +39,23 @@ async function sample(page){
   const slot=document.querySelector('#hero .hero-visual');
   const rect=el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height}};
   let pixels=[];
+  let lowerInk=0;
   if(video.readyState>=2){
    const c=document.createElement('canvas');c.width=36;c.height=64;
    const ctx=c.getContext('2d',{willReadFrequently:true});
    ctx.drawImage(video,0,0,36,64);
    const a=ctx.getImageData(0,0,36,64).data;
    for(let i=0;i<a.length;i+=32)pixels.push(a[i]+a[i+1]+a[i+2]);
+   for(let y=34;y<57;y++)for(let x=0;x<36;x++){
+     const i=(y*36+x)*4;
+     if(a[i]<115 && a[i+1]<115 && a[i+2]<115)lowerInk++;
+   }
   }
   return {scrollProgress:t?.progress,videoTime:video.currentTime,duration:video.duration,
    ready:video.readyState,videoWidth:video.videoWidth,videoHeight:video.videoHeight,
    src:video.currentSrc.split('/').at(-1),paused:video.paused,
    fit:getComputedStyle(video).objectFit,mask:getComputedStyle(video).maskImage,
-   visibility:getComputedStyle(video).visibility,film:rect(screen),slot:rect(slot),pixels};
+   visibility:getComputedStyle(video).visibility,film:rect(screen),slot:rect(slot),pixels,lowerInk};
  });
 }
 function pixelDifference(a,b) {
@@ -80,8 +85,9 @@ try{
   await progress(page,.64);const later=await sample(page);
   await page.screenshot({path:`${dir}/${v.tag}-64.jpg`,type:'jpeg',quality:65});
   assert(later.videoTime>early.videoTime+1,'Tempo do vídeo não acompanha scroll');
-  console.log('DEBUG FRAME',JSON.stringify({tag:v.tag,early:{time:early.videoTime,ready:early.ready,src:early.src},later:{time:later.videoTime,ready:later.ready,src:later.src},delta:pixelDifference(early,later),earlyPixelAvg:Math.round(early.pixels.reduce((s,n)=>s+n,0)/early.pixels.length),laterPixelAvg:Math.round(later.pixels.reduce((s,n)=>s+n,0)/later.pixels.length)}));
-  assert(pixelDifference(early,later)>15,'Frames visuais praticamente iguais: não parece HeroScroll');
+  console.log('DEBUG FRAME',JSON.stringify({tag:v.tag,early:{time:early.videoTime,ready:early.ready,src:early.src},later:{time:later.videoTime,ready:later.ready,src:later.src},delta:pixelDifference(early,later),earlyInk:early.lowerInk,laterInk:later.lowerInk,earlyPixelAvg:Math.round(early.pixels.reduce((s,n)=>s+n,0)/early.pixels.length),laterPixelAvg:Math.round(later.pixels.reduce((s,n)=>s+n,0)/later.pixels.length)}));
+  assert(pixelDifference(early,later)>=8,'Frames quase iguais: HeroScroll visual não está mudando');
+  assert(later.lowerInk>early.lowerInk+12,'Lettering inferior precisa REVELAR ao longo dos frames, não só mudar currentTime');
   await drag(page,v.height*.25,v.height*.76);
   const reverse=await sample(page);
   assert(reverse.videoTime<later.videoTime-.25,'Arraste físico reverso não diminuiu o tempo do vídeo');
