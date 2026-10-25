@@ -231,7 +231,7 @@
     inset:0;
     width:100%;
     height:100%;
-    background:#ff6108;
+    background:#f1570d;
     touch-action:pan-y;
     overflow:hidden;
   }
@@ -249,7 +249,7 @@
     transform:none;
     -webkit-mask-image:none;
     mask-image:none;
-    background:#ff6108;
+    background:#f1570d;
     will-change:contents;
   }
   /* Durante o movimento final, manter o mesmo vídeo scroll-linked.
@@ -264,4 +264,26 @@
     -webkit-mask-image:none;
     mask-image:none;
   }
+}
+
+/* V11 · a arte retrato que começa full-screen termina em um quadro RETRATO.
+   Preservar 9:16 também no último frame evita comprimir a marca
+   em uma estreita faixa central de um player 16:9. */
+@media(max-width:899px) and (orientation:portrait){
+ .hero-scroll-stage .hero-visual{
+    display:block;
+    width:min(44vw,190px,24dvh);
+    max-width:100%;
+    aspect-ratio:9 / 16;
+    height:auto;
+    flex-shrink:0;
+    background:#f1570d;
+ }
+ .hero-scroll-stage .hero-film-screen,
+ .hero-scroll-stage .hero-film-screen video{
+    background:#f1570d;
+ }
+}
+@media(max-width:899px) and (orientation:portrait) and (max-height:690px){
+ .hero-scroll-stage .hero-visual{width:min(40vw,150px,21dvh)}
 }
