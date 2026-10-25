@@ -41,5 +41,8 @@ jobs:
         if: always()
         with:
           name: qa-hero-mobile-real-v10
-          path: qa-hero-mobile-v10
+          path: |
+            qa-hero-mobile-v10/
+            site/assets/media/motion-hero.mp4
+            site/assets/media/motion-hero-mobile.mp4
           if-no-files-found: warn
