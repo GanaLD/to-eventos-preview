@@ -12,7 +12,7 @@ assert(html.includes('motion-v71.js')&&html.includes('motion-v71.css'),'Módulo 
 assert(!about.includes('<figcaption>'),'Vídeo floral sem legenda abaixo');
 assert(about.includes('about-floral-video')&&about.includes('papoulas-preview.webp'),'Papoulas originais e transparentes');
 assert(/#sobre\s+\.botanical-motion\s+\.about-floral-video/.test(css)&&css.includes('object-fit:contain'),'Vídeo floral inteiro e com respiro');
-assert((cases.match(/OPERAÇÕES CORPORATIVAS/g)||[]).length===1,'Identificação Operações Corporativas não pode repetir');
+assert((cases.match(/OPERAÇÕES INTERESTADUAIS/g)||[]).length===1,'Identificação Operações Interestaduais deve aparecer uma única vez');
 assert(!cases.includes('project-asset-note'),'Nota interna de produção não deve aparecer no site');
 assert(cases.includes('FEIRAS')||cases.includes('Feiras'),'Painel de feiras e métricas permanece');
 assert(projects.includes('connect-web.mp4')&&projects.includes('to-pdf-showcase'),'Connect e PDF preservados');
