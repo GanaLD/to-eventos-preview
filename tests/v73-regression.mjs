@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const load=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const html=load('site/index.html'),motion=load('site/motion-v71.js'),about=load('site/v7.js'),css=load('site/motion-v71.css');
+const flower=html.slice(html.indexOf('id="sobre"'),html.indexOf('id="solucoes"'));
+assert(flower.includes('animacao-papoulas-inteiras-v73.mp4'),'Novo vídeo deve usar bouquet inteiro sem pétalas cortadas');
+assert(flower.includes('papoulas-preview.webp'),'Arte original precisa ser fallback visual do vídeo');
+assert(!flower.includes('editorial-v72.mp4'),'Vídeo com feather e cortes não pode seguir publicado');
+assert(css.includes('to-v73-typed'),'Digitação suave deve ser aplicada aos títulos selecionados');
+assert(motion.includes('to-v73-type-solutions'),'Competências precisam ter títulos digitados, não apenas fades');
+assert(motion.includes('to-v73-type-gray'),'Digitação do card cinza continua obrigatória');
+assert(!motion.includes('timeline.restart()'),'Ao retornar via scroll nenhuma timeline pode reiniciar');
+assert(motion.includes('to-v73-reveal-about'),'Motion lento da seção Sobre deve ser controlado no mesmo módulo');
+assert(motion.includes('duration:2.0')||motion.includes('duration:2.1')||motion.includes('duration:2.2'),'Sobre precisa de movimento visivelmente mais lento que V7.2');
+assert(!about.includes("gsap.set(copyParts,{y:32,autoAlpha:0})"),'Não podem existir dois controladores simultâneos para os mesmos textos');
+assert(motion.includes('aria-label'),'Texto completo acessível independentemente do typewriter');
+assert(motion.includes('prefers-reduced-motion'),'Mobile e acessibilidade precisam ter texto sem ocultação permanente');
+console.log('V7.3 regressões de papoulas completas, digitação e entrada de textos OK');
