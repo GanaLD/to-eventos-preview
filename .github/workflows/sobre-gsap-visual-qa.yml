@@ -1,0 +1,35 @@
+name: QA visual — Sobre GSAP
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/sobre/**'
+      - 'tests/sobre-motion-*'
+      - '.github/workflows/sobre-gsap-visual-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sobre-visual:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar navegador de QA
+        run: npm install --no-save --no-package-lock playwright@1.56.1
+      - name: Verificar HTML, JS, fluxo GSAP e alinhamento visual
+        run: |
+          node tests/sobre-motion-smoke.mjs
+          node --check site/sobre/sobre-motion.js
+          node tests/v7-range-server.mjs >/tmp/site-sobre.log 2>&1 &
+          for i in $(seq 1 25); do curl -fsS http://127.0.0.1:8765/sobre/ -o /dev/null && break || sleep 1; done
+          node tests/sobre-motion-visual.mjs
+      - name: Arquivar capturas e medidas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sobre-gsap-evidencias
+          path: qa-sobre-cinematico/
+          if-no-files-found: warn
