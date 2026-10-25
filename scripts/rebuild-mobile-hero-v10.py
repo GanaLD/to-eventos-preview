@@ -32,7 +32,7 @@ def region(x1,y1,x2,y2):
 # Bordas autorais (fileiras/faixas) estão FORA das caixas.
 # Recortes estreitos evitam trazer letras de outro grupo ou barras laterais.
 left =region(.066,.255,.493,.825)
-right=region(.515,.330,.882,.812)
+right=region(.512,.330,.931,.812)
 def crop(r):return f'crop={r[0]}:{r[1]}:{r[2]}:{r[3]}'
 # Key removendo SOMENTE o laranja do backing, preservando os pixels
 # e a animação das letras brancas/pretas do vídeo original.
