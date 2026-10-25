@@ -31,16 +31,27 @@ const scan=async page=>page.evaluate(()=>{
 });
 
 async function jumpGallery(page,progress){
-  const result=await page.evaluate(progress=>{
-    const t=window.ScrollTrigger?.getAll().find(t=>t.trigger?.id==='projetos' && t.animation);
-    if(!t)return null;
-    window.scrollTo({top:t.start+(t.end-t.start)*progress,behavior:'instant'});
-    return {start:t.start,end:t.end,progress};
+  const gallery=await page.evaluate(progress=>{
+    const t=window.ScrollTrigger?.getAll().find(t=>t.trigger?.id==='projetos'&&t.animation);
+    return t?{start:t.start,end:t.end,progress,target:t.start+(t.end-t.start)*progress}:null;
   },progress);
-  await page.waitForTimeout(2300);
-  return result;
+  if(!gallery)return null;
+  // Pass through the GSAP pin boundary as a person scrolling would:
+  // native page.scrollTo straight across multiple pins may trigger layout refresh.
+  await page.evaluate(async target=>{
+    const from=scrollY;
+    const steps=Math.max(8,Math.min(40,Math.ceil(Math.abs(target-from)/170)));
+    for(let i=1;i<=steps;i++){
+      window.scrollTo({top:from+(target-from)*i/steps,behavior:'instant'});
+      await new Promise(resolve=>requestAnimationFrame(resolve));
+    }
+  },gallery.target);
+  await page.waitForTimeout(2600);
+  const actual=await page.evaluate(()=>scrollY);
+  console.log('QA GALLERY SCROLL',JSON.stringify({...gallery,actual}));
+  assert(Math.abs(actual-gallery.target)<innerHeight,'Scroll horizontal precisa manter posição: '+JSON.stringify({...gallery,actual}));
+  return gallery;
 }
-
 try {
   for(const v of [{w:1440,h:900,key:'desktop'},{w:390,h:844,key:'mobile'}]){
     const page=await browser.newPage({viewport:{width:v.w,height:v.h},deviceScaleFactor:1});
