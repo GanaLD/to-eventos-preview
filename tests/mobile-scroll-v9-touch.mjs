@@ -103,9 +103,26 @@ try {
     assert.equal(gallery.direction,'row','Os três painéis devem ficar lado a lado');
     await page.evaluate(y=>window.scrollTo({top:y+20,behavior:'instant'}),gallery.start);
     await page.waitForTimeout(1000);
+    const debugScroll=()=>page.evaluate(()=>{
+      const trigger=window.ScrollTrigger?.getAll().find(t=>t.trigger?.id==='projetos');
+      const at=document.elementFromPoint(innerWidth*.5,innerHeight*.75);
+      const pin=document.querySelector('.projects-pin');
+      const panel=document.querySelector('.project-panel-inner');
+      return {y:scrollY,max:document.scrollingElement.scrollHeight-innerHeight,p:trigger?.progress,
+        active:trigger?.isActive,start:trigger?.start,end:trigger?.end,
+        pinOverflow:getComputedStyle(pin).overflowY,
+        pinOverscroll:getComputedStyle(pin).overscrollBehaviorY,
+        panelOverflow:getComputedStyle(panel).overflowY,
+        panelOverscroll:getComputedStyle(panel).overscrollBehaviorY,
+        panelScroll:panel.scrollTop,panelScrollMax:panel.scrollHeight-panel.clientHeight,
+        hit:at?.tagName+'.'+at?.className};
+    });
+    const debugBefore=await debugScroll();
     const x0=await page.locator('#projects-track').evaluate(el=>new DOMMatrix(getComputedStyle(el).transform).m41);
     await touchDrag(page,view.width/2,view.height*.75,view.height*.23);
     const x1=await page.locator('#projects-track').evaluate(el=>new DOMMatrix(getComputedStyle(el).transform).m41);
+    const debugAfter=await debugScroll();
+    console.log('DEBUG TOUCH PIN',JSON.stringify({view,debugBefore,debugAfter,x0,x1}));
     assert(x1<x0-20,'Gesto vertical NÃO moveu projetos na horizontal: '+JSON.stringify({x0,x1,view}));
     await page.screenshot({path:`${dir}/${view.tag}-04-projetos-touch.png`});
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
