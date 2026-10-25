@@ -37,6 +37,7 @@ try {
   assert(initial.source.includes('motion-hero-mobile.mp4'),'HERO mobile carrega MP4 16:9, não 9:16: '+JSON.stringify(initial));
   assert(Math.abs(initial.mediaW/initial.mediaH-9/16)<.02,'Mídia real não é retrato 9:16');
   assert.equal(initial.fit,'contain','O lettering original não pode ser cortado nas laterais');
+  // V11: arquivo reexportado com matriz SMPTE170M; comparar MP4 x CSS.
   // Exigir correspondência cromática real entre MP4 decodificado e CSS:
   // sem uma faixa visível onde o vídeo 9:16 termina.
   const colors=await page.evaluate(()=>{
