@@ -22,7 +22,6 @@
   if(about&&botanicalMedia&&copyParts.length&&!reduce&&gsap&&ST){
     gsap.registerPlugin(ST);
     gsap.set(copyParts,{y:32,autoAlpha:0});
-    gsap.set(botanicalMedia,{y:0,autoAlpha:0});
     const enter=()=>{
       if(entered)return;
       entered=true;
@@ -30,7 +29,6 @@
       reveal.to(copyParts,{y:0,autoAlpha:1,
         duration:(index,el)=>el.id==='sobre-heading'?2.1:1.28,
         stagger:.21},0);
-      reveal.to(botanicalMedia,{y:0,autoAlpha:1,duration:1.6},.25);
     };
     ST.create({
       id:'to-v7-sobre-intro',trigger:about,
