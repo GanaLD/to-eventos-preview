@@ -2,6 +2,7 @@
    Não altera a passagem papoulas → competências nem o trilho horizontal dos projetos. */
 (() => {
   const stage = document.querySelector('.hero-scroll-stage');
+  const flow = stage?.parentElement?.classList.contains('hero-scroll-flow') ? stage.parentElement : stage;
   const hero = document.getElementById('hero');
   const film = hero?.querySelector('.hero-film-screen');
   const video = hero?.querySelector('[data-role="hero-film"]');
@@ -27,6 +28,7 @@
 
   gsap.registerPlugin(ScrollTrigger);
   stage.classList.add('is-motion-hero');
+  flow?.classList.add('is-motion-flow');
   const videoPhaseEnd = 0.7;
   const revealStart = 85;
   let duration = 10;
@@ -146,10 +148,12 @@
 
     const trigger = ScrollTrigger.create({
       id: 'to-hero-mobile-film-and-copy',
-      trigger: stage, start: 'top top',
+      // Sticky nativo mantém o frame em viewport; ScrollTrigger comanda apenas os quadros.
+      // O wrapper reserva TODA a rolagem, impedindo Sobre/Competências de sobrepor o vídeo.
+      trigger: flow, start: 'top top',
       end: () => '+=' + Math.round(innerHeight * 2.9),
-      scrub: .3, pin: true, pinSpacing: true,
-      invalidateOnRefresh: true, anticipatePin: 1, refreshPriority: 8,
+      scrub: .3, pin: false,
+      invalidateOnRefresh: true, refreshPriority: 8,
       onUpdate: self => {
         timeline.progress(self.progress);
         stage.classList.toggle('is-hero-framed', self.progress >= .84);
