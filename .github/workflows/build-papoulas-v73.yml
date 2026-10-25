@@ -1,0 +1,42 @@
+name: Criar vídeo papoulas completas V7.3
+on:
+  push:
+    branches: [fix/to-v73-floral-type-motion]
+    paths: ['.github/workflows/build-papoulas-v73.yml']
+permissions:
+  contents: write
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/to-v73-floral-type-motion
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --disable-pip-version-check pillow numpy
+      - name: Renderizar originais completos sem cortes
+        run: |
+          command -v ffmpeg
+          mkdir -p site/assets/media qa-artifacts/v73
+          python scripts/build_floral_v73.py
+          test $(stat -c%s site/assets/media/animacao-papoulas-inteiras-v73.mp4) -gt 100000
+          ffprobe -v error -show_entries stream=width,height,codec_name -show_entries format=duration -of json site/assets/media/animacao-papoulas-inteiras-v73.mp4
+          ffmpeg -hide_banner -loglevel error -ss 6.3 -i site/assets/media/animacao-papoulas-inteiras-v73.mp4 -frames:v 1 -y qa-artifacts/v73/papoulas-completas-final.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: papoulas-v73-preview
+          path: qa-artifacts/v73
+          retention-days: 30
+      - name: Arquivar MP4 definitivo na branch de revisão
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/assets/media/animacao-papoulas-inteiras-v73.mp4
+          git commit -m 'assets(v7.3): papoulas completas animadas sem recortes' || exit 0
+          git fetch origin fix/to-v73-floral-type-motion
+          git rebase origin/fix/to-v73-floral-type-motion
+          git push origin HEAD:fix/to-v73-floral-type-motion
