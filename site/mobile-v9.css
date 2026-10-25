@@ -196,3 +196,27 @@
   .hero-scroll-stage .hero-copy,.hero-scroll-stage .hero-copy>*{opacity:1!important;transform:none!important}
   .hero-scroll-stage .hero-visual video{pointer-events:auto}
 }
+
+/* V9.1 — CORREÇÃO TOUCH:
+   Nunca capturar o gesto vertical em um scroll interno do card fixado.
+   A rolagem precisa chegar ao documento para alimentar o ScrollTrigger
+   que movimenta o trilho de projetos horizontalmente. */
+@media(max-width:899px) and (prefers-reduced-motion:no-preference){
+  .is-gsap-active #projetos .projects-pin{
+    overscroll-behavior:auto;
+    touch-action:pan-y;
+  }
+  .is-gsap-active #projetos .project-panel-inner{
+    overflow-y:visible;
+    overscroll-behavior-y:auto;
+    touch-action:pan-y;
+  }
+}
+/* Em telas baixas, permitir ler todo o card, mas sem bloquear
+   o scroll chaining no início/fim do conteúdo. */
+@media(max-width:899px) and (max-height:700px) and (prefers-reduced-motion:no-preference){
+  .is-gsap-active #projetos .project-panel-inner{
+    overflow-y:auto;
+    overscroll-behavior-y:auto;
+  }
+}
