@@ -65,6 +65,102 @@ function calculateNineSlice(sw, sh, dw, dh) {
 const stage = document.querySelector('.hero-scroll-stage');
 const hero = document.getElementById('hero');
 if (!stage || !hero) return;
+/* FIX MOBILE V15: native video player is the VISIBLE frame of the mobile overlay.
+   Avoid canvas drawImage, which was only checking decoder and did not reliably
+   show the artwork on real devices. Desktop path below is unchanged. */
+function startMobileFloral() {
+  if (document.getElementById('to-floral-mobile-v15')) return;
+  const floralReverseEnd = 0.42;
+  const clamp = p => Math.max(0, Math.min(1, p));
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const layer = document.createElement('div');
+  layer.id = 'to-floral-mobile-v15';
+  layer.setAttribute('aria-hidden', 'true');
+  const video = document.createElement('video');
+  video.id = 'to-floral-mobile-v15-video';
+  video.src = window.__TO_PREVIEW_MEDIA__?.mobileMp4 || 'assets/media/floral-mobile-v14.mp4';
+  video.autoplay = !reduced; video.muted = true; video.defaultMuted = true;
+  video.loop = false; video.playsInline = true; video.preload = 'auto';
+  video.setAttribute('muted', ''); video.setAttribute('playsinline', '');
+  video.disablePictureInPicture = true;
+  const poster = document.createElement('img');
+  poster.id = 'to-floral-mobile-v15-poster';
+  poster.src = window.__TO_PREVIEW_MEDIA__?.mobilePoster || 'assets/media/floral-mobile-v14.webp';
+  poster.alt = ''; poster.draggable = false;
+  poster.style.display = 'none';
+  layer.append(video, poster);
+  document.body.appendChild(layer);
+  let introDone = false, scrollStarted = false;
+  let wantedTime = null, raf = 0;
+  const progress = () => {
+    const st = window.ScrollTrigger;
+    const trigger = st?.getById('to-hero-mobile-film-and-copy');
+    if (trigger) return clamp(trigger.progress);
+    return clamp(-stage.getBoundingClientRect().top / Math.max(1, innerHeight*1.9));
+  };
+  const scheduleSeek = () => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      if (wantedTime === null || video.readyState < 1 || video.seeking) return;
+      if (Math.abs(video.currentTime - wantedTime) > 1/30) {
+        try { video.currentTime = wantedTime; } catch { /* decoding pending */ }
+      }
+    });
+  };
+  const update = () => {
+    const p = progress();
+    const reverse = clamp(p / floralReverseEnd);
+    layer.style.opacity = String(1 - reverse);
+    if (reduced) { video.style.display = 'none'; poster.style.display = ''; return; }
+    if (!scrollStarted && p < .001) return; // play full intro at top, then freeze
+    scrollStarted = true;
+    poster.style.display = 'none';
+    video.style.display = '';
+    video.pause();
+    const duration = video.duration;
+    if (Number.isFinite(duration) && duration > 0) {
+      wantedTime = Math.max(0, duration - 1/24) * (1 - reverse);
+      scheduleSeek();
+    }
+  };
+  let scrollRaf = 0;
+  const onScroll = () => {
+    if (scrollRaf) return;
+    scrollRaf = requestAnimationFrame(() => {scrollRaf = 0; update();});
+  };
+  video.addEventListener('loadedmetadata', () => {
+    if (reduced) { update(); return; }
+    if (progress() > .001) { update(); return; }
+    video.play().catch(() => { poster.style.display = ''; video.style.display='none';});
+  });
+  video.addEventListener('ended', () => {
+    introDone = true;
+    video.pause();
+    if (!scrollStarted) { poster.style.display = ''; video.style.display = 'none'; }
+    onScroll();
+  });
+  video.addEventListener('seeked', scheduleSeek);
+  video.addEventListener('error', () => {poster.style.display = '';video.style.display = 'none';});
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) video.pause();
+    else if (!scrollStarted && !introDone && !reduced) video.play().catch(() => {});
+  });
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', onScroll, {passive:true});
+  window.addEventListener('pagehide', () => {
+    video.pause(); window.removeEventListener('scroll', onScroll);
+    window.removeEventListener('resize', onScroll);
+    if (raf) cancelAnimationFrame(raf);
+    if (scrollRaf) cancelAnimationFrame(scrollRaf);
+  }, {once:true});
+  video.load();
+  onScroll();
+}
+if (window.matchMedia('(max-width: 899px) and (orientation: portrait)').matches) {
+  startMobileFloral();
+  return; // desktop continua no canvas original
+}
 if (document.getElementById('to-floral-intro-v10')) return;
 const canvas = document.createElement('canvas');
 canvas.id='to-floral-intro-v10';
