@@ -92,6 +92,9 @@ try{
   await page.screenshot({path:`${dir}/${v.tag}-22.jpg`,type:'jpeg',quality:65});
   await progress(page,.64);const later=await sample(page);
   assert(later.heroVisibleAtCenter,'HeroScroll perdeu o pin antes do encerramento (64%)');
+  const aboutTop=await page.locator('#sobre').evaluate(el=>el.getBoundingClientRect().top);
+  assert(aboutTop>=v.height-6,'A seção SOBRE entrou na tela ANTES do encerramento do HeroScroll: '+aboutTop);
+
   console.log('FRAME LATER POSITION',JSON.stringify({tag:v.tag,scrollY:later.scrollY,stage:later.stageRect,film:later.film,hit:later.hit,trigger:[later.pinStart,later.pinEnd,later.pinActive]}));
   await page.screenshot({path:`${dir}/${v.tag}-64.jpg`,type:'jpeg',quality:65});
   assert(later.videoTime>early.videoTime+1,'Tempo do vídeo não acompanha scroll');
