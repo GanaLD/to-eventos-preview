@@ -8,15 +8,16 @@ const base = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = file => readFileSync(path.join(base, file), 'utf8');
 const markup = () => read('site/index.html');
 
-test('menu possui apenas HOME e PRODUCT, nesta ordem', () => {
+test('menu inclui HOME, SOBRE e mantém PRODUCT desativado, nesta ordem', () => {
   const labels = [...markup().matchAll(/<(?:a|button)\b[^>]*data-to-menu-item="([^"]+)"/g)].map(m => m[1]);
-  assert.deepEqual(labels, ['HOME', 'PRODUCT']);
+  assert.deepEqual(labels, ['HOME', 'SOBRE', 'PRODUCT']);
 });
 test('HOME aponta para a própria página, inclusive no GitHub Pages em subpasta', () => {
   assert.match(markup(), /data-to-menu-item="HOME"[^>]*href="\.\/#hero"/);
 });
-test('PRODUCT não possui ação e está nativamente desabilitado', () => {
+test('SOBRE tem rota navegável e PRODUCT não possui ação e está nativamente desabilitado', () => {
   const html = markup();
+  assert.match(html, /data-to-menu-item="SOBRE"[^>]*href="\.\/sobre\/"/);
   assert.match(html, /<button[^>]*data-to-menu-item="PRODUCT"[^>]*disabled/);
   assert.doesNotMatch(html, /data-to-menu-item="PRODUCT"[^>]*(?:href=|onclick=)/);
 });
@@ -55,10 +56,10 @@ test('regressão: CSS não acumula translateX com xPercent controlado pelo GSAP'
 test('menu usa cache bust após correção de animação', () => {
   const html = markup();
   assert.match(html, /staggered-menu\.css\?v=20261025c/);
-  assert.match(html, /staggered-menu\.js\?v=20261025b/);
+  assert.match(html, /staggered-menu\.js\?v=20261025d/);
 });
 
-test('opções HOME e PRODUCT sem numeração visual ou semântica', () => {
+test('opções HOME, SOBRE e PRODUCT sem numeração visual ou semântica', () => {
   const html = markup();
   assert.match(html, /<ul class="to-sm-list">/);
   assert.doesNotMatch(html, /<ol class="to-sm-list">/);

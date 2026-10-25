@@ -10,6 +10,7 @@
   const layers = Array.from(root.querySelectorAll('.to-sm-layer'));
   const labels = Array.from(root.querySelectorAll('.to-sm-item-label'));
   const home = root.querySelector('[data-to-menu-item="HOME"]');
+  const menuLinks = Array.from(root.querySelectorAll("a.to-sm-item[href]"));
   const toggleLabel = root.querySelector('.to-sm-toggle-label');
   const icon = root.querySelector('.to-sm-icon');
   if (!toggle || !panel || !scrim || layers.length !== 2 || !home || !icon) return;
@@ -85,22 +86,19 @@
 
   toggle.addEventListener('click', () => setOpen(!open));
   scrim.addEventListener('click', () => setOpen(false, true));
-  home.addEventListener('click', () => setOpen(false));
+  menuLinks.forEach(link => link.addEventListener('click', () => setOpen(false)));
   document.addEventListener('keydown', event => {
     if (!open) return;
     if (event.key === 'Escape') {
       event.preventDefault();
       setOpen(false, true);
     } else if (event.key === 'Tab') {
-      // Enquanto o painel está aberto, o teclado circula pelos dois controles ativos.
-      if (event.shiftKey && document.activeElement === home) {
-        event.preventDefault(); focusToggle();
-      } else if (!event.shiftKey && document.activeElement === toggle) {
-        event.preventDefault(); focusHome();
-      } else if (!event.shiftKey && document.activeElement === home) {
-        event.preventDefault(); focusToggle();
-      } else if (event.shiftKey && document.activeElement === toggle) {
-        event.preventDefault(); focusHome();
+      // Preserva a navegação nativa entre os links e fecha o ciclo nos extremos.
+      const focusables = [...menuLinks, toggle];
+      if (event.shiftKey && document.activeElement === focusables[0]) {
+        event.preventDefault(); focusables[focusables.length - 1].focus({ preventScroll: true });
+      } else if (!event.shiftKey && document.activeElement === focusables[focusables.length - 1]) {
+        event.preventDefault(); focusables[0].focus({ preventScroll: true });
       }
     }
   });
