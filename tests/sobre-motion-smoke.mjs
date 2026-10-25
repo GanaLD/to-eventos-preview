@@ -1,55 +1,58 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-const h=readFileSync(new URL('../site/sobre/index.html',import.meta.url),'utf8');
+
+const html=readFileSync(new URL('../site/sobre/index.html',import.meta.url),'utf8');
 const css=readFileSync(new URL('../site/sobre/sobre.css',import.meta.url),'utf8');
 const js=readFileSync(new URL('../site/sobre/sobre-motion.js',import.meta.url),'utf8');
 
-test('introdução lateral começa depois do Hero, não altera a Home',()=>{
-  assert.match(h,/class="sobre-entrance"[^>]*data-sobre-slide-right|class="sobre-section sobre-light sobre-entrance" data-sobre-slide-right/);
-  assert.ok(h.indexOf('class="sobre-hero"')<h.indexOf('data-sobre-slide-right'));
-  assert.match(js,/xPercent:\s*100/);
-  assert.match(js,/start:\s*'top bottom'/);
-  assert.match(js,/end:\s*'top top'/);
-});
-test('serviços revelados em dois pulsos verticais com pin e scrub',()=>{
-  assert.match(h,/data-sobre-rise-heading/);
-  assert.match(h,/data-sobre-rise-details/);
-  assert.match(js,/gsap\.set\(\[heading,\s*details\]/);
-  assert.match(js,/rise\.to\(heading,[\s\S]*?\.to\(details,/);
+test('Hero e Sobre compartilham um único palco; não entram lateralmente no fluxo normal',()=>{
+  const stage=html.indexOf('data-sobre-intro');
+  const pin=html.indexOf('data-sobre-intro-pin');
+  const hero=html.indexOf('class="sobre-hero"');
+  const about=html.indexOf('data-sobre-slide-right');
+  const services=html.indexOf('data-sobre-services');
+  assert.ok(stage>0&&stage<pin&&pin<hero&&hero<about&&about<services);
+  assert.match(css,/\.sobre-page\.sobre-intro-active \.sobre-hero,\s*\.sobre-page\.sobre-intro-active \.sobre-entrance\s*\{[^}]*position:absolute;[^}]*inset:0/s);
+  assert.match(js,/trigger:\s*pin/);
   assert.match(js,/pin:\s*true/);
-  assert.match(js,/scrub:\s*1\.25/);
+  assert.doesNotMatch(js,/trigger:\s*entrance/);
 });
-test('quatro painéis laterais, sem índices ou setas, até o fim antes da FAQ',()=>{
-  const start=h.indexOf('data-sobre-horizontal');
-  const end=h.indexOf('<!-- Aqui termina o pin horizontal');
-  assert.ok(start>0&&end>start);
-  const content=h.slice(start,end);
-  assert.equal((content.match(/sobre-horizontal-panel"/g)||[]).length,4);
-  for(const heading of ['id="publicos"','id="formatos"','id="metodo"','id="experiencia"'])assert.ok(content.includes(heading));
-  assert.ok(h.indexOf('id="duvidas"')>end);
-  assert.ok(h.indexOf('id="contato-sobre"')>end);
-  assert.ok(h.indexOf('class="sobre-footer"')>end);
-  assert.doesNotMatch(h,/[↗↖↘↙→←➜➝➡➤⇢⇨]/u);
-  assert.doesNotMatch(h,/class="sobre-index"|class="sobre-side"/);
+test('Sobre tem duas colunas com respiro e fallback estático acessível',()=>{
+  assert.match(html,/class="sobre-about-grid"/);
+  assert.match(html,/class="sobre-about-heading"/);
+  assert.match(html,/class="sobre-about-body"/);
+  assert.match(css,/\.sobre-page\.sobre-intro-active \.sobre-about-grid\s*\{[^}]*display:grid/s);
+  assert.match(js,/layoutFits\(hero\) && layoutFits\(entrance\)/);
+  assert.match(js,/clearProps:\s*'transform'/);
 });
-test('distância horizontal medida dinamicamente e pin termina antes do rodapé',()=>{
-  assert.match(js,/track\.scrollWidth\s*-\s*horizontal\.clientWidth/);
-  assert.match(js,/trigger:\s*horizontal/);
-  assert.match(js,/pin:\s*true/);
-  assert.doesNotMatch(js,/trigger:\s*['"]?\.?sobre-(?:faq|contact|footer)/);
-  assert.match(css,/\.sobre-motion-ready \.sobre-horizontal-track\s*\{[\s\S]*?display:flex/);
+test('conceito e execução são revelados em duas entradas suaves com tempo limitado',()=>{
+  assert.match(html,/data-sobre-rise-heading/);
+  assert.match(html,/data-sobre-rise-details/);
+  assert.match(js,/reveal\.to\(heading,[\s\S]*?\.to\(details,/);
+  assert.match(js,/viewport\(\) \* 1\.3/);
+  assert.doesNotMatch(js,/viewport\(\) \* 2\.65/);
 });
-test('fallback estático para mobile, telas baixas e movimento reduzido',()=>{
-  assert.match(js,/min-width: 1180px/);
-  assert.match(js,/min-height: 780px/);
+test('painéis horizontais respeitam viewport e não criam rolagem vertical interna',()=>{
+  assert.equal((html.match(/sobre-horizontal-panel"/g)||[]).length,4);
+  assert.match(js,/panels\.every\(layoutFits\)/);
+  assert.match(js,/track\.scrollWidth - horizontal\.clientWidth/);
+  assert.match(css,/\.sobre-page\.sobre-horizontal-active \.sobre-horizontal-panel\s*\{[^}]*overflow:visible/s);
+  assert.doesNotMatch(css,/\.sobre-page\.sobre-horizontal-active \.sobre-horizontal-panel\s*\{[^}]*overflow-y:auto/s);
+});
+test('scroll natural depois do horizontal e fallback móvel/redução de movimento',()=>{
+  const end=html.indexOf('<!-- Aqui termina o pin horizontal');
+  assert.ok(end>0&&end<html.indexOf('id="duvidas"'));
+  assert.ok(end<html.indexOf('id="contato-sobre"')&&end<html.indexOf('class="sobre-footer"'));
+  assert.match(js,/min-width: 1220px/);
+  assert.match(js,/min-height: 850px/);
   assert.match(js,/prefers-reduced-motion: no-preference/);
-  assert.match(css,/@media \(min-width:1180px\) and \(min-height:780px\)/);
-  assert.match(h,/ScrollTrigger\.min\.js/);
-  assert.match(h,/sobre-motion\.js\?v=1/);
+  assert.doesNotMatch(js,/trigger:\s*(?:faq|footer|contact)/);
 });
-test('sem colisões: cada cena usa tamanhos limitados, conteúdo adaptável',()=>{
-  assert.match(css,/\.sobre-motion-ready \.sobre-service-list\s*\{\s*display:grid/);
-  assert.match(css,/\.sobre-motion-ready \.sobre-horizontal-panel\s*\{[\s\S]*?overflow-y:auto/);
-  assert.match(css,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+test('sem numerações decorativas ou setas e sem alterações da Home',()=>{
+  assert.doesNotMatch(html,/[↗↖↘↙→←➜➝➡➤⇢⇨]/u);
+  assert.doesNotMatch(html,/class="sobre-side"|class="sobre-index"|<article><span>0[1-9]/);
+  assert.equal((html.match(/<h1\b/g)||[]).length,1);
+  assert.match(html,/sobre\.css\?v=4/);
+  assert.match(html,/sobre-motion\.js\?v=2/);
 });

@@ -21,11 +21,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="../staggered-menu.css?v=20261025c">
-  <link rel="stylesheet" href="sobre.css?v=3">
+  <link rel="stylesheet" href="sobre.css?v=4">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="../staggered-menu.js?v=20261025d"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script defer src="sobre-motion.js?v=1"></script>
+  <script defer src="sobre-motion.js?v=2"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -62,7 +62,10 @@
     </button>
   </div>
   <main id="conteudo">
-    <section class="sobre-hero" aria-labelledby="page-title">
+    <!-- Hero e Sobre compartilham o mesmo palco para a transição lateral em sobreposição real. -->
+    <div class="sobre-intro-stage" data-sobre-intro>
+      <div class="sobre-intro-pin" data-sobre-intro-pin>
+        <section class="sobre-hero" aria-labelledby="page-title">
       <div class="shell">
         <nav class="sobre-breadcrumb" aria-label="Caminho de navegação"><a href="../">HOME</a><span aria-hidden="true">/</span><span aria-current="page">SOBRE</span></nav>
         <div class="sobre-hero-grid">
@@ -84,15 +87,24 @@
     <section class="sobre-section sobre-light sobre-entrance" data-sobre-slide-right aria-labelledby="quem-somos">
       <div class="shell sobre-split">
         <div class="sobre-content">
-          <p class="sobre-kicker">PRODUÇÃO EXECUTIVA DE EVENTOS EM CURITIBA</p>
+          <div class="sobre-about-grid">
+            <div class="sobre-about-heading">
+              <p class="sobre-kicker">PRODUÇÃO EXECUTIVA DE EVENTOS EM CURITIBA</p>
           <h2 id="quem-somos">O invisível <em>também comunica.</em></h2>
           <p class="sobre-intro">Mais de uma década de experiência em negócios, planejamento e produção de eventos corporativos.</p>
+            </div>
+            <div class="sobre-about-body">
           <p>Thais Ortiz é produtora executiva com trajetória em gestão de projetos, relacionamento comercial, organização de grandes operações e experiências de marca. Sua atuação reúne visão estratégica e conhecimento operacional em convenções, feiras, congressos, encontros científicos e eventos empresariais.</p>
           <p>Do diagnóstico ao acompanhamento no local, cada etapa é conduzida com atenção à experiência dos participantes, aos recursos envolvidos e aos objetivos de quem contrata.</p>
           <div class="sobre-stats"><div><strong>+10 anos</strong><span>TRAJETÓRIA PROFISSIONAL</span></div><div><strong>PR · SC · RS · MS</strong><span>EXPERIÊNCIA EM OPERAÇÕES INTERESTADUAIS</span></div></div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
+
+    </div>
+    </div>
 
     <section class="sobre-section sobre-dark sobre-services-scene" data-sobre-services aria-labelledby="servicos">
       <div class="shell sobre-split">

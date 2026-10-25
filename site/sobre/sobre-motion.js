@@ -1,80 +1,106 @@
-/* TO Eventos — Sobre: introdução lateral, duas elevações e narrativa horizontal.
- * ScrollTrigger controla o tempo do movimento; nenhum wheel preventDefault.
- * Toda seção permanece no fluxo HTML se GSAP não carregar.
+/* TO Eventos — Sobre / Scroll cinematográfico alinhado.
+   Intro: Hero e Sobre são sobrepostos no mesmo contêiner fixado.
+   Serviços: duas elevações curtas.
+   Capítulos: só há pin lateral quando TODOS cabem inteiros na viewport.
+   FAQ, contato e rodapé permanecem em fluxo vertical normal.
  */
 (() => {
   'use strict';
-  const root = document.querySelector('.sobre-page');
+
+  const root = document.querySelector('body.sobre-page');
   const gsap = window.gsap;
   const ScrollTrigger = window.ScrollTrigger;
-  if (!root || !gsap || !ScrollTrigger || !gsap.matchMedia) return;
+  if (!root || !gsap || !ScrollTrigger || typeof gsap.matchMedia !== 'function') return;
 
-  const entrance = root.querySelector('[data-sobre-slide-right]');
-  const services = root.querySelector('[data-sobre-services]');
-  const heading = root.querySelector('[data-sobre-rise-heading]');
-  const details = root.querySelector('[data-sobre-rise-details]');
-  const horizontal = root.querySelector('[data-sobre-horizontal]');
-  const track = root.querySelector('[data-sobre-track]');
-  if (!entrance || !services || !heading || !details || !horizontal || !track) return;
-  if (track.querySelectorAll('.sobre-horizontal-panel').length !== 4) return;
+  const stage = document.querySelector('[data-sobre-intro]');
+  const pin = document.querySelector('[data-sobre-intro-pin]');
+  const hero = stage?.querySelector('.sobre-hero');
+  const entrance = stage?.querySelector('[data-sobre-slide-right]');
+  const services = document.querySelector('[data-sobre-services]');
+  const heading = services?.querySelector('[data-sobre-rise-heading]');
+  const details = services?.querySelector('[data-sobre-rise-details]');
+  const horizontal = document.querySelector('[data-sobre-horizontal]');
+  const track = horizontal?.querySelector('[data-sobre-track]');
+  const panels = Array.from(track?.querySelectorAll('.sobre-horizontal-panel') || []);
+  if (!stage || !pin || !hero || !entrance || !services ||
+      !heading || !details || !horizontal || !track || panels.length !== 4) return;
 
   gsap.registerPlugin(ScrollTrigger);
   const media = gsap.matchMedia();
+  const layoutFits = element => element.scrollHeight <= element.clientHeight + 4;
+  const viewport = () => window.innerHeight;
 
-  media.add('(min-width: 1180px) and (min-height: 780px) and (prefers-reduced-motion: no-preference)', () => {
-    document.documentElement.classList.add('sobre-motion-ready');
+  media.add('(min-width: 1220px) and (min-height: 850px) and (prefers-reduced-motion: no-preference)', () => {
+    // O estado inicial é aplicado no mesmo frame antes de fixar a cena.
+    gsap.set(entrance, { xPercent: 100 });
+    root.classList.add('sobre-intro-active');
+    if (layoutFits(hero) && layoutFits(entrance)) {
+      const intro = gsap.timeline({
+        scrollTrigger: {
+          trigger: pin,
+          start: 'top top',
+          end: () => '+=' + Math.round(viewport() * 1.1),
+          pin: true,
+          scrub: 1.05,
+          anticipatePin: 1,
+          invalidateOnRefresh: true
+        }
+      });
+      intro.to(entrance, { xPercent: 0, duration: 1, ease: 'none' })
+           .to({}, { duration: .26 });
+    } else {
+      root.classList.remove('sobre-intro-active');
+      gsap.set(entrance, { clearProps: 'transform' });
+    }
 
-    // Após o Hero: a página institucional completa desliza da direita.
-    gsap.fromTo(entrance, { xPercent: 100 }, {
-      xPercent: 0,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: entrance,
-        start: 'top bottom',
-        end: 'top top',
-        scrub: 1.2,
-        invalidateOnRefresh: true
-      }
-    });
+    // Duas elevações distintas, mas curtas; não expor uma tela vazia por várias voltas.
+    root.classList.add('sobre-service-active');
+    if (layoutFits(services)) {
+      gsap.set(heading, { autoAlpha: 0.25, y: 60 });
+      gsap.set(details, { autoAlpha: 0.25, y: 65 });
+      const reveal = gsap.timeline({
+        scrollTrigger: {
+          trigger: services,
+          start: 'top top',
+          end: () => '+=' + Math.round(viewport() * 1.3),
+          scrub: .95,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true
+        }
+      });
+      reveal.to(heading, { autoAlpha: 1, y: 0, duration: 1, ease: 'none' })
+            .to(details, { autoAlpha: 1, y: 0, duration: 1, ease: 'none' }, '>')
+            .to({}, { duration: .18 });
+    } else {
+      root.classList.remove('sobre-service-active');
+    }
 
-    // Cena seguinte: duas entradas de baixo para cima, no mesmo painel fixado.
-    gsap.set([heading, details], { autoAlpha: 0, y: () => Math.min(window.innerHeight * .58, 420) });
-    const rise = gsap.timeline({
-      scrollTrigger: {
-        trigger: services,
-        start: 'top top',
-        end: () => '+=' + Math.round(window.innerHeight * 2.65),
-        pin: true,
-        scrub: 1.25,
-        invalidateOnRefresh: true,
-        anticipatePin: 1
-      }
-    });
-    rise.to(heading, { autoAlpha: 1, y: 0, duration: 1, ease: 'none' })
-        .to({}, { duration: .35 })
-        .to(details, { autoAlpha: 1, y: 0, duration: 1, ease: 'none' })
-        .to({}, { duration: .45 });
+    // Preserva leitura: se houver corte por altura/largura, usa o fluxo vertical.
+    root.classList.add('sobre-horizontal-active');
+    if (panels.every(layoutFits)) {
+      const distance = () => Math.max(0, track.scrollWidth - horizontal.clientWidth);
+      gsap.to(track, {
+        x: () => -distance(),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: horizontal,
+          start: 'top top',
+          end: () => '+=' + Math.round(distance() * 1.05 + viewport() * .18),
+          pin: true,
+          scrub: 1.05,
+          anticipatePin: 1,
+          invalidateOnRefresh: true
+        }
+      });
+    } else {
+      root.classList.remove('sobre-horizontal-active');
+    }
 
-    // Continuação: a rolagem vertical percorre quatro painéis laterais.
-    // A distância é calculada a partir do conteúdo real, sem valores fixos.
-    const distance = () => Math.max(0, track.scrollWidth - horizontal.clientWidth);
-    gsap.to(track, {
-      x: () => -distance(),
-      ease: 'none',
-      scrollTrigger: {
-        trigger: horizontal,
-        start: 'top top',
-        end: () => '+=' + Math.round(distance() * 1.15 + window.innerHeight * .35),
-        pin: true,
-        scrub: 1.3,
-        invalidateOnRefresh: true,
-        anticipatePin: 1
-      }
-    });
-
-    // Não há pin nem ScrollTrigger na FAQ, no CTA ou no rodapé:
-    // após o último painel, o scroll nativo retoma o controle.
-    return () => document.documentElement.classList.remove('sobre-motion-ready');
+    return () => {
+      root.classList.remove('sobre-intro-active','sobre-service-active','sobre-horizontal-active');
+      gsap.set([entrance, heading, details, track], { clearProps: 'all' });
+    };
   });
 
   const refresh = () => ScrollTrigger.refresh();

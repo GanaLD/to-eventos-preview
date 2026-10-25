@@ -423,64 +423,154 @@ body.sobre-page{
 }
 
 
-/* SOBRE: direção cinematográfica GSAP / ScrollTrigger
- * Hero e final usam scroll nativo.
- * A animação depende de media query e só é ativada quando as cenas cabem na tela.
- * Sem GSAP, com redução de movimento ou em mobile, tudo permanece no fluxo normal.
- */
-.sobre-entrance{position:relative}
-.sobre-horizontal-stage,.sobre-horizontal-track{width:100%}
-.sobre-horizontal-panel{min-width:0}
 
-/* Respiro comum: conteúdo permanece legível mesmo sem animação. */
+/* SOBRE — Sobreposição verdadeira (Hero + Sobre), dois reveals verticais e
+   painéis laterais legíveis. Sem rolagem capturada por containers internos. */
+.sobre-intro-stage{position:relative;isolation:isolate}
+.sobre-intro-pin{position:relative}
+.sobre-entrance{position:relative}
 .sobre-services-heading{max-width:100%;margin:0 0 clamp(24px,3vw,46px)}
 .sobre-services-heading h2{margin-bottom:0}
 .sobre-services-heading .sobre-kicker{margin-bottom:20px}
-
-@media (min-width:1180px) and (min-height:780px) and (prefers-reduced-motion:no-preference){
-  .sobre-motion-ready .sobre-services-scene{
+.sobre-about-grid{display:block}
+.sobre-about-body{min-width:0}
+.sobre-horizontal-stage,.sobre-horizontal-track{width:100%}
+.sobre-horizontal-panel{min-width:0}
+@media(min-width:1220px) and (min-height:850px) and (prefers-reduced-motion:no-preference){
+  .sobre-page.sobre-intro-active .sobre-intro-stage{
     height:100dvh;
-    min-height:780px;
+    width:100%;
+  }
+  .sobre-page.sobre-intro-active .sobre-intro-pin{
+    position:relative;
+    height:100dvh;
+    min-height:0;
+    width:100%;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .sobre-page.sobre-intro-active .sobre-hero,
+  .sobre-page.sobre-intro-active .sobre-entrance{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100dvh;
+    min-height:0;
+    margin:0;
+    overflow:hidden;
+  }
+  .sobre-page.sobre-intro-active .sobre-hero{
+    z-index:1;
+    display:flex;
+    align-items:stretch;
+    padding:clamp(108px,11vh,148px) 0 28px;
+  }
+  .sobre-page.sobre-intro-active .sobre-hero>.shell{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    min-height:0;
+  }
+  .sobre-page.sobre-intro-active .sobre-breadcrumb{
+    margin-bottom:clamp(20px,3vh,32px);
+  }
+  .sobre-page.sobre-intro-active .sobre-hero-grid{
+    gap:clamp(28px,3vw,50px);
+  }
+  .sobre-page.sobre-intro-active .sobre-hero h1{
+    font-size:clamp(39px,3.55vw,61px);
+    line-height:1.2;
+  }
+  .sobre-page.sobre-intro-active .sobre-hero-image img{
+    height:clamp(260px,32vh,390px);
+  }
+  .sobre-page.sobre-intro-active .sobre-hero-footer{
+    margin-top:clamp(25px,3.2vh,42px);
+  }
+  .sobre-page.sobre-intro-active .sobre-entrance{
+    z-index:2;
     display:flex;
     align-items:center;
-    overflow:hidden;
-    padding:clamp(64px,7vh,90px) 0;
+    padding:clamp(60px,7vh,92px) 0;
+    box-shadow:-18px 0 44px rgba(0,0,0,.11);
   }
-  .sobre-motion-ready .sobre-services-scene .sobre-content{max-width:1220px}
-  .sobre-motion-ready .sobre-services-heading{margin-bottom:clamp(24px,4vh,46px)}
-  .sobre-motion-ready .sobre-services-heading h2{
-    font-size:clamp(48px,4.3vw,70px);
-    line-height:1.18;
+  .sobre-page.sobre-intro-active .sobre-entrance>.shell{
+    width:min(1340px,calc(100% - clamp(40px,8vw,128px)));
+  }
+  .sobre-page.sobre-intro-active .sobre-about-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,.98fr);
+    align-items:center;
+    gap:clamp(42px,5.5vw,90px);
+  }
+  .sobre-page.sobre-intro-active .sobre-about-grid>*{min-width:0}
+  .sobre-page.sobre-intro-active .sobre-about-heading h2{
+    font-size:clamp(42px,4.2vw,67px);
+    line-height:1.2;
+    max-width:14ch;
+    margin-bottom:clamp(20px,3vh,30px);
+  }
+  .sobre-page.sobre-intro-active .sobre-about-heading .sobre-intro{
+    font-size:clamp(19px,1.7vw,23px);
+    line-height:1.55;
     margin:0;
   }
-  .sobre-motion-ready .sobre-service-list{
+  .sobre-page.sobre-intro-active .sobre-about-body>p{
+    font:400 clamp(15px,1.12vw,17px)/1.73 var(--font-commercial);
+    color:#4b4b46;
+    margin:0 0 clamp(16px,2vh,24px);
+  }
+  .sobre-page.sobre-intro-active .sobre-about-body .sobre-stats{
+    margin-top:clamp(20px,2.5vh,33px);
+    padding-top:18px;
+    gap:clamp(14px,2vw,27px);
+  }
+  .sobre-page.sobre-intro-active .sobre-stats strong{
+    font-size:clamp(22px,2vw,31px);
+  }
+  .sobre-page.sobre-service-active .sobre-services-scene{
+    min-height:100dvh;
+    height:100dvh;
+    display:flex;
+    align-items:center;
+    padding:clamp(44px,6vh,72px) 0;
+    overflow:hidden;
+  }
+  .sobre-page.sobre-service-active .sobre-services-scene .sobre-content{max-width:1140px}
+  .sobre-page.sobre-service-active .sobre-services-heading{margin-bottom:clamp(28px,4vh,43px)}
+  .sobre-page.sobre-service-active .sobre-services-heading h2{
+    font-size:clamp(46px,4.15vw,63px);
+    line-height:1.19;
+    margin:0;
+  }
+  .sobre-page.sobre-service-active .sobre-service-list{
     display:grid;
     grid-template-columns:repeat(3,minmax(0,1fr));
-    align-items:stretch;
-    gap:clamp(20px,2.4vw,36px);
+    gap:clamp(24px,2.6vw,40px);
     border-top:0;
   }
-  .sobre-motion-ready .sobre-service-list article{
+  .sobre-page.sobre-service-active .sobre-service-list article{
     min-width:0;
-    padding:clamp(17px,2.1vw,30px) 0 0;
-    border-top:1px solid #676762;
+    padding:clamp(16px,2vh,24px) 0 0;
+    border-top:1px solid #62625c;
     border-bottom:0;
   }
-  .sobre-motion-ready .sobre-service-list h3{
-    font-size:clamp(28px,2.5vw,37px);
-    line-height:1.24;
-    margin:0 0 18px;
+  .sobre-page.sobre-service-active .sobre-service-list h3{
+    font-size:clamp(27px,2.5vw,36px);
+    line-height:1.28;
+    max-width:100%;
+    margin:0 0 15px;
   }
-  .sobre-motion-ready .sobre-service-list p{
-    font-size:clamp(15px,1.12vw,16px);
-    line-height:1.63;
+  .sobre-page.sobre-service-active .sobre-service-list p{
+    font-size:clamp(15px,1.1vw,16px);
+    line-height:1.68;
   }
-  .sobre-motion-ready .sobre-horizontal-stage{
+  .sobre-page.sobre-horizontal-active .sobre-horizontal-stage{
+    position:relative;
     height:100dvh;
     overflow:hidden;
-    position:relative;
   }
-  .sobre-motion-ready .sobre-horizontal-track{
+  .sobre-page.sobre-horizontal-active .sobre-horizontal-track{
     display:flex;
     flex-wrap:nowrap;
     align-items:stretch;
@@ -488,76 +578,93 @@ body.sobre-page{
     height:100%;
     will-change:transform;
   }
-  .sobre-motion-ready .sobre-horizontal-panel{
+  .sobre-page.sobre-horizontal-active .sobre-horizontal-panel{
     flex:0 0 100vw;
     width:100vw;
     height:100dvh;
-    padding:clamp(80px,10vh,114px) 0 clamp(38px,5vh,60px);
-    overflow-y:auto;
-    overscroll-behavior:contain;
+    padding:clamp(63px,8vh,89px) 0 clamp(30px,4vh,51px);
+    overflow:visible;
   }
-  .sobre-motion-ready .sobre-horizontal-panel .sobre-content{max-width:1210px}
-  .sobre-motion-ready .sobre-horizontal-panel h2{
-    font-size:clamp(45px,4.25vw,66px);
+  .sobre-page.sobre-horizontal-active .sobre-horizontal-panel>.shell{
+    width:min(1340px,calc(100% - clamp(40px,8vw,128px)));
+  }
+  .sobre-page.sobre-horizontal-active .sobre-horizontal-panel .sobre-content{
+    max-width:1140px;
+    margin:0 auto;
+  }
+  .sobre-page.sobre-horizontal-active .sobre-horizontal-panel h2{
+    font-size:clamp(43px,4vw,62px);
     line-height:1.2;
-    margin-bottom:clamp(20px,3vh,30px);
+    margin-bottom:clamp(18px,2.5vh,28px);
   }
-  .sobre-motion-ready .sobre-horizontal-panel .sobre-kicker{
-    margin-bottom:clamp(12px,2vh,18px);
+  .sobre-page.sobre-horizontal-active .sobre-horizontal-panel .sobre-kicker{
+    margin-bottom:clamp(13px,1.8vh,19px);
   }
-  .sobre-motion-ready .sobre-horizontal-panel .sobre-intro{
-    font-size:clamp(18px,1.55vw,23px);
-    line-height:1.52;
-    margin-bottom:24px;
+  .sobre-page.sobre-horizontal-active .sobre-horizontal-panel .sobre-intro{
+    font-size:clamp(18px,1.55vw,22px);
+    line-height:1.54;
+    margin-bottom:clamp(20px,2.5vh,27px);
   }
-  .sobre-motion-ready .sobre-horizontal-panel .sobre-cards{
-    margin-top:clamp(22px,3vh,34px);
-    gap:clamp(16px,1.7vw,26px);
+  .sobre-page.sobre-horizontal-active .sobre-horizontal-panel .sobre-cards{
+    margin-top:clamp(23px,3vh,34px);
+    gap:clamp(17px,2vw,26px);
   }
-  .sobre-motion-ready .sobre-horizontal-panel .sobre-cards article{
-    padding:clamp(24px,2vw,34px);
+  .sobre-page.sobre-horizontal-active .sobre-cards article{
+    padding:clamp(19px,2vw,30px);
   }
-  .sobre-motion-ready .sobre-horizontal-panel .sobre-cards h3{
-    font-size:clamp(25px,2.15vw,33px);
-    margin:0 0 16px;
+  .sobre-page.sobre-horizontal-active .sobre-cards h3{
+    font-size:clamp(24px,2.15vw,31px);
+    margin:0 0 15px;
   }
-  .sobre-motion-ready .sobre-horizontal-panel.sobre-types{padding-top:clamp(80px,10vh,114px)}
-  .sobre-motion-ready .sobre-types-grid{
-    gap:clamp(20px,2vw,30px);
-    margin-top:clamp(26px,3.4vh,40px);
+  .sobre-page.sobre-horizontal-active .sobre-horizontal-panel.sobre-types{
+    padding-top:clamp(63px,8vh,89px);
   }
-  .sobre-motion-ready .sobre-types-grid article{
-    padding:clamp(17px,2vh,28px) 4px clamp(10px,1.5vh,18px) 0;
+  .sobre-page.sobre-horizontal-active .sobre-types-grid{
+    gap:clamp(17px,2vw,29px);
+    margin-top:clamp(23px,3vh,36px);
   }
-  .sobre-motion-ready .sobre-types-grid h3{
-    font-size:clamp(27px,2.5vw,38px);
-    line-height:1.27;
-    margin-bottom:10px;
+  .sobre-page.sobre-horizontal-active .sobre-types-grid article{
+    padding:clamp(17px,2vh,27px) 4px clamp(12px,1.5vh,20px) 0;
   }
-  .sobre-motion-ready .sobre-process{
+  .sobre-page.sobre-horizontal-active .sobre-types-grid h3{
+    font-size:clamp(26px,2.42vw,36px);
+    line-height:1.28;
+    margin:0 0 10px;
+  }
+  .sobre-page.sobre-horizontal-active .sobre-process{
     grid-template-columns:repeat(2,minmax(0,1fr));
     column-gap:clamp(20px,3vw,45px);
-    margin-top:clamp(26px,3vh,38px);
+    margin-top:clamp(25px,3vh,36px);
   }
-  .sobre-motion-ready .sobre-process article{
-    padding:clamp(22px,2.5vh,33px) 0;
+  .sobre-page.sobre-horizontal-active .sobre-process article{
+    padding:clamp(20px,2.4vh,30px) 0;
   }
-  .sobre-motion-ready .sobre-process h3{
-    font-size:clamp(25px,2.4vw,36px);
-    line-height:1.27;
+  .sobre-page.sobre-horizontal-active .sobre-process h3{
+    font-size:clamp(24px,2.3vw,34px);
+    line-height:1.28;
     margin-bottom:10px;
   }
-  .sobre-motion-ready .sobre-process p{font-size:15px;line-height:1.6}
-  .sobre-motion-ready .sobre-proof-grid{
-    margin:clamp(24px,3vh,37px) 0 clamp(19px,2.5vh,29px);
-    gap:clamp(20px,2.3vw,32px);
+  .sobre-page.sobre-horizontal-active .sobre-process p{font-size:15px;line-height:1.64}
+  .sobre-page.sobre-horizontal-active .sobre-proof-grid{
+    margin:clamp(23px,3vh,36px) 0 clamp(18px,2.5vh,30px);
+    gap:clamp(20px,2.2vw,34px);
   }
-  .sobre-motion-ready .sobre-proof-grid strong{font-size:clamp(43px,4vw,61px)}
-  .sobre-motion-ready .sobre-proof-grid h3{
-    font-size:clamp(23px,2vw,30px);
-    margin:12px 0 10px;
-    line-height:1.27;
+  .sobre-page.sobre-horizontal-active .sobre-proof-grid strong{
+    font-size:clamp(44px,4vw,61px);
   }
-  .sobre-motion-ready .sobre-proof-grid p{font-size:14px;line-height:1.62}
-  .sobre-motion-ready .sobre-secondary-button{min-height:52px;padding-block:13px}
+  .sobre-page.sobre-horizontal-active .sobre-proof-grid h3{
+    font-size:clamp(23px,2vw,29px);
+    line-height:1.28;
+    margin:11px 0;
+  }
+  .sobre-page.sobre-horizontal-active .sobre-proof-grid p{
+    font-size:14px;
+    line-height:1.65;
+    margin:0;
+  }
+  .sobre-page.sobre-horizontal-active .sobre-secondary-button{
+    min-height:52px;
+    margin-top:5px;
+    padding-block:13px;
+  }
 }
