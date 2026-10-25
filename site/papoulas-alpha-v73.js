@@ -24,19 +24,23 @@
   };
   const vertex = compile(gl.VERTEX_SHADER,
     'attribute vec2 a_pos; varying vec2 uv; void main(){uv=a_pos*.5+.5;gl_Position=vec4(a_pos,0.,1.);}');
+  // V7.4: matte por saturação, não por diferença de luminosidade.
+  // O critério antigo conservava o grão cinza/bege do papel em um retângulo.
+  // Esta máscara remove tons claros neutros e preserva pétalas/caules cromáticos.
   const fragment = compile(gl.FRAGMENT_SHADER, [
     'precision mediump float;uniform sampler2D frame;varying vec2 uv;',
     'void main(){',
     'vec3 p=texture2D(frame,uv).rgb;',
-    'vec3 bg=(texture2D(frame,vec2(.025,.025)).rgb+',
-    'texture2D(frame,vec2(.975,.025)).rgb+',
-    'texture2D(frame,vec2(.025,.975)).rgb+',
-    'texture2D(frame,vec2(.975,.975)).rgb)*.25;',
-    'float dist=length(p-bg);',
-    'float chroma=max(max(p.r,p.g),p.b)-min(min(p.r,p.g),p.b);',
-    'float a=max(smoothstep(.035,.14,dist),smoothstep(.06,.14,chroma));',
-    'if(a<.006)discard;',
-    'vec3 clean=clamp((p-bg*(1.-a))/max(a,.006),0.,1.);',
+    'float mx=max(max(p.r,p.g),p.b);',
+    'float mn=min(min(p.r,p.g),p.b);',
+    'float saturation=(mx-mn)/max(mx,.001);',
+    'float luminance=dot(p,vec3(.299,.587,.114));',
+    'float colorful=smoothstep(.095,.215,saturation);',
+    'float stems=smoothstep(.30,.55,1.-luminance)*smoothstep(.07,.17,saturation);',
+    'float a=max(colorful,stems);',
+    'if(a<.045)discard;',
+    'vec3 page=vec3(244./255.,244./255.,242./255.);',
+    'vec3 clean=clamp((p-page*(1.-a))/max(a,.045),0.,1.);',
     'gl_FragColor=vec4(clean,a);}'
   ].join(''));
   if (!vertex || !fragment) return;
