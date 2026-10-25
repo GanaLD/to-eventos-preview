@@ -35,7 +35,12 @@ jobs:
               preview_tag = '<meta name="robots" content="noindex,nofollow">'
               if content.count(preview_tag) != 1:
                   raise SystemExit(f"Expected one preview robots tag in {path}")
-              path.write_text(content.replace(preview_tag, '<meta name="robots" content="index,follow">'), encoding="utf-8")
+              content = content.replace(preview_tag, '<meta name="robots" content="index,follow">')
+              content = content.replace(
+                  '<!-- A homologação no GitHub Pages não deve competir com a publicação definitiva em toeventos.com. Remover noindex somente ao publicar na Hostinger após aprovação. -->',
+                  '<!-- Versão de produção publicada a partir da branch hostinger-production. -->',
+              )
+              path.write_text(content, encoding="utf-8")
           PY
           git add -A
           if git diff --cached --quiet; then
