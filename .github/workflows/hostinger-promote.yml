@@ -19,15 +19,53 @@ jobs:
           ref: main
           fetch-depth: 0
           persist-credentials: true
+      - name: Integrar vídeo autoral do HERO no artefato de produção
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p site/assets/media
+          curl --fail --location --retry 3 --connect-timeout 15 --max-time 90 'https://d2ol7oe51mr4n9.cloudfront.net/user_2wayxIrYymbrFzIPfYY8jkYgTU2/0541ee43-65c7-4f9e-b054-2796ac3aeaab.mp4' --output /tmp/to-eventos-motion-hero-original.mp4
+          test "$(wc -c < /tmp/to-eventos-motion-hero-original.mp4)" -gt 100000
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg || true
+          fi
+          if command -v ffmpeg >/dev/null 2>&1; then
+            ffmpeg -hide_banner -loglevel error -i /tmp/to-eventos-motion-hero-original.mp4 -c:v libx264 -preset fast -crf 23 -g 12 -keyint_min 12 -sc_threshold 0 -pix_fmt yuv420p -an -movflags +faststart -y site/assets/media/motion-hero.mp4
+          else
+            echo "::warning::FFmpeg indisponível; publicando MP4 original sem transcodificação"
+            cp /tmp/to-eventos-motion-hero-original.mp4 site/assets/media/motion-hero.mp4
+          fi
+          test "$(wc -c < site/assets/media/motion-hero.mp4)" -gt 100000
+      - name: Preparar exportação do vídeo floral para produção
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Gerar papoulas originais com fundo infinito para produção
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet --disable-pip-version-check numpy opencv-python-headless
+          python scripts/build_papoulas_infinite.py \
+            site/assets/media/animacao-papoulas-editorial-v72.mp4 \
+            site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4
+          test -s site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4
+          ffprobe -v error -show_entries stream=width,height,codec_name -of default=noprint_wrappers=1 site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4
       - name: Copy the approved site into the production branch
         shell: bash
         run: |
           set -euo pipefail
           source_sha="$(git rev-parse HEAD)"
+          generated_assets="$RUNNER_TEMP/hostinger-generated-assets"
+          mkdir -p "$generated_assets"
+          cp site/assets/media/motion-hero.mp4 "$generated_assets/"
+          cp site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4 "$generated_assets/"
           git fetch origin hostinger-production
           git checkout -B hostinger-production origin/hostinger-production
           git rm -r --quiet -- .
           git archive "${source_sha}:site" | tar -x
+          mkdir -p assets/media
+          cp "$generated_assets/motion-hero.mp4" assets/media/
+          cp "$generated_assets/animacao-papoulas-fundo-infinito-v77.mp4" assets/media/
           python3 - <<'PY'
           from pathlib import Path
           for path in (Path("index.html"), Path("sobre/index.html")):
