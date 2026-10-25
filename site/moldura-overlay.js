@@ -80,8 +80,14 @@ video.setAttribute('aria-hidden','true');
 video.setAttribute('playsinline','');
 video.playsInline=true;video.muted=true;video.defaultMuted=true;video.preload='auto';
 video.disablePictureInPicture=true;video.loop=false;
-const sourceMP4 = window.__TO_PREVIEW_MEDIA__?.mp4 || 'assets/media/moldura-v13-screen.mp4';
-const sourcePoster = window.__TO_PREVIEW_MEDIA__?.poster || 'assets/media/moldura-v13-screen.webp';
+const isMobilePortrait = window.matchMedia('(max-width: 899px) and (orientation: portrait)').matches;
+// Desktop preservado: só a fonte da moldura muda em mobile retrato.
+const sourceMP4 = isMobilePortrait
+  ? (window.__TO_PREVIEW_MEDIA__?.mobileMp4 || 'assets/media/floral-mobile-v14.mp4')
+  : (window.__TO_PREVIEW_MEDIA__?.mp4 || 'assets/media/moldura-v13-screen.mp4');
+const sourcePoster = isMobilePortrait
+  ? (window.__TO_PREVIEW_MEDIA__?.mobilePoster || 'assets/media/floral-mobile-v14.webp')
+  : (window.__TO_PREVIEW_MEDIA__?.poster || 'assets/media/moldura-v13-screen.webp');
 video.src=sourceMP4;
 document.body.appendChild(video);
 const poster = new Image();poster.src=sourcePoster;
@@ -112,6 +118,15 @@ function drawMedia(media){
   ctx.translate(sizeW/2,sizeH/2);
   ctx.scale(1.07,1.07);
   ctx.translate(-sizeW/2,-sizeH/2);
+  if(isMobilePortrait){
+    // Imagem mobile 9:16 intacta, preenchendo a viewport sem esticar ou repetir flores.
+    // A camada conserva o Screen Blend e o zoom 7% do desktop, sem chroma key.
+    const scale=Math.max(sizeW/sw,sizeH/sh);
+    const drawW=sw*scale,drawH=sh*scale;
+    ctx.drawImage(media,(sizeW-drawW)/2,(sizeH-drawH)/2,drawW,drawH);
+    ctx.restore();
+    return;
+  }
   for(const t of calculateNineSlice(sw,sh,sizeW,sizeH)){
     if (!(t.dw>0 && t.dh>0)) continue;
     if ((t.feathered || t.fadeY) && offctx){

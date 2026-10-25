@@ -1,0 +1,28 @@
+name: QA moldura vertical V14 mobile
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mobile-floral:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar Chrome com MP4
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install chrome
+      - name: Smoke test sem regressao desktop
+        run: |
+          node --check site/moldura-overlay.js
+          node tests/moldura-mobile-v14-smoke.mjs
+      - name: Teste real mobile e desktop, source e scroll
+        run: |
+          node tests/v7-range-server.mjs >/tmp/range.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/ -o /dev/null && break || sleep 1; done
+          node tests/moldura-mobile-v14-visual.mjs
