@@ -15,7 +15,7 @@ for(const id of ['hero','sobre','solucoes','projetos','contato']){
  assert(html.includes('data-section="'+id+'"'),'Falta âncora lateral '+id);
 }
 assert(html.includes('300 PARTICIPANTES'), 'Métrica real de case deve ser preservada');
-assert(/papoulas-preview\.webp|animacao-papoulas\.mp4/.test(html),'Representação floral deve continuar no layout');
+assert(html.includes('animacao-papoulas-fundo-infinito-v77.mp4'),'Vídeo de papoulas deve continuar no layout');
 assert(html.includes('portfolio-thais-ortiz.pdf'), 'Showcase do portfólio PDF deve substituir o player da apresentação');
 assert(style.includes('.hero-title{font-size:clamp'), 'HERO deve ter escala tipográfica responsiva');
 assert(style.includes('grid-template-columns:minmax(0,1.03fr) minmax(0,1fr)'), 'HERO deve manter colunas independentes');
