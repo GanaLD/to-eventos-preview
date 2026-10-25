@@ -34,6 +34,7 @@ jobs:
           node tests/florais-v6-check.mjs
           node tests/v72-no-flicker.mjs
           node tests/papoulas-intactas-v76.mjs
+          node tests/papoulas-fundo-infinito-v77.mjs
           node --check site/v7.js
           node tests/v7-smoke.mjs
           node tests/hostinger-connect-visual-smoke.mjs
@@ -64,6 +65,18 @@ jobs:
             cp /tmp/to-eventos-motion-hero-original.mp4 site/assets/media/motion-hero.mp4
           fi
           test "$(wc -c < site/assets/media/motion-hero.mp4)" -gt 100000
+      - name: Preparar exportação do vídeo floral sem cortes
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Gerar papoulas originais com fundo infinito
+        run: |
+          python -m pip install --quiet --disable-pip-version-check numpy opencv-python-headless
+          python scripts/build_papoulas_infinite.py \
+            site/assets/media/animacao-papoulas-editorial-v72.mp4 \
+            site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4
+          test -s site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4
+          ffprobe -v error -show_entries stream=width,height,codec_name -of default=noprint_wrappers=1 site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4
       - name: Preparar GitHub Pages
         uses: actions/configure-pages@v5
         with:
