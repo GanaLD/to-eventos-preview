@@ -68,7 +68,7 @@
   // These spans reveal a stable width; no letters are inserted or removed.
   const splitTitle = (heading, className='to-v74-type-line') => {
     if (!heading || heading.querySelector('.to-v74-type-line, .to-v72-type-line')) return [];
-    const accessible = heading.textContent.replace(/\s+/g,' ').trim();
+    const accessible = [...heading.childNodes].map(node=>node.nodeName==='BR'?' ':node.textContent).join('').replace(/\s+/g,' ').trim();
     if (!accessible) return [];
     heading.setAttribute('aria-label',accessible);
     const fragment=document.createDocumentFragment();
