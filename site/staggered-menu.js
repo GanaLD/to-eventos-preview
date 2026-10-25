@@ -18,6 +18,12 @@
   let timeline = null;
   const gsap = window.gsap;
   const reducedMotion = () => Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+  // Fonte única de transformação: o GSAP controla xPercent e não acumula
+  // o translateX(105%) que anteriormente deixava o painel fora da tela.
+  if (gsap && !reducedMotion()) {
+    root.classList.add('has-gsap');
+    gsap.set([panel, ...layers], { xPercent: 105, force3D: true });
+  }
   const focusToggle = () => toggle.focus({ preventScroll: true });
   const focusHome = () => { if (open) home.focus({ preventScroll: true }); };
 
