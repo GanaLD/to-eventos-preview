@@ -42,20 +42,42 @@
     return trigger;
   };
 
-  // SESSÃO COMPETÊNCIAS — o texto revela junto às flores, sem alterar o seu GSAP lateral.
+  // COMPETÊNCIAS — digitação APENAS nos três títulos, corpos em reveal suave.
+  // A tipografia mantém largura final; clipPath revela texto, nunca alterna opacidade.
   const solutions=document.getElementById('solucoes');
   if (solutions) {
     const kicker=solutions.querySelector('.section-kicker');
     const title=solutions.querySelector('.solutions-title');
-    const fields=[...solutions.querySelectorAll('.solution h3, .solution p')];
-    const groups=[kicker,title,...fields].filter(Boolean);
-    if (groups.length) {
+    const rows=[...solutions.querySelectorAll('.solution')];
+    const headings=rows.map(el=>el.querySelector('h3')).filter(Boolean);
+    const descriptions=rows.map(el=>el.querySelector('p')).filter(Boolean);
+    const layoutCopy=[kicker,title,...descriptions].filter(Boolean);
+    if (headings.length && layoutCopy.length) {
       const timeline=gsap.timeline({paused:true,defaults:{ease:'power2.out'}});
-      gsap.set(groups,{y:24,autoAlpha:0});
-      timeline.to(groups,{y:0,autoAlpha:1,duration:1.05,stagger:.14},0);
+      gsap.set(layoutCopy,{y:28,autoAlpha:0});
+      headings.forEach(heading=>{
+        heading.classList.add('to-v8-type-competence');
+        gsap.set(heading,{clipPath:'inset(0 100% 0 0)'});
+      });
+      if(kicker) timeline.to(kicker,{y:0,autoAlpha:1,duration:1.05},0);
+      if(title) timeline.to(title,{y:0,autoAlpha:1,duration:1.45},.20);
+      headings.forEach((heading,i)=>{
+        const start=1.05+i*.83;
+        const letters=Array.from(heading.textContent.trim()).length;
+        const duration=Math.max(.95,Math.min(1.55,letters*.042));
+        timeline.to(heading,{
+          clipPath:'inset(0 0% 0 0)',
+          duration,
+          ease:'steps('+Math.max(10,letters)+')'
+        },start);
+        const paragraph=rows[i]?.querySelector('p');
+        if(paragraph)timeline.to(paragraph,{
+          y:0,autoAlpha:1,duration:1.05,ease:'power2.out'
+        },start+.50);
+      });
       createEnterTrigger({
         id:'to-v71-solutions',element:solutions,timeline,
-        start:'top 78%',end:'bottom 16%'
+        start:'top 65%',end:'bottom 18%'
       });
     }
   }
@@ -86,7 +108,7 @@
     const groups=[kicker,headline,description,...captions].filter(Boolean);
     const timeline=gsap.timeline({paused:true,defaults:{ease:'power2.out'}});
     gsap.set(groups,{y:30,autoAlpha:0});
-    timeline.to(groups,{y:0,autoAlpha:1,duration:1.05,stagger:.17},0);
+    timeline.to(groups,{y:0,autoAlpha:1,duration:1.35,stagger:.22},0);
     bindPanel('to-v71-projects',summit,timeline);
   }
 
@@ -114,6 +136,7 @@
   if (cases) {
     const gray=cases.querySelector('.case-text:not(.case-text-contrast)');
     const dark=cases.querySelector('.case-text-contrast');
+    gray?.classList.add('to-v8-type-case');
     const heading=gray?.querySelector('.case-text-main h3');
     const lines=splitAccessibleTitle(heading);
     if (gray && lines.length) {
@@ -128,7 +151,7 @@
       if (kicker) timeline.to(kicker,{y:0,autoAlpha:1,duration:.6},0);
       let titleEnd=.35;
       lines.forEach((line,i)=>{
-        const duration=Math.max(.45,line.textContent.length*.055);
+        const duration=Math.max(.88,line.textContent.length*.075);
         timeline.to(line,{
           clipPath:'inset(0 0% 0 0)',
           duration,
@@ -157,10 +180,10 @@
     const timeline=gsap.timeline({paused:true,defaults:{ease:'power2.out'}});
     const groups=[heading,paragraph,cta,...aside,...foot].filter(Boolean);
     gsap.set(groups,{y:28,autoAlpha:0});
-    timeline.to(groups,{y:0,autoAlpha:1,duration:1.05,stagger:.16},0);
+    timeline.to(groups,{y:0,autoAlpha:1,duration:1.35,stagger:.22},0);
     createEnterTrigger({
       id:'to-v71-contact',element:contact,timeline,
-      start:'top 80%',end:'bottom 10%'
+      start:'top 70%',end:'bottom 10%'
     });
   }
 
