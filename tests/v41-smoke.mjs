@@ -8,12 +8,16 @@ const original=readFileSync(new URL('../site/main.js', import.meta.url), 'utf8')
 
 assert(html.includes('<link rel="stylesheet" href="ui-v41.css">'), 'Folha V4.1 não carregada');
 assert(html.includes('<script defer src="ui-v41.js"></script>'), 'Script V4.1 não carregado');
-assert(html.includes('class="nav" id="nav"'), 'Menu superior original precisa permanecer no DOM');
-for(const label of ['Sobre','Soluções','Projetos','Contato']) {
-  assert(html.includes('>'+label+'</a>'), 'Falta link superior '+label);
-}
-assert(/@media\s*\(min-width:\s*901px\)/.test(css), 'O menu superior deve ser restaurado no desktop');
-assert(/\.site-header\s+\.nav\s*\{\s*display:\s*flex/.test(css), 'Menu superior desktop precisa ter display:flex');
+// V4.1 mantém o conteúdo e a transição; o menu superior antigo foi substituído.
+const menuCss=readFileSync(new URL('../site/staggered-menu.css', import.meta.url), 'utf8');
+const menuJs=readFileSync(new URL('../site/staggered-menu.js', import.meta.url), 'utf8');
+assert(html.includes('staggered-menu.css')&&html.includes('staggered-menu.js'), 'Novo menu deve carregar CSS e JS');
+assert(!html.includes('class="nav" id="nav"')&&!html.includes('class="nav-toggle"'), 'Navegação superior antiga não deve competir com novo menu');
+assert([...html.matchAll(/<(?:a|button)\\b[^>]*data-to-menu-item="([^"]+)"/g)].map(m=>m[1]).join(',')==='HOME,PRODUCT', 'Menu deve ter somente HOME e PRODUCT');
+assert(/data-to-menu-item="HOME"[^>]*href="\\.\\/#hero"/.test(html), 'HOME deve funcionar no GitHub Pages com base relativa');
+assert(/<button[^>]*data-to-menu-item="PRODUCT"[^>]*disabled/.test(html), 'PRODUCT deve ficar desabilitado');
+assert(menuCss.includes('backdrop-filter: blur(22px)')&&menuCss.includes('#FF4D00'), 'Acionador em vidro e paleta da marca');
+assert(menuJs.includes('window.gsap')&&menuJs.includes('Escape'), 'GSAP e acessibilidade do menu devem ser preservados');
 assert(/\.site-header\s+\.nav-contact\s*\{[^}]*background:\s*var\(--orange\)/s.test(css), 'CTA do cabeçalho deve ser laranja TO Eventos');
 assert(html.includes('class="to-whatsapp-float"'), 'Botão flutuante original não deve ser removido');
 assert(/matchMedia|matchMedia\(/.test(js), 'Movimento deve considerar breakpoints e redução de movimento');
