@@ -39,9 +39,12 @@ for(const [width,height] of [[390,844],[360,800],[768,1024]]){
  const b=document.querySelector('.hero-visual').getBoundingClientRect();
  const v=document.querySelector('[data-role="hero-film"]');
  return {a:{x:a.x,y:a.y,w:a.width,h:a.height},b:{x:b.x,y:b.y,w:b.width,h:b.height},
- fit:getComputedStyle(v).objectFit,alpha:getComputedStyle(document.querySelector('#hero-heading')).opacity};
+ fit:getComputedStyle(v).objectFit,alpha:getComputedStyle(document.querySelector('#hero-heading')).opacity,
+ stageClass:document.querySelector('.hero-scroll-stage').className,
+ progress:window.ScrollTrigger.getById('to-hero-mobile-film-and-copy')?.progress,
+ mediaMatch:matchMedia('(max-width:899px) and (orientation:portrait)').matches};
  });
- assert.equal(final.fit,'contain');
+ assert.equal(final.fit,'contain','Frame final: '+JSON.stringify(final));
  for(const k of ['x','y','w','h']) assert(Math.abs(final.a[k]-final.b[k])<12,'Frame final desalinhado: '+k+' '+JSON.stringify(final));
  assert(Number(final.alpha)>.7,'Copy não revela');
  await page.screenshot({path:`${dir}/${width}-final.png`});
