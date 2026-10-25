@@ -1,0 +1,4 @@
+/* Componente exclusivo: não altera regras do Hero original. */
+#to-floral-intro-v10{position:fixed;inset:0;width:100vw;height:100dvh;display:block;pointer-events:none;z-index:40;opacity:1;contain:layout paint;user-select:none;}
+.to-floral-v10-video-decoder{position:fixed;width:1px;height:1px;left:-10px;top:-10px;opacity:0;pointer-events:none;}
+@media(prefers-reduced-motion:reduce){#to-floral-intro-v10{transition:none!important}}
