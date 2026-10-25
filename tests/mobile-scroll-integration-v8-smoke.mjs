@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const html=read('site/index.html');
+const gallery=read('site/main.js');
+const animation=read('site/motion-v71.js');
+const css=read('site/mobile-scroll-v8.css');
+const hero=read('site/hero-v5.js');
+assert(html.includes('mobile-scroll-v8.css'),'A folha mobile deve carregar');
+assert(html.indexOf('motion-v71.css')<html.indexOf('mobile-scroll-v8.css'),'CSS mobile deve vencer estilos anteriores');
+assert(!gallery.includes('&& desktop'),'Desktop-only guard não pode bloquear mobile');
+assert(gallery.includes('isMobile()'),'Scrub deve recalcular tempo para touch');
+assert(/\.is-gsap-active #projetos \.projects-track[\s\S]*?flex-direction:row/.test(css),'Painéis da galeria devem permanecer em linha');
+assert(animation.includes('const horizontal=!!gallery?.animation'),'Animação interna deve reconhecer o trilho GSAP no mobile');
+assert(hero.includes('to-hero-mobile-film-and-copy'),'GSAP precisa pin HeroScroll no celular');
+assert(hero.includes('scheduleSeek(Math.min(1, self.progress / videoPhaseEnd)'),'Scroll deve seekar vídeo e ter reversibilidade');
+assert(hero.includes('width: () => slot().width'),'No fim, o vídeo deve recolher para frame editorial, não sumir');
+console.log('PASS: HeroScroll e projetos horizontais habilitados no mobile com GSAP.');
