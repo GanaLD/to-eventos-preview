@@ -90,6 +90,17 @@ function startMobileFloral() {
   poster.style.display = 'none';
   layer.append(video, poster);
   document.body.appendChild(layer);
+  // Alinhar às bordas reais do Hero (inclusive previews de celular dentro
+  // de um canvas/iframe maior); não usar as bordas do navegador externo.
+  const syncLayerBounds = () => {
+    const rect = hero.getBoundingClientRect();
+    layer.style.inset = 'auto';
+    layer.style.left = rect.left+'px';
+    layer.style.top = rect.top+'px';
+    layer.style.width = rect.width+'px';
+    layer.style.height = rect.height+'px';
+  };
+  syncLayerBounds();
   let introDone = false, scrollStarted = false;
   let wantedTime = null, raf = 0;
   const progress = () => {
@@ -109,6 +120,7 @@ function startMobileFloral() {
     });
   };
   const update = () => {
+    syncLayerBounds();
     const p = progress();
     const reverse = clamp(p / floralReverseEnd);
     layer.style.opacity = String(1 - reverse);
@@ -157,10 +169,9 @@ function startMobileFloral() {
   video.load();
   onScroll();
 }
-if (window.matchMedia('(max-width: 899px) and (orientation: portrait)').matches) {
-  startMobileFloral();
-  return; // desktop continua no canvas original
-}
+/* V16: alterna camada mobile/desktop no resize sem recarregar o site.
+   O caminho V13 desktop abaixo mantém sua implementação original. */
+function startDesktopFloral() {
 if (document.getElementById('to-floral-intro-v10')) return;
 const canvas = document.createElement('canvas');
 canvas.id='to-floral-intro-v10';
@@ -306,4 +317,26 @@ window.addEventListener('pagehide',()=>{
 resize();
 if(!reduced)video.load();
 onScroll();
+}
+const portraitMode = () => window.matchMedia('(max-width: 899px) and (orientation: portrait)').matches
+  || document.documentElement.classList.contains('to-hero-mobile-portrait-forced');
+function reconcileFloralLayer() {
+  if (portraitMode()) {
+    startMobileFloral();
+    const mobile = document.getElementById('to-floral-mobile-v15');
+    const desktop = document.getElementById('to-floral-intro-v10');
+    if (mobile) mobile.style.display = '';
+    if (desktop) desktop.style.display = 'none';
+  } else {
+    startDesktopFloral();
+    const mobile = document.getElementById('to-floral-mobile-v15');
+    const desktop = document.getElementById('to-floral-intro-v10');
+    if (mobile) mobile.style.display = 'none';
+    if (desktop) desktop.style.display = '';
+  }
+}
+const resyncFloral = () => requestAnimationFrame(reconcileFloralLayer);
+window.addEventListener('resize', resyncFloral, {passive:true});
+window.addEventListener('orientationchange', resyncFloral, {passive:true});
+reconcileFloralLayer();
 })();
