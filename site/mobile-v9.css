@@ -92,7 +92,7 @@
     padding-bottom:clamp(50px,8dvh,78px);
     justify-content:center;
     overflow-y:auto;
-    overscroll-behavior-y:contain;
+    overscroll-behavior-y:auto;
     scrollbar-width:none;
   }
   .is-gsap-active #projetos .project-panel-inner::-webkit-scrollbar{display:none}
