@@ -62,7 +62,7 @@
     min-height:0;
     max-height:100dvh;
     overflow:hidden;
-    overscroll-behavior:contain;
+    overscroll-behavior: auto; /* gesto touch encadeia até a página e avança o GSAP */
     scroll-snap-type:none;
     touch-action:pan-y;
   }
