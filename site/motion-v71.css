@@ -31,6 +31,7 @@
   background:#F4F4F2;
 }
 #sobre .botanical-motion figcaption{display:none!important}
+#sobre .botanical-motion .about-floral-reduced{display:none;max-width:100%;width:100%;height:auto;object-fit:contain;object-position:center}
 .project-panel-cases .project-panel-inner{justify-content:center}
 .project-panel-cases .case-layout{margin-block:0}
 
@@ -77,5 +78,6 @@
     clip-path:none!important;
     will-change:auto!important;
   }
-  #sobre .botanical-motion .about-floral-video{transform:none!important}
+  #sobre .botanical-motion .about-floral-video{display:none!important;transform:none!important}
+  #sobre .botanical-motion .about-floral-reduced{display:block!important}
 }
