@@ -27,6 +27,8 @@ jobs:
           node tests/hero-v5-smoke.mjs
           node tests/florais-v6-check.mjs
           node tests/v7-smoke.mjs
+          node tests/accordion-gallery-v1-smoke.mjs
+          node --check site/accordion-gallery.js
           node --check site/v7.js
           node --check site/florais-v6.js
           node --check site/main.js
