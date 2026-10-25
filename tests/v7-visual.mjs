@@ -76,7 +76,7 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
    const heroVisual=await page.evaluate(()=>{
      const film=document.querySelector('.hero-film-screen video');return {fit:film?getComputedStyle(film).objectFit:null,w:film?.videoWidth,h:film?.videoHeight};
    });
-   assert.equal(heroVisual.fit,'cover','Paisagem mantém HERO full bleed atual');
+   assert.equal(heroVisual.fit,'contain','Após scrub o HERO encaixa o vídeo inteiro no slot editorial');
  }
  await page.locator('#projetos').scrollIntoViewIfNeeded();
  await page.waitForTimeout(1100);
