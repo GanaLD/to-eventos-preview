@@ -53,9 +53,6 @@
   will-change:clip-path;
 }
 
-/* Avoid full-width block reveals on the title's italic line */
-.to-v74-type-line em {font:inherit;font-style:italic}
-
 /* Reinforce the typography's original metrics; animations do not move cards. */
 #solucoes .solutions-title .to-v74-type-line,
 #projetos-heading .to-v74-type-line,
