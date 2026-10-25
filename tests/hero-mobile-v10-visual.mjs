@@ -51,7 +51,11 @@ async function sample(page){
      if(a[i]<115 && a[i+1]<115 && a[i+2]<115)lowerInk++;
    }
   }
-  return {scrollProgress:t?.progress,videoTime:video.currentTime,duration:video.duration,
+  const stage=document.querySelector('.hero-scroll-stage');
+  const hit=document.elementFromPoint(innerWidth*.5,innerHeight*.45);
+  return {scrollY:scrollY,stageRect:rect(stage),heroRect:rect(document.getElementById('hero')),
+   pinStart:t?.start,pinEnd:t?.end,pinActive:t?.isActive,hit:hit?.tagName+'.'+String(hit?.className).slice(0,75),
+   scrollProgress:t?.progress,videoTime:video.currentTime,duration:video.duration,
    ready:video.readyState,videoWidth:video.videoWidth,videoHeight:video.videoHeight,
    src:video.currentSrc.split('/').at(-1),paused:video.paused,
    fit:getComputedStyle(video).objectFit,mask:getComputedStyle(video).maskImage,
@@ -74,6 +78,7 @@ try{
   await page.waitForFunction(()=>Boolean(window.ScrollTrigger?.getById('to-hero-mobile-film-and-copy')),{timeout:20000});
   await page.waitForFunction(()=>document.querySelector('[data-role=hero-film]')?.readyState>=2,{timeout:25000});
   const first=await sample(page);
+  console.log('FRAME START POSITION',JSON.stringify({tag:v.tag,scrollY:first.scrollY,stage:first.stageRect,film:first.film,hit:first.hit,trigger:[first.pinStart,first.pinEnd,first.pinActive]}));
   assert.equal(first.src,'motion-hero-mobile.mp4','Ainda carrega vídeo horizontal em viewport vertical');
   assert(Math.abs(first.videoWidth/first.videoHeight-9/16)<.03,'O vídeo DEVE ser 9:16 real');
   assert.equal(first.fit,'cover','Vídeo inicial deve ser full-bleed');
@@ -81,8 +86,10 @@ try{
   assert(Math.abs(first.film.w-v.width)<2 && Math.abs(first.film.h-v.height)<3,'Vídeo precisa ocupar tela inteira');
   await page.screenshot({path:`${dir}/${v.tag}-00-abertura.jpg`,type:'jpeg',quality:65});
   await progress(page,.22);const early=await sample(page);
+  console.log('FRAME EARLY POSITION',JSON.stringify({tag:v.tag,scrollY:early.scrollY,stage:early.stageRect,film:early.film,hit:early.hit,trigger:[early.pinStart,early.pinEnd,early.pinActive]}));
   await page.screenshot({path:`${dir}/${v.tag}-22.jpg`,type:'jpeg',quality:65});
   await progress(page,.64);const later=await sample(page);
+  console.log('FRAME LATER POSITION',JSON.stringify({tag:v.tag,scrollY:later.scrollY,stage:later.stageRect,film:later.film,hit:later.hit,trigger:[later.pinStart,later.pinEnd,later.pinActive]}));
   await page.screenshot({path:`${dir}/${v.tag}-64.jpg`,type:'jpeg',quality:65});
   assert(later.videoTime>early.videoTime+1,'Tempo do vídeo não acompanha scroll');
   console.log('DEBUG FRAME',JSON.stringify({tag:v.tag,early:{time:early.videoTime,ready:early.ready,src:early.src},later:{time:later.videoTime,ready:later.ready,src:later.src},delta:pixelDifference(early,later),earlyInk:early.lowerInk,laterInk:later.lowerInk,earlyPixelAvg:Math.round(early.pixels.reduce((s,n)=>s+n,0)/early.pixels.length),laterPixelAvg:Math.round(later.pixels.reduce((s,n)=>s+n,0)/later.pixels.length)}));
