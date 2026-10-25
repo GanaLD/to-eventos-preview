@@ -28,11 +28,20 @@ for(const {width,height,mobile,portrait} of [
   assert(initial.duration>=5.7 && initial.duration<6,'Untrimmed video will finish on black');
   await page.waitForFunction(()=>!!window.ScrollTrigger?.getById('to-hero-mobile-film-and-copy'),{timeout:30000});
   // A progress=0.21, floral layer half faded, controlled by the existing Hero trigger.
-  await page.evaluate(()=>{
-    const st=ScrollTrigger.getById('to-hero-mobile-film-and-copy');
-    window.scrollTo(0,st.start+(st.end-st.start)*.21);ScrollTrigger.update();
-  });
-  await page.waitForTimeout(1300);
+  // Fonts e pins podem atualizar a geometria após o carregamento.
+  // Repetir usando progress REAL, como o QA Hero mobile já aprovado.
+  await page.evaluate(()=>document.fonts?.ready);
+  for(let attempt=0;attempt<8;attempt++){
+    await page.evaluate(()=>{
+      const st=ScrollTrigger.getById('to-hero-mobile-film-and-copy');
+      window.scrollTo({top:st.start+(st.end-st.start)*.21,behavior:'instant'});
+      ScrollTrigger.update();
+    });
+    await page.waitForTimeout(650);
+    const actual=await page.evaluate(()=>ScrollTrigger.getById('to-hero-mobile-film-and-copy').progress);
+    if(Math.abs(actual-.21)<.018)break;
+  }
+  await page.waitForTimeout(350);
   const mid=await page.evaluate(()=>({opacity:parseFloat(getComputedStyle(document.getElementById('to-floral-intro-v10')).opacity),scroll:ScrollTrigger.getById('to-hero-mobile-film-and-copy').progress}));
   assert(mid.scroll>.16 && mid.scroll<.26,'Mobile HeroScroll progress unexpected '+JSON.stringify(mid));
   assert(mid.opacity>.35 && mid.opacity<.65,'Floral layer not reversing fast '+JSON.stringify(mid));
