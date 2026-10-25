@@ -1,0 +1,136 @@
+/* TO Eventos — diretrizes de legibilidade e controles, 2026-10-25
+   Escopo restrito: respiro de texto, numeração editorial, setas e botões.
+   Preservar hero, vídeos, galerias, animações, rotas e comportamento. */
+:root{
+  --to-ui-copy-space:clamp(16px,2.1vw,28px);
+  --to-ui-group-space:clamp(28px,4.1vw,62px);
+}
+/* Ritmo de leitura: evitar encostar blocos e quebrar palavras desnecessariamente. */
+.hero-copy,.about-copy,.sobre-hero-copy,.sobre-content,
+.projects-top,.case-caption,.full-video-block,.sobre-contact .shell{
+  min-width:0;
+}
+.hero-copy :is(h1,p),.about-copy :is(h2,p),#solucoes :is(h2,h3,p),
+#projetos :is(h2,h3,p),#contato :is(h2,p),
+.sobre-page :is(h1,h2,h3,p),#galeria-editorial :is(h2,p){
+  overflow-wrap:break-word;
+}
+.hero-copy .hero-title,.about-copy .display-heading,
+#solucoes .display-heading,#projetos .display-heading,
+.sobre-page :is(h1,h2){
+  line-height:1.12;
+  text-wrap:balance;
+}
+.hero-copy>p,.about-copy>p,#solucoes .solution p,#projetos .case-caption p,
+#projetos .case-text p,.sobre-page .sobre-lead,
+.sobre-page .sobre-content>p:not(.sobre-kicker),
+.sobre-page .sobre-service-list p,
+.sobre-page .sobre-cards p,.sobre-page .sobre-types-grid p,
+.sobre-page .sobre-process p,.sobre-page .sobre-proof-grid p,
+.sobre-page .sobre-questions details p{
+  line-height:1.65;
+}
+#hero .hero-title{margin-block:clamp(25px,3vw,40px);}
+#sobre .about-copy>.display-heading{margin-block:clamp(20px,2.5vw,36px);}
+#sobre .about-copy>p:not(.overline){margin-block:0 var(--to-ui-copy-space);}
+#sobre .microproof{margin-top:var(--to-ui-group-space);}
+#solucoes .solutions-title{margin-bottom:var(--to-ui-group-space);}
+#solucoes .solution h3{margin-bottom:clamp(14px,1.8vw,22px);}
+#solucoes .solution{padding-block:clamp(30px,3.5vw,50px);}
+#projetos .projects-top{row-gap:clamp(16px,2vw,26px);}
+#projetos .case-caption{gap:clamp(12px,1.55vw,21px);}
+#projetos .case-caption>h3,#projetos .case-caption>p{margin:0;}
+#projetos .case-text h3{margin-bottom:clamp(12px,1.55vw,20px);}
+.sobre-page .sobre-hero h1{margin-bottom:clamp(24px,3.3vw,42px);}
+.sobre-page .sobre-lead{margin-bottom:clamp(26px,3vw,38px);}
+.sobre-page .sobre-section h2{margin-bottom:clamp(28px,3.5vw,46px);}
+.sobre-page .sobre-content>p.sobre-intro{margin-bottom:clamp(26px,3.3vw,42px);}
+.sobre-page .sobre-service-list article,
+.sobre-page .sobre-process li{
+  grid-template-columns:minmax(0,1fr);
+  gap:0;
+  padding-block:clamp(30px,3.7vw,49px);
+}
+.sobre-page .sobre-service-list h3{margin-bottom:clamp(14px,2vw,22px);}
+.sobre-page .sobre-cards article{gap:clamp(12px,1.8vw,24px);}
+.sobre-page .sobre-cards h3{min-height:0;margin:0;}
+.sobre-page .sobre-types-grid h3{margin:clamp(12px,1.5vw,19px) 0 clamp(14px,1.8vw,23px);}
+.sobre-page .sobre-process h3{margin-bottom:clamp(12px,1.6vw,20px);}
+.sobre-page .sobre-proof-grid h3{margin-block:clamp(16px,2.2vw,26px) clamp(10px,1.4vw,17px);}
+.sobre-page .sobre-questions summary{
+  list-style:none;
+  padding-block:clamp(26px,3vw,35px);
+  line-height:1.4;
+}
+.sobre-page .sobre-questions summary::-webkit-details-marker{display:none;}
+.sobre-page .sobre-questions summary:hover{color:#a23a15;}
+.sobre-page .sobre-questions details p{padding-bottom:8px;}
+/* CTAs alinhados, com luz e sombra discretas — sem símbolos direcionais. */
+.button-accent,.site-header .nav-contact,.to-sm-toggle,
+#projetos .to-pdf-controls button,#projetos .to-pdf-controls a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  vertical-align:middle;
+  box-sizing:border-box;
+  min-height:46px;
+  line-height:1.35;
+  white-space:normal;
+  text-wrap:balance;
+}
+.button-accent{
+  gap:0;
+  padding:clamp(15px,1.7vw,20px) clamp(22px,2.4vw,32px);
+  border:1px solid rgba(255,126,72,.72);
+  border-radius:12px;
+  background:linear-gradient(155deg,#ff7d41 0%,var(--orange) 45%,#e53f00 100%);
+  color:var(--graphite);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.48),
+    inset 0 -2px 4px rgba(102,24,0,.13),
+    0 10px 24px rgba(0,0,0,.19),
+    0 3px 8px rgba(255,77,0,.16);
+  text-decoration:none;
+  transition:transform .22s ease,box-shadow .22s ease,filter .22s ease;
+}
+.button-accent:hover{
+  background:linear-gradient(155deg,#ff9060 0%,#ff621e 48%,#ed4b08 100%);
+  transform:translateY(-2px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.58),
+    0 13px 30px rgba(0,0,0,.24),0 5px 13px rgba(255,77,0,.22);
+}
+.button-accent:active{transform:translateY(0);box-shadow:inset 0 2px 6px rgba(93,32,0,.22),0 4px 11px rgba(0,0,0,.17);}
+.site-header .nav-contact{
+  background:linear-gradient(150deg,#ff7f46,var(--orange) 58%,#ec4304);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 7px 18px rgba(0,0,0,.2);
+}
+.site-header .nav-contact:hover{background:linear-gradient(150deg,#ff9360,#ff5e18);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 10px 22px rgba(0,0,0,.25);}
+.to-sm-toggle{box-shadow:inset 0 1px 0 rgba(255,255,255,.23),0 9px 24px rgba(0,0,0,.22);}
+#projetos .to-pdf-controls button,#projetos .to-pdf-controls a{
+  border-radius:9px;
+  padding:10px 14px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 4px 12px rgba(0,0,0,.1);
+}
+#projetos .to-pdf-controls button:hover,#projetos .to-pdf-controls a:hover{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 7px 15px rgba(0,0,0,.17);
+}
+#projetos .to-pdf-controls button:disabled{box-shadow:none;}
+.sobre-page .sobre-inline-link{gap:0;min-height:44px;text-align:center;justify-content:center;}
+@media(max-width:899px){
+  .hero-copy .hero-title,.about-copy .display-heading,#solucoes .display-heading,
+  .sobre-page :is(h1,h2){line-height:1.14;}
+  #hero .hero-title{margin-block:clamp(19px,4vw,31px);}
+  #sobre .about-copy>p:not(.overline){margin-bottom:clamp(17px,3.6vw,25px);}
+  #projetos .case-caption{gap:clamp(10px,2.5vw,16px);}
+  .button-accent{min-height:48px;padding:14px 21px;max-width:100%;}
+  .sobre-page .sobre-service-list article,.sobre-page .sobre-process li{padding-block:clamp(27px,5vw,39px);}
+  .sobre-page .sobre-section h2{margin-bottom:clamp(24px,6vw,36px);}
+  #projetos .to-pdf-controls button,#projetos .to-pdf-controls a{min-height:44px;}
+}
+@media(max-width:390px){
+  .button-accent{font-size:12px;line-height:1.4;}
+  .sobre-page .sobre-inline-link{font-size:11px;line-height:1.5;}
+}
+@media(prefers-reduced-motion:reduce){
+  .button-accent,.site-header .nav-contact{transition:none!important;transform:none!important;}
+}
