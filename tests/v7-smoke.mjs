@@ -23,7 +23,7 @@ assert(/\.hero-film-screen video\{[^}]*object-fit:contain[^}]*background:\s*var\
 assert(css.includes('--to-hero-ambient:#ff6108'),'Eliminar a diferença de cor entre as faixas laterais e o primeiro frame de vídeo');
 assert(css.includes('object-fit:contain')&&css.includes('100dvh'),'Vídeo HERO integral sem cortes ou deformação');
 assert(orig.includes('videoPhaseEnd = 0.7')&&orig.includes('revealStart = 85'),'Vídeo antes dos textos no HERO');
-assert(about.includes('animacao-papoulas.mp4')&&about.includes('class="about-copy"'),'Conteúdo Sobre deve permanecer');
+assert(about.includes('papoulas-preview.webp')&&about.includes('class="about-copy"'),'Conteúdo Sobre com papoulas intactas');
 assert(solutions.includes('width="720" height="1613"')&&solutions.includes('width="706" height="1527"'),'Dimensões alfa garantem layout mesmo antes do lazy load');
 assert(css.includes('.solutions-florals{overflow:hidden;contain:paint}'),'Camada ornamental deve conter transformações laterais');
 assert(solutions.includes('papoula-3-esquerda-crop.webp')&&solutions.includes('papoula-2-direita-crop.webp'),'Papoulas precisam usar recorte transparente correto');
