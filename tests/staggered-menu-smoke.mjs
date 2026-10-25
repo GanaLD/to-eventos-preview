@@ -42,3 +42,18 @@ test('GSAP, fallback e fechamento por Escape e clique fora', () => {
   assert.match(js, /addEventListener\('click'/);
   assert.match(js, /\.inert\s*=/);
 });
+
+test('regressão: CSS não acumula translateX com xPercent controlado pelo GSAP', () => {
+  const css = read('site/staggered-menu.css');
+  const js = read('site/staggered-menu.js');
+  assert.match(css, /\.to-sm\.has-gsap \.to-sm-panel\s*\{\s*transform:\s*none/);
+  assert.match(css, /\.to-sm\.has-gsap \.to-sm-layer/);
+  assert.match(js, /root\.classList\.add\('has-gsap'\)/);
+  assert.match(js, /gsap\.set\(\[panel,\s*\.\.\.layers\],\s*\{\s*xPercent:\s*105/);
+  assert.match(js, /timeline\.to\(panel,\s*\{\s*xPercent:\s*0/);
+});
+test('menu usa cache bust após correção de animação', () => {
+  const html = markup();
+  assert.match(html, /staggered-menu\.css\?v=20261025b/);
+  assert.match(html, /staggered-menu\.js\?v=20261025b/);
+});
