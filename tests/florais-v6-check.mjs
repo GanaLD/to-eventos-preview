@@ -9,7 +9,7 @@ for(const name of ['papoula-2-direita.png','papoula-3-esquerda.png','animacao-pa
 assert(html.includes('florais-v6.css') && html.includes('v7.js'));
 const about=html.substring(html.indexOf('<section id="sobre"'),html.indexOf('<section id="solucoes"'));
 const solutions=html.substring(html.indexOf('<section id="solucoes"'),html.indexOf('<section id="projetos"'));
-assert(about.includes('src="assets/media/animacao-papoulas-fundo-infinito-v77.mp4"'),'Papoulas animadas integrais na seção Sobre');
+assert(about.includes('src="assets/media/animacao-papoulas-fundo-infinito-v77.mp4?v=20261025-v78"'),'Papoulas animadas integrais na seção Sobre');
 assert(!about.includes('animacao-papoulas-alpha-v75.webm'),'Remover o vídeo recortado');
 assert(about.includes('floral-reveal')&&about.includes('playsinline')&&about.includes('loop'),'Vídeo floral original reproduzível no mobile');
 assert(solutions.includes('src="assets/media/papoula-3-esquerda-crop.webp"'));
