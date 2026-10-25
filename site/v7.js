@@ -35,7 +35,10 @@
       }
       entered=true;
       reveal=gsap.timeline({defaults:{ease:'power2.out'}});
-      reveal.to(copyParts,{y:0,autoAlpha:1,duration:1.28,stagger:.21},0);
+      // Letreiro principal desacelera isoladamente; outros textos mantêm o timing anterior.
+      reveal.to(copyParts,{y:0,autoAlpha:1,
+        duration:(index,el)=>el.id==='sobre-heading'?2.1:1.28,
+        stagger:.21},0);
       reveal.to(botanicalVideo,{y:0,autoAlpha:1,duration:1.35},.25);
       // Reprodução começa uma vez, sem pular para 0 na volta à seção.
       playFlower();
