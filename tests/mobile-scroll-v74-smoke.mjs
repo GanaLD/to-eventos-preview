@@ -8,7 +8,7 @@ const motion=read('site/motion-v71.js');
 const css=read('site/mobile-v8.css');
 assert(html.includes('mobile-v8.css'),'CSS mobile final deve carregar na LP');
 assert(html.indexOf('motion-v71.css')<html.indexOf('mobile-v8.css'),'Mobile V8 prevalece sobre os estilos antigos');
-assert(/<source[^>]*media="\(max-width: 899px\) and \(orientation: portrait\)"[^>]*motion-hero-mobile.mp4/.test(html),'Usar versão retrato original adaptada no HeroScroll de celular');
+assert(html.includes('<source src="assets/media/motion-hero-mobile.mp4" type="video/mp4" media="(max-width: 899px) and (orientation: portrait)">'),'Usar mídia retrato no primeiro source do HeroScroll');
 assert(/if\s*\(track\s*&&\s*pin\s*&&\s*area\)/.test(main),'Galeria não pode ser bloqueada por breakpoint desktop');
 assert(!/track\s*&&\s*pin\s*&&\s*area\s*&&\s*desktop/.test(main),'Remover a condição que quebra scroll em mobile');
 assert(main.includes('mobile ?')||main.includes('isMobile() ?'),'Progressão horizontal deve ser calibrada para gesto em telas menores');
