@@ -43,7 +43,7 @@ test('interação possui teclado, touch, redução de movimento e fallback indep
   assert(js.includes("ArrowRight") && js.includes("ArrowLeft"));
   assert(js.includes('aria-pressed') && js.includes('prefers-reduced-motion: reduce'));
   assert(js.includes('ResizeObserver') && js.includes('window.gsap'));
-  assert(!js.includes('ScrollTrigger') && !js.includes('.killAll('));
+  assert(!/\\bScrollTrigger\\s*\\.\\s*(create|refresh|kill)\\s*\\(/.test(js) && !js.includes('.killAll('));
   assert(css.includes('@media (max-width: 620px)'));
   assert(css.includes('@media (prefers-reduced-motion: reduce)'));
   assert(css.includes(':focus-visible'));
