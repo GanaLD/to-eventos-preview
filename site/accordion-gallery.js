@@ -115,5 +115,14 @@
     ro?.disconnect();
     window.removeEventListener('resize', onResize);
     reduced.removeEventListener?.('change', onReducedChange);
-  }, { once: true });
+  });
+  // Restaurar a interatividade quando o navegador retorna pelo back/forward cache.
+  window.addEventListener('pageshow', event => {
+    if (!event.persisted || !destroyed) return;
+    destroyed = false;
+    ro?.observe(root);
+    window.addEventListener('resize', onResize, { passive: true });
+    reduced.addEventListener?.('change', onReducedChange);
+    setActive(active, false);
+  });
 })();
