@@ -36,7 +36,7 @@ try {
   });
   assert(initial.source.includes('motion-hero-mobile.mp4'),'HERO mobile carrega MP4 16:9, não 9:16: '+JSON.stringify(initial));
   assert(Math.abs(initial.mediaW/initial.mediaH-9/16)<.02,'Mídia real não é retrato 9:16');
-  assert.equal(initial.fit,'cover','A abertura deve ocupar o viewport, sem letterbox');
+  assert.equal(initial.fit,'contain','O lettering original não pode ser cortado nas laterais');
   assert.equal(initial.mask,'none','Não usar fade para disfarçar barras vazias');
   assert(Math.abs(initial.film.w-width)<3&&Math.abs(initial.film.h-height)<4,'Vídeo HeroScroll não ocupa viewport real');
   await page.screenshot({path:`${output}/${tag}-inicio.jpg`,type:'jpeg',quality:38});
