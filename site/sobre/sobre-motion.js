@@ -37,10 +37,11 @@
     if (layoutFits(hero) && layoutFits(entrance)) {
       const intro = gsap.timeline({
         scrollTrigger: {
-          trigger: pin,
+          // Fixar o contêiner externo para a spacer reservar altura real no documento.
+          trigger: stage,
           start: 'top top',
           end: () => '+=' + Math.round(viewport() * 1.1),
-          pin: true,
+          pin: stage,
           scrub: 1.05,
           anticipatePin: 1,
           invalidateOnRefresh: true

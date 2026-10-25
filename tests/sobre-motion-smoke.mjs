@@ -14,7 +14,8 @@ test('Hero e Sobre compartilham um único palco; não entram lateralmente no flu
   const services=html.indexOf('data-sobre-services');
   assert.ok(stage>0&&stage<pin&&pin<hero&&hero<about&&about<services);
   assert.match(css,/\.sobre-page\.sobre-intro-active \.sobre-hero,\s*\.sobre-page\.sobre-intro-active \.sobre-entrance\s*\{[^}]*position:absolute;[^}]*inset:0/s);
-  assert.match(js,/trigger:\s*pin/);
+  assert.match(js,/trigger:\s*stage/);
+  assert.match(js,/pin:\s*stage/);
   assert.match(js,/pin:\s*true/);
   assert.doesNotMatch(js,/trigger:\s*entrance/);
 });
