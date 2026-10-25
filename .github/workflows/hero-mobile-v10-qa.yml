@@ -28,7 +28,7 @@ jobs:
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/ -o /dev/null && break || sleep 1; done
           node tests/hero-mobile-v10-visual.mjs
       - name: Screenshots para revisão
-        if: success() && github.event_name == 'push'
+        if: always() && github.event_name == 'push'
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: node tests/hero-mobile-v10-export-review.mjs
