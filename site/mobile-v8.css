@@ -220,3 +220,21 @@
     object-position:center center;
   }
 }
+
+/* Mobile V7.4: ao recolher, o vídeo 9:16 mantém sua proporção nativa.
+   Não comprimir a mídia vertical dentro de uma moldura 16:9. */
+@media(max-width:899px) and (orientation:portrait){
+  .hero-scroll-stage .hero-visual{
+    display:block;
+    aspect-ratio:9/16;
+    width:min(58vw,26dvh);
+    height:auto;
+    max-height:46dvh;
+    flex:0 0 auto;
+  }
+  .hero-scroll-stage .hero-visual::after{display:none}
+  .hero-scroll-stage.is-hero-framed .hero-film-screen video{
+    object-fit:contain;
+    object-position:center;
+  }
+}
