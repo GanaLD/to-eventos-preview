@@ -54,7 +54,7 @@ test('regressão: CSS não acumula translateX com xPercent controlado pelo GSAP'
 });
 test('menu usa cache bust após correção de animação', () => {
   const html = markup();
-  assert.match(html, /staggered-menu\.css\?v=20261025b/);
+  assert.match(html, /staggered-menu\.css\?v=20261025c/);
   assert.match(html, /staggered-menu\.js\?v=20261025b/);
 });
 
