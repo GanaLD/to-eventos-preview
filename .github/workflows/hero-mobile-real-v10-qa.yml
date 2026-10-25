@@ -1,0 +1,45 @@
+name: QA HeroScroll retrato V10 — quadro e touch reais
+on:
+  push:
+    branches: [fix/mobile-heroscroll-real-v10]
+    paths:
+      - site/index.html
+      - site/mobile-v9.css
+      - site/hero-v5.js
+      - site/assets/media/motion-hero-mobile.mp4
+      - tests/hero-mobile-real-v10-smoke.mjs
+      - tests/hero-mobile-real-v10-touch.mjs
+      - .github/workflows/hero-mobile-real-v10-qa.yml
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    steps:
+      - uses: actions/checkout@v4
+      - name: Chrome real com codec H264
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install chrome
+      - name: Smoke — proporção real e código sem regressões
+        run: |
+          node tests/hero-mobile-real-v10-smoke.mjs
+          node --check site/hero-v5.js
+      - name: Gestos touch reais e enquadramento em três telas
+        run: |
+          node tests/v7-range-server.mjs >/tmp/site.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/ >/dev/null && break || sleep 1; done
+          curl -sSI -H 'Range: bytes=0-63' http://127.0.0.1:8765/assets/media/motion-hero-mobile.mp4 | grep -q '206 Partial Content'
+          node tests/hero-mobile-real-v10-touch.mjs
+      - name: Salvar capturas do frame inicial, durante touch e final
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qa-hero-mobile-real-v10
+          path: qa-hero-mobile-v10
+          if-no-files-found: warn
