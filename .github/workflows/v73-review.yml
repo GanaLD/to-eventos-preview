@@ -1,0 +1,56 @@
+name: TO Eventos V7.3 — testes e prévia visual
+on:
+  push:
+    branches: [fix/to-v73-floral-type-motion]
+    paths:
+      - '.github/workflows/v73-review.yml'
+      - 'site/**'
+      - 'tests/**'
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testar arquitetura e motion da V7.3
+        run: |
+          node tests/v4-smoke.mjs
+          node tests/v41-smoke.mjs
+          node tests/hero-v5-smoke.mjs
+          node tests/florais-v6-check.mjs
+          node tests/v7-smoke.mjs
+          node tests/v71-smoke.mjs
+          node tests/v72-no-flicker.mjs
+          node tests/v73-regression.mjs
+          node --check site/motion-v71.js
+          node --check site/v7.js
+          node --check site/hero-v5.js
+          node --check site/main.js
+          file site/assets/media/animacao-papoulas-inteiras-v73.mp4
+          test $(stat -c%s site/assets/media/animacao-papoulas-inteiras-v73.mp4) -gt 100000
+      - name: Instalar Playwright
+        run: npm install --no-save --no-package-lock playwright@1.57.0
+      - name: Conferir HERO e PDF nas sete resoluções
+        env:
+          TO_PREVIEW_URL: http://127.0.0.1:8765/?v73
+        run: |
+          node tests/v7-range-server.mjs > /tmp/site-qa-v73.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/ -o /dev/null && break || sleep 1; done
+          node tests/v7-visual.mjs
+      - name: Conferir animação lenta, digitação e retorno sem piscadas
+        env:
+          TO_PREVIEW_URL: http://127.0.0.1:8765/?v73
+        run: node tests/v71-visual.mjs
+      - name: Arquivar capturas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TO-V73-capturas-desktop-mobile
+          path: qa-artifacts/
+          retention-days: 30
+          if-no-files-found: warn
