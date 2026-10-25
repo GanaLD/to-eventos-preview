@@ -4,72 +4,8 @@
   const gsap=window.gsap, ST=window.ScrollTrigger;
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // SOBRE — animar os cinco grupos reais em ordem, após entrada da seção.
-  const about=document.getElementById('sobre');
-  const copy=about?.querySelector('.about-copy');
-  const botanicalVideo=about?.querySelector('.about-floral-video');
-  const copyParts=copy?[
-    copy.querySelector('.overline'),
-    copy.querySelector('#sobre-heading'),
-    copy.querySelector('p.intro'),
-    [...copy.children].find(n=>n.tagName==='P'&&!n.classList.contains('overline')&&!n.classList.contains('intro')),
-    copy.querySelector('.microproof')
-  ].filter(Boolean):[];
-
-  let entered=false;
-  const playFlower=()=>{
-    if(!botanicalVideo || botanicalVideo.ended)return;
-    const promise=botanicalVideo.play();
-    promise?.catch?.(()=>{});
-  };
-  if(about&&botanicalVideo&&copyParts.length && !reduce && gsap&&ST){
-    gsap.registerPlugin(ST);
-    // Esconde apenas antes do primeiro reveal. Nunca reseta ao scroll reverso.
-    gsap.set(copyParts,{y:32,autoAlpha:0});
-    gsap.set(botanicalVideo,{y:0,autoAlpha:0});
-    let reveal;
-    const enter=()=>{
-      if(entered){
-        playFlower();
-        return;
-      }
-      entered=true;
-      reveal=gsap.timeline({defaults:{ease:'power2.out'}});
-      reveal.to(copyParts,{y:0,autoAlpha:1,duration:1.28,stagger:.21},0);
-      reveal.to(botanicalVideo,{y:0,autoAlpha:1,duration:1.35},.25);
-      // Reprodução começa uma vez, sem pular para 0 na volta à seção.
-      playFlower();
-    };
-    ST.create({
-      id:'to-v7-sobre-intro',
-      trigger:about,
-      start:'top 82%',
-      end:'bottom 15%',
-      invalidateOnRefresh:true,
-      onEnter:enter,
-      onEnterBack:enter,
-      onLeave:()=>botanicalVideo.pause(),
-      onLeaveBack:()=>botanicalVideo.pause()
-    });
-    // Abertura por #sobre e restauração pelo histórico.
-    const reconcile=()=>{
-      const r=about.getBoundingClientRect();
-      if(!entered && r.top<innerHeight*.82 && r.bottom>innerHeight*.15)enter();
-    };
-    requestAnimationFrame(()=>requestAnimationFrame(reconcile));
-    document.fonts?.ready?.then(()=>{ST.refresh();reconcile();});
-    botanicalVideo.addEventListener('loadedmetadata',()=>ST.refresh(),{once:true});
-  }else if(botanicalVideo){
-    // Sem GSAP / movimento reduzido: texto visível e vídeo livre de animações agressivas.
-    botanicalVideo.addEventListener('loadedmetadata',()=>{
-      if(reduce&&botanicalVideo.duration>0){
-        try{botanicalVideo.currentTime=Math.max(0,botanicalVideo.duration-.08);}catch(_){}
-      }
-    },{once:true});
-    if(!reduce&&'IntersectionObserver' in window){
-      new IntersectionObserver(entries=>entries.forEach(e=>e.isIntersecting?playFlower():botanicalVideo.pause()),{threshold:.15}).observe(about);
-    }
-  }
+  // SOBRE: controlador único de motion/vídeo no motion-v74.js.
+  // Nunca inicializar uma segunda timeline para a mesma seção.
 
   // COMPETÊNCIAS — imagens já recortadas pelos limites ALFA reais.
   const solutions=document.getElementById('solucoes');

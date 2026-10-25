@@ -1,0 +1,103 @@
+/* TO Eventos V7.4 — editorial text rhythm + borderless botanical motion.
+   DO NOT modify HERO scroll, page-turn, PDF, or gallery pin geometry. */
+
+#sobre .about-grid .botanical-motion {
+  grid-column:2;
+  align-self:center;
+  justify-self:center;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:min(100%,410px);
+  max-width:410px;
+  min-width:0;
+  margin:0 auto;
+  padding:0;
+  border:0;
+  background:transparent;
+  overflow:visible;
+  box-shadow:none;
+}
+
+#sobre .about-grid .botanical-motion .about-floral-video {
+  box-sizing:border-box;
+  display:block;
+  width:100%;
+  height:auto;
+  max-width:100%;
+  aspect-ratio:9 / 16;
+  object-fit:contain;
+  object-position:center center;
+  background:#F4F4F2;
+  padding:0;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  filter:none;
+}
+#sobre .botanical-motion figcaption{display:none!important}
+
+/* Static CSS never hides content: JS applies masks only after GSAP is ready.
+   Each line retains full text and its final measured width during typing. */
+.to-v74-type-line,
+.project-panel-cases .case-text:not(.case-text-contrast) .to-v72-type-line {
+  display:block;
+  position:relative;
+  width:max-content;
+  max-width:100%;
+  min-width:0;
+  clip-path:none;
+  white-space:normal;
+  overflow:visible;
+  will-change:clip-path;
+}
+
+/* Reinforce the typography's original metrics; animations do not move cards. */
+#solucoes .solutions-title .to-v74-type-line,
+#projetos-heading .to-v74-type-line,
+#contato-heading .to-v74-type-line {
+  max-width:100%;
+  line-height:inherit;
+}
+#solucoes .solution h3 .to-v74-type-line {
+  max-width:100%;
+  white-space:normal;
+  line-height:inherit;
+}
+.project-panel-cases .case-text:not(.case-text-contrast) .to-v72-type-line {
+  white-space:normal;
+  line-height:inherit;
+}
+
+/* Prevent animation transforms from overflowing viewport or cover CTA. */
+#sobre .about-copy, #solucoes .shell, #contato .contact-grid {
+  min-width:0;
+}
+@media(max-width:900px) {
+  #sobre .about-grid .botanical-motion {
+    grid-column:auto;
+    width:min(78vw,340px);
+    margin:40px auto 0;
+  }
+}
+@media(max-width:720px) {
+  #sobre .about-grid .botanical-motion {
+    width:min(78vw,320px);
+    max-width:320px;
+    margin:32px auto 0;
+    padding:0;
+  }
+  #sobre .about-grid .botanical-motion .about-floral-video {
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:9 / 16;
+    object-fit:contain;
+  }
+  .to-v74-type-line, .to-v72-type-line {max-width:100%;overflow:visible;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .to-v74-type-line,.to-v72-type-line{clip-path:none!important;will-change:auto!important}
+  #sobre .about-floral-video{transform:none!important;opacity:1!important}
+}
