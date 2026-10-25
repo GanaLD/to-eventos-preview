@@ -1,4 +1,4 @@
-/* TO Eventos — moldura V10 isolada. Não altera o Hero, nem os arquivos/vídeos originais. */
+/* TO Eventos — moldura V13 sem halo. Fonte MP4 com preto neutro via CSS screen. Hero original intacto. */
 (() => {
 'use strict';
 function progressForScroll(scrollY, distance) {
@@ -73,16 +73,16 @@ document.body.appendChild(canvas);
 const ctx=canvas.getContext('2d',{alpha:true,desynchronized:true});
 if(!ctx) { canvas.remove(); return; }
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const safari=/^((?!chrome|android).)*safari/i.test(navigator.userAgent) || /iPad|iPhone|iPod/.test(navigator.userAgent);
+// MP4 H.264 compatível também com Safari, sem necessidade de imagem estática nesse navegador.
 const video = document.createElement('video');
 video.className='to-floral-v10-video-decoder';
 video.setAttribute('aria-hidden','true');
 video.setAttribute('playsinline','');
 video.playsInline=true;video.muted=true;video.defaultMuted=true;video.preload='auto';
 video.disablePictureInPicture=true;video.loop=false;
-const sourceWebM = window.__TO_PREVIEW_MEDIA__?.webm || 'assets/media/moldura-v12-alpha.webm';
-const sourcePoster = window.__TO_PREVIEW_MEDIA__?.poster || 'assets/media/moldura-v12-final.webp';
-video.src=sourceWebM;
+const sourceMP4 = window.__TO_PREVIEW_MEDIA__?.mp4 || 'assets/media/moldura-v13-screen.mp4';
+const sourcePoster = window.__TO_PREVIEW_MEDIA__?.poster || 'assets/media/moldura-v13-screen.webp';
+video.src=sourceMP4;
 document.body.appendChild(video);
 const poster = new Image();poster.src=sourcePoster;
 let posterReady=false;let videoError=false;
@@ -130,7 +130,7 @@ function drawMedia(media){
   ctx.restore();
 }
 function draw(){
-  if((reduced || videoError || safari) && posterReady) drawMedia(poster);
+  if((reduced || videoError) && posterReady) drawMedia(poster);
   else if(video.readyState>=HTMLMediaElement.HAVE_CURRENT_DATA){
     drawMedia(video);latestVideoTime=video.currentTime;
   }
@@ -143,7 +143,7 @@ function resize(){
   draw();
 }
 function seekToTime(){
-  if(targetTime===null || video.seeking || video.readyState<1 || safari || videoError) return;
+  if(targetTime===null || video.seeking || video.readyState<1 || videoError) return;
   if(Math.abs(video.currentTime-targetTime)<1/48) { if(Math.abs(latestVideoTime-video.currentTime)>1/48) draw();return; }
   try {video.currentTime=targetTime;} catch { /* metadata indisponível durante carga */ }
 }
@@ -152,7 +152,7 @@ function update(){
   const p=heroProgress();
   const reverseProgress=clamp(p/floralReverseEnd);
   canvas.style.opacity=(1-reverseProgress).toFixed(4);
-  if(reduced || videoError || safari){if(posterReady) draw();return;}
+  if(reduced || videoError){if(posterReady) draw();return;}
   // No topo a introdução deve concluir naturalmente antes do scroll assumir o playhead.
   if(!scrollStarted && p<.001) return;
   scrollStarted=true;
@@ -167,12 +167,12 @@ video.addEventListener('loadeddata',draw);
 video.addEventListener('timeupdate',()=>{if(!scrollStarted)draw();});
 video.addEventListener('ended',()=>{introDone=true;video.pause();draw();onScroll();});
 video.addEventListener('loadedmetadata',()=>{
-  if(reduced || safari) {draw();onScroll();return;}
+  if(reduced) {draw();onScroll();return;}
   if(heroProgress()>.001){scrollStarted=true;onScroll();return;}
   video.play().catch(()=>{videoError=true;draw();onScroll();});
 });
 video.addEventListener('error',()=>{videoError=true;draw();onScroll();});
-poster.onload=()=>{posterReady=true;if(reduced || safari || videoError)draw();};
+poster.onload=()=>{posterReady=true;if(reduced || videoError)draw();};
 if('requestVideoFrameCallback' in video){
  const frame=()=>{draw();video.requestVideoFrameCallback(frame);};
  video.requestVideoFrameCallback(frame);
@@ -185,7 +185,7 @@ window.addEventListener('scroll',onScroll,{passive:true});
 window.addEventListener('resize',()=>{resize();onScroll();},{passive:true});
 document.addEventListener('visibilitychange',()=>{
  if(document.hidden)video.pause();
- else if(!scrollStarted && !introDone && !reduced && !videoError && !safari)video.play().catch(()=>{});
+ else if(!scrollStarted && !introDone && !reduced && !videoError)video.play().catch(()=>{});
 });
 window.addEventListener('pagehide',()=>{
  window.removeEventListener('scroll',onScroll);
@@ -193,6 +193,6 @@ window.addEventListener('pagehide',()=>{
  video.pause();
 },{once:true});
 resize();
-if(!reduced && !safari)video.load();
+if(!reduced)video.load();
 onScroll();
 })();
