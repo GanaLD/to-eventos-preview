@@ -22,7 +22,7 @@ test('Home mantém folha de respiro e iluminacao dos CTAs',()=>{
   assert.match(override,/@media\(max-width:899px\)/);
 });
 test('Sobre mantém CSS responsivo e acabamento dos botoes sem alterar mídia',()=>{
-  assert.match(about,/href="sobre\.css\?v=2"/);
+  assert.match(about,/href="sobre\.css\?v=\d+"/);
   assert.match(aboutCSS,/\.sobre-page \.button-accent/);
   assert.match(aboutCSS,/box-shadow:/);
   assert.match(aboutCSS,/@media\(max-width:760px\)/);
