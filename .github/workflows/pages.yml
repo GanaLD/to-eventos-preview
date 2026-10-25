@@ -24,6 +24,7 @@ jobs:
           node tests/v4-smoke.mjs
           node tests/v41-smoke.mjs
           node tests/staggered-menu-smoke.mjs
+          node tests/whatsapp-glossy-smoke.mjs
           node tests/hero-v5-smoke.mjs
           node tests/florais-v6-check.mjs
           node tests/v7-smoke.mjs
