@@ -33,6 +33,12 @@ try{
        about:{x:ar.x,y:ar.y,w:ar.width,h:ar.height,scroll:about.scrollHeight},
        stage:{x:sr.x,y:sr.y,w:sr.width,h:sr.height}};
     });
+    // A coreografia deve estar realmente ativa no desktop de referência.
+    if(width===1440){
+      assert(initial.intro,'Overlay Hero/Sobre não ativado no desktop 1440x900: '+JSON.stringify(initial));
+      assert(initial.service,'Cena vertical de serviços não ativada no desktop 1440x900: '+JSON.stringify(initial));
+      assert(initial.horizontal,'Percurso horizontal não ativado no desktop 1440x900: '+JSON.stringify(initial));
+    }
     // Quando ativo, o About precisa preencher o MESMO palco do Hero.
     if(initial.intro){
       assert(Math.abs(initial.hero.y-initial.about.y)<3,'Hero/Sobre divergem no eixo Y: '+JSON.stringify(initial));
@@ -85,4 +91,5 @@ try{
   }
   await fs.writeFile(out+'/report.json',JSON.stringify(report,null,2));
   console.log('QA SOBRE GSAP: PASS '+report.map(x=>x.width+'x'+x.height).join(', '));
+  console.log('GSAP-LAYOUT '+JSON.stringify(report.map(x=>({viewport:x.width+'x'+x.height,intro:x.initial.intro,service:x.initial.service,horizontal:x.initial.horizontal}))));
 }finally{await browser.close();}
