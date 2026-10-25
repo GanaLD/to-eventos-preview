@@ -23,6 +23,9 @@ jobs:
           mkdir -p site/assets/media
           unzip -p /tmp/moldura-v11.zip 'TO-Eventos-V10/assets/media/moldura-alpha.webm' > site/assets/media/moldura-alpha.webm
           unzip -p /tmp/moldura-v11.zip 'TO-Eventos-V10/assets/media/moldura-final.webp' > site/assets/media/moldura-final.webp
+          unzip -p /tmp/moldura-v11.zip 'TO-Eventos-V10/moldura-overlay.js' > site/moldura-overlay.js
+          unzip -p /tmp/moldura-v11.zip 'TO-Eventos-V10/moldura-overlay.css' > site/moldura-overlay.css
+          node --check site/moldura-overlay.js
           test "$(wc -c < site/assets/media/moldura-alpha.webm)" -gt 7000000
           test "$(wc -c < site/assets/media/moldura-final.webp)" -gt 300000
       - name: Registrar novas midias sem alterar outras
@@ -30,7 +33,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add site/assets/media/moldura-alpha.webm site/assets/media/moldura-final.webp
+          git add site/assets/media/moldura-alpha.webm site/assets/media/moldura-final.webp site/moldura-overlay.js site/moldura-overlay.css
           if ! git diff --cached --quiet; then
             git commit -m 'assets: adicionar papoulas alpha e poster (sem alterar video hero)'
             git push origin HEAD:feature/moldura-papoulas-v11
