@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const read=(p)=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const html=read('site/index.html');
+const flow=read('.github/workflows/pages.yml');
+const css=read('site/papoulas-fundo-infinito-v77.css');
+const about=html.slice(html.indexOf('<section id="sobre"'),html.indexOf('<section id="solucoes"'));
+assert(flow.includes('aa4ed72b-e239-4251-8a2c-d100dbf0eddc.mp4'), 'Deploy deve buscar NOVO vídeo enviado pelo cliente');
+assert(flow.includes('7b6e54906ecd4e6bd661c4c9f3f59ed869250f1b9a80b2d622849a51bd723a72'), 'Integridade do vídeo novo deve ser validada por SHA256');
+assert(flow.includes('scripts/build_papoulas_infinite.py') && flow.includes('/tmp/papoulas-cliente-v78.mp4'), 'Converter o vídeo NOVO, não mídia antiga');
+assert(about.includes('animacao-papoulas-fundo-infinito-v77.mp4?v=20261025-v78'), 'Forçar nova mídia sem cache antigo');
+assert(about.includes('autoplay muted loop playsinline'), 'Preservar reprodução original');
+assert(!about.includes('papoulas-preview.webp'), 'Não trocar vídeo por imagem');
+assert(css.includes('object-fit:contain') && css.includes('clip-path:none'), 'Manter vídeo inteiro sem corte espacial');
+console.log('PASS — nova papoula animada substituída, SHA verificado, sem crop ou máscara');
