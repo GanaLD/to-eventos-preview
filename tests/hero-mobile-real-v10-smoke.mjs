@@ -4,8 +4,8 @@ const html=file('site/index.html'),css=file('site/mobile-v9.css'),js=file('site/
 assert(/<source\s+media="\(max-width: 899px\) and \(orientation: portrait\)"\s+src="assets\/media\/motion-hero-mobile\.mp4"/.test(html),'HERO mobile deve selecionar o asset 9:16 no <video> antes do fallback 16:9');
 assert(fs.existsSync(new URL('../site/assets/media/motion-hero-mobile.mp4',import.meta.url)),'Asset vertical real precisa existir no site');
 assert(/@media\s*\(max-width:\s*899px\).*?\(orientation:\s*portrait\)/s.test(css),'Viewport retrato precisa de enquadramento próprio');
-assert(/\.hero-scroll-stage \.hero-film-screen video\s*\{[^}]*object-fit:\s*cover/s.test(css.slice(css.lastIndexOf('V10'))),'Cinemática mobile precisa ocupar 100% do HERO');
+assert(/\.hero-scroll-stage \.hero-film-screen video\s*\{[^}]*object-fit:\s*contain/s.test(css.slice(css.lastIndexOf('V10'))),'Cinemática mobile não deve cortar letras em 19.5:9');
 assert(css.includes('mask-image:none'),'Proibido mascarar bordas da marca com efeito falso');
 assert(!html.includes('hero-bleed.js')&&!html.includes('hero-edge-canvas'),'Nunca repetir vídeo nas bordas');
 assert(js.includes("to-hero-mobile-film-and-copy")&&js.includes('scheduleSeek('),'Vídeo continua ligado a ScrollTrigger');
-console.log('PASS: video retrato real 9:16, cover mobile e scrub acoplado ao scroll.');
+console.log('PASS: video retrato real 9:16, mídia completa e scrub acoplado ao scroll.');
