@@ -1,19 +1,19 @@
-/* TO Eventos V7.2 — composição floral integrada e motion sem piscadas.
-   Ninguém reinicia o texto no scroll reverso; não há alteração no HERO. */
+/* TO Eventos V7.3 — único sistema tipográfico e vídeo floral do acervo ORIGINAL.
+   Não altera HERO, cores nem geometria do GSAP horizontal. */
 #sobre .botanical-motion{
   box-sizing:border-box;
   grid-column:2;
   min-width:0;
-  width:min(100%,370px);
-  max-width:370px;
-  margin-inline:auto;
+  width:min(100%,410px);
+  max-width:410px;
   padding:0;
-  overflow:visible;
+  margin-inline:auto;
   align-self:center;
   justify-self:center;
   display:flex;
   align-items:center;
   justify-content:center;
+  overflow:visible;
   background:transparent;
 }
 #sobre .botanical-motion .about-floral-video{
@@ -21,11 +21,11 @@
   width:100%;
   max-width:100%;
   height:auto;
-  aspect-ratio:9 / 16;
+  aspect-ratio:9/16;
   object-fit:contain;
   object-position:center center;
-  margin:0 auto;
   padding:0;
+  margin:0 auto;
   border:0;
   box-shadow:none;
   background:#F4F4F2;
@@ -33,34 +33,49 @@
 #sobre .botanical-motion figcaption{display:none!important}
 .project-panel-cases .project-panel-inner{justify-content:center}
 .project-panel-cases .case-layout{margin-block:0}
-/* Somente o título do card cinza usa reveal de digitação: sem opacity por letra. */
+
+/* Typewriter non-blinking: preserve real text widths and natural word wrapping. */
+.to-v73-typed{
+  display:inline-block;
+  white-space:nowrap;
+  vertical-align:baseline;
+  will-change:clip-path;
+  clip-path:inset(0 0 0 0);
+}
+.to-v73-typed-word{letter-spacing:inherit;}
 .project-panel-cases .case-text:not(.case-text-contrast) .to-v72-type-line{
   display:inline-block;
   white-space:nowrap;
-  clip-path:inset(0 100% 0 0);
-  will-change:clip-path;
 }
+#solucoes .solution h3{overflow-wrap:normal;}
 @media(max-width:900px){
   #sobre .botanical-motion{
     grid-column:auto;
-    max-width:min(100%,335px);
+    width:min(100%,350px);
+    max-width:350px;
     margin:32px auto 0;
-    padding:0;
   }
 }
 @media(max-width:720px){
   #sobre .botanical-motion{
-    width:min(100%,300px);
-    max-width:300px;
-    padding:0;
-    margin:32px auto 0;
+    width:min(100%,320px);
+    max-width:320px;
+    margin:28px auto 0;
   }
   #sobre .botanical-motion .about-floral-video{
+    width:100%;
     height:auto;
-    aspect-ratio:9 / 16;
+    aspect-ratio:9/16;
   }
 }
+@media(max-width:390px){
+  #sobre .botanical-motion{width:min(100%,295px);}
+  #solucoes .solution h3{font-size:clamp(25px,6.4vw,37px)}
+}
 @media(prefers-reduced-motion:reduce){
-  .to-v72-type-line{clip-path:none!important;will-change:auto!important}
+  .to-v73-typed,.to-v72-type-line{
+    clip-path:none!important;
+    will-change:auto!important;
+  }
   #sobre .botanical-motion .about-floral-video{transform:none!important}
 }
