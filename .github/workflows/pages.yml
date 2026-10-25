@@ -27,6 +27,7 @@ jobs:
           node tests/sobre-page-smoke.mjs
           node tests/whatsapp-glossy-smoke.mjs
           node tests/hero-v5-smoke.mjs
+          node tests/hostinger-thaiso-background-smoke.mjs
           node tests/florais-v6-check.mjs
           node tests/v7-smoke.mjs
           node tests/accordion-gallery-v1-smoke.mjs
@@ -38,6 +39,7 @@ jobs:
           node --check site/ui-v4.js
           node --check site/ui-v41.js
           node --check site/hero-v5.js
+          node --check site/hero-thaiso.js
       - name: Integrar vídeo autoral do HERO no artefato do Pages
         run: |
           mkdir -p site/assets/media
