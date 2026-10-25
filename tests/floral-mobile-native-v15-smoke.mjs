@@ -6,7 +6,7 @@ const css=read('site/moldura-overlay.css');
 const html=read('site/index.html');
 assert(js.includes('function startMobileFloral'), 'O mobile precisa de camada própria, não do canvas desktop');
 assert(js.includes('to-floral-mobile-v15-video'),'Mídia mobile precisa ser vídeo visível, não decoder oculto');
-assert(js.includes('return; // desktop continua no canvas original'),'Mobile termina antes de iniciar o canvas desktop');
+assert(js.includes('function reconcileFloralLayer()') && js.includes('startMobileFloral();') && js.includes('startDesktopFloral();'),'Mobile usa vídeo próprio e desktop conserva canvas original, com troca no resize');
 assert(js.includes('floral-mobile-v14.mp4')&&js.includes('floral-mobile-v14.webp'),'Usar mídia vertical fornecida');
 assert(css.includes('#to-floral-mobile-v15')&&css.includes('mix-blend-mode:screen'),'Composição sem fundo preto');
 assert(js.includes('const floralReverseEnd = 0.42'),'Preservar scroll reverso atual');
