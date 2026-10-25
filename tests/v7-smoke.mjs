@@ -34,6 +34,8 @@ assert(projects.includes('controls')&&projects.includes('preload="metadata"')&&p
 assert(projects.includes('portfolio-thais-ortiz.pdf')&&projects.includes('to-pdf-showcase'),'Apresentação deve usar showcase real PDF');
 assert(!projects.includes('FRAME DO VÍDEO FORNECIDO'),'Frame antigo removido da experiência');
 assert(projects.includes('Anterior')&&projects.includes('Próxima')&&projects.includes('Tela cheia'),'PDF deve ter controles completos');
+assert(!/<a\b[^>]*\bdownload(?:\s|=|>)/i.test(projects),'Link Baixar PDF não pode reaparecer na LP');
+assert(projects.includes('>Abrir PDF</a>'),'Link Abrir PDF deve permanecer no visualizador');
 assert(js.includes('pdfjsLib')&&js.includes('numPages')&&js.includes('getPage('),'PDF.js deve renderizar documento e páginas reais');
 assert(original.includes("getElementById('projects-track')"),'GSAP horizontal preservado');
 assert(html.indexOf('id="hero"')<html.indexOf('id="sobre"')&&html.indexOf('id="sobre"')<html.indexOf('id="solucoes"')&&html.indexOf('id="solucoes"')<html.indexOf('id="projetos"'),'Ordem da LP preservada');
