@@ -16,6 +16,10 @@ jobs:
           persist-credentials: true
       - name: Install compositor dependencies
         run: python3 -m pip install --break-system-packages numpy pillow
+      - name: Install ffmpeg on runner
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
       - name: Compose from original animation
         run: |
           python3 tools/build_papoulas_v74.py
