@@ -80,8 +80,8 @@ video.setAttribute('aria-hidden','true');
 video.setAttribute('playsinline','');
 video.playsInline=true;video.muted=true;video.defaultMuted=true;video.preload='auto';
 video.disablePictureInPicture=true;video.loop=false;
-const sourceWebM = window.__TO_PREVIEW_MEDIA__?.webm || 'assets/media/moldura-alpha.webm';
-const sourcePoster = window.__TO_PREVIEW_MEDIA__?.poster || 'assets/media/moldura-final.webp';
+const sourceWebM = window.__TO_PREVIEW_MEDIA__?.webm || 'assets/media/moldura-v12-alpha.webm';
+const sourcePoster = window.__TO_PREVIEW_MEDIA__?.poster || 'assets/media/moldura-v12-final.webp';
 video.src=sourceWebM;
 document.body.appendChild(video);
 const poster = new Image();poster.src=sourcePoster;
@@ -89,7 +89,7 @@ let posterReady=false;let videoError=false;
 let introDone=false;let scrollStarted=false;
 let targetTime=null;let latestVideoTime=-1;
 let frameRequest=0;let sizeW=0;let sizeH=0;
-const videoPhaseEnd = 0.7; // exatamente a mesma fase utilizada pelo hero-v5.js, somente LEITURA.
+const floralReverseEnd = 0.42; // Somente a moldura some mais cedo; o Hero V5 permanece inalterado.
 const offscreen = document.createElement('canvas');
 const offctx = offscreen.getContext('2d',{alpha:true});
 const clamp=(x)=>Math.max(0,Math.min(1,x));
@@ -107,6 +107,11 @@ function drawMedia(media){
   const sh=media.videoHeight||media.naturalHeight;
   if(!(sw>0 && sh>0 && sizeW>0 && sizeH>0)) return;
   ctx.clearRect(0,0,sizeW,sizeH);
+  // Zoom da composição floral: 7% extra são cortados nas bordas, sem tocar no Hero.
+  ctx.save();
+  ctx.translate(sizeW/2,sizeH/2);
+  ctx.scale(1.07,1.07);
+  ctx.translate(-sizeW/2,-sizeH/2);
   for(const t of calculateNineSlice(sw,sh,sizeW,sizeH)){
     if (!(t.dw>0 && t.dh>0)) continue;
     if ((t.feathered || t.fadeY) && offctx){
@@ -122,6 +127,7 @@ function drawMedia(media){
       ctx.drawImage(offscreen,t.dx,t.dy,t.dw,t.dh);
     } else ctx.drawImage(media,t.sx,t.sy,t.sw,t.sh,t.dx,t.dy,t.dw,t.dh);
   }
+  ctx.restore();
 }
 function draw(){
   if((reduced || videoError || safari) && posterReady) drawMedia(poster);
@@ -144,7 +150,7 @@ function seekToTime(){
 function update(){
   frameRequest=0;
   const p=heroProgress();
-  const reverseProgress=clamp(p/videoPhaseEnd);
+  const reverseProgress=clamp(p/floralReverseEnd);
   canvas.style.opacity=(1-reverseProgress).toFixed(4);
   if(reduced || videoError || safari){if(posterReady) draw();return;}
   // No topo a introdução deve concluir naturalmente antes do scroll assumir o playhead.
