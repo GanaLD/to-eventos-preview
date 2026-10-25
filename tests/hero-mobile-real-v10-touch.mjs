@@ -59,11 +59,22 @@ try {
   assert(back.frame<one.frame-.05,'Gesto inverso não retrocede quadros do vídeo: '+JSON.stringify({one,back}));
 
   // Cena de transição editorial só começa DEPOIS de tocar toda a abertura.
-  await page.evaluate(()=>{
-   const t=window.ScrollTrigger.getById('to-hero-mobile-film-and-copy');
-   window.scrollTo({top:t.start+(t.end-t.start)*.95,behavior:'instant'});
-  });
-  await page.waitForTimeout(1600);
+  // Após gesto touch, estabilizar a inércia antes de validar o slot final.
+  // Continua sendo a mesma timeline controlada pelo scroll, não fake playback.
+  let progress=0;
+  for(let n=0;n<6;n++){
+   progress=await page.evaluate(()=>{
+     const t=window.ScrollTrigger.getById('to-hero-mobile-film-and-copy');
+     window.scrollTo({top:t.start+(t.end-t.start)*.95,behavior:'instant'});
+     window.ScrollTrigger.update();
+     return t.progress;
+   });
+   await page.waitForTimeout(480);
+   progress=await page.evaluate(()=>window.ScrollTrigger.getById('to-hero-mobile-film-and-copy').progress);
+   if(Math.abs(progress-.95)<.02)break;
+  }
+  assert(Math.abs(progress-.95)<.03,'O HERO deve chegar ao final após a inércia touch: '+progress);
+  await page.waitForTimeout(750);
   const finale=await page.evaluate(()=>{
     const get=e=>{const r=e.getBoundingClientRect();return{x:r.x,y:r.y,w:r.width,h:r.height}};
     return {film:get(document.querySelector('.hero-film-screen')),
@@ -71,6 +82,7 @@ try {
       textOpacity:Number(getComputedStyle(document.getElementById('hero-heading')).opacity)};
   });
   assert(finale.textOpacity>.75,'A copy final não surge depois do filme');
+  assert(Math.abs(finale.slot.w/finale.slot.h-9/16)<.035,'O quadro final mobile deve preservar 9:16 sem letterbox');
   for(const k of ['x','y','w','h']) assert(Math.abs(finale.film[k]-finale.slot[k])<12,'Vídeo não recolhe no slot final: '+k+JSON.stringify(finale));
   await page.screenshot({path:`${output}/${tag}-final.jpg`,type:'jpeg',quality:38});
   assert.deepEqual(errors,[],'Erros JS no mobile');
