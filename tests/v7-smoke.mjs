@@ -28,7 +28,7 @@ assert(solutions.includes('width="720" height="1613"')&&solutions.includes('widt
 assert(css.includes('.solutions-florals{overflow:hidden;contain:paint}'),'Camada ornamental deve conter transformações laterais');
 assert(solutions.includes('papoula-3-esquerda-crop.webp')&&solutions.includes('papoula-2-direita-crop.webp'),'Papoulas precisam usar recorte transparente correto');
 assert(/\b(ST|ScrollTrigger)\.create\(/.test(js)&&js.includes('onEnterBack')&&js.includes('onLeaveBack'),'Ativar e desativar ao atravessar a seção');
-assert(js.includes('power2.out')&&js.includes('about-copy')&&js.includes('microproof'),'Sequência animada de textos em Sobre');
+assert(read('site/motion-v74.js').includes('duration:2.25')&&read('site/motion-v74.js').includes('about-copy')&&read('site/motion-v74.js').includes('microproof'),'A entrada lenta dos textos da seção Sobre deve pertencer ao controlador V7.4');
 assert(projects.includes('connect-web.mp4')&&projects.includes('connect-poster.webp'),'Projeto deve conter vídeo Connect com poster autêntico');
 assert(projects.includes('controls')&&projects.includes('preload="metadata"')&&projects.includes('playsinline'),'Reprodução acessível e sob demanda');
 assert(projects.includes('portfolio-thais-ortiz.pdf')&&projects.includes('to-pdf-showcase'),'Apresentação deve usar showcase real PDF');
