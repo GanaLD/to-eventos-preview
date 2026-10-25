@@ -41,13 +41,13 @@
     }
   }
 
-  // Os projetos deslizam horizontalmente no desktop. Usa o movimento já criado
+  // Os projetos deslizam horizontalmente no desktop e no mobile. Usa o movimento criado
   // em main.js como containerAnimation, evitando ScrollTriggers verticais precoces.
   const projects=document.getElementById('projetos');
   const summit=projects?.querySelector('.project-panel-summit');
   const cases=projects?.querySelector('.project-panel-cases');
   const gallery=ST.getAll().find(t=>t.trigger===projects && t.animation);
-  const horizontal=window.matchMedia('(min-width:900px)').matches && !!gallery?.animation;
+  const horizontal=!!gallery?.animation;
   const sharedContainer=horizontal?gallery.animation:null;
   const bindPanel=(id,element,timeline)=>{
     createEnterTrigger({
