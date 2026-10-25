@@ -63,11 +63,11 @@ try {
     });
     assert.equal(flowerStyle.fit,'contain','Vídeo de papoulas deve ser exibido inteiro');
     assert(Math.abs(flowerStyle.ratio-.5625)<.025,'Vídeo floral não deve ser deformado: '+JSON.stringify(flowerStyle));
-    assert(flowerStyle.width<=370,'Vídeo floral deve preservar proporção e escala editorial reduzida: '+JSON.stringify(flowerStyle));
-    assert((await page.locator('.about-floral-video source').first().getAttribute('src')).includes('editorial-v72.mp4'),'Vídeo floral deve usar o novo enquadramento com bordas suaves');
+    assert(flowerStyle.width<=415,'Vídeo floral deve preservar proporção e escala editorial reduzida: '+JSON.stringify(flowerStyle));
+    assert((await page.locator('.about-floral-video source').first().getAttribute('src')).includes('papoulas-completas-v8.mp4'),'Vídeo floral deve usar as três flores completas sem recorte');
 
     await page.locator('#sobre').scrollIntoViewIfNeeded();
-    await page.waitForTimeout(2600);
+    await page.waitForTimeout(5100);
     const about=await scan(page);
     assert(about.about.headline>.95&&about.about.proof>.95&&about.about.video>.95,
       'Textos de Sobre e vídeo precisam estar visíveis depois da revelação: '+JSON.stringify(about.about));
@@ -80,7 +80,7 @@ try {
     assert(opacityReturn>.98,'Retornar à Sobre não pode piscar nem ocultar o título: '+opacityReturn);
 
     await page.locator('#solucoes').scrollIntoViewIfNeeded();
-    await page.waitForTimeout(3200);
+    await page.waitForTimeout(5600);
     const skills=await page.evaluate(()=>[...document.querySelectorAll('#solucoes .solution h3')].map(e=>+getComputedStyle(e).opacity));
     assert(skills.every(x=>x>.95),'Revelações de competências precisam terminar visíveis: '+JSON.stringify(skills));
     await page.screenshot({path:directory+'/competencias-'+v.key+'.png'});
@@ -96,7 +96,7 @@ try {
       await page.screenshot({path:directory+'/connect-'+v.key+'.png'});
 
       await jumpGallery(page,.51);
-      await page.waitForTimeout(3800);
+      await page.waitForTimeout(4800);
       const cards=await scan(page);
       assert(cards.cases.lines===2&&cards.cases.text==='Convenções corporativas',
         'Cabeçalho em letras com rótulo acessível íntegro');
@@ -123,7 +123,7 @@ try {
       assert(summit.project.heading>.95&&summit.project.caption>.95,'Textos Connect no mobile');
       await page.screenshot({path:directory+'/connect-'+v.key+'.png'});
       await page.locator('.project-panel-cases').scrollIntoViewIfNeeded();
-      await page.waitForTimeout(3500);
+      await page.waitForTimeout(4800);
       const lastClip=await page.locator('.to-v72-type-line').last().evaluate(e=>getComputedStyle(e).clipPath);
       assert(!lastClip.includes('100%'),'Digitação no mobile deve concluir: '+lastClip);
       await page.screenshot({path:directory+'/operacoes-digitacao-'+v.key+'.png'});
