@@ -1,0 +1,32 @@
+name: Build Botanical Film V7.4 (temporary)
+on:
+  push:
+    branches: [fix/v74-botanical-typing-editorial]
+    paths: ['.github/workflows/build-papoulas-v74.yml']
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/v74-botanical-typing-editorial
+          persist-credentials: true
+      - name: Install compositor dependencies
+        run: python3 -m pip install --break-system-packages numpy pillow
+      - name: Compose from original animation
+        run: |
+          python3 tools/build_papoulas_v74.py
+          ffprobe -v error -show_entries stream=codec_name,width,height -show_entries format=duration,size -of default=noprint_wrappers=1 site/assets/media/papoulas-seamless-v74.mp4
+          test "$(stat -c %s site/assets/media/papoulas-seamless-v74.mp4)" -gt 150000
+      - name: Permanently archive original-derived film
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/assets/media/papoulas-seamless-v74.mp4
+          git commit -m 'assets(v74): botanical animation with no visible rectangle or cut borders' || exit 0
+          git fetch origin fix/v74-botanical-typing-editorial
+          git rebase origin/fix/v74-botanical-typing-editorial
+          git push origin HEAD:fix/v74-botanical-typing-editorial
