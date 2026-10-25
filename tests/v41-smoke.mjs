@@ -13,7 +13,7 @@ const menuCss=readFileSync(new URL('../site/staggered-menu.css', import.meta.url
 const menuJs=readFileSync(new URL('../site/staggered-menu.js', import.meta.url), 'utf8');
 assert(html.includes('staggered-menu.css')&&html.includes('staggered-menu.js'), 'Novo menu deve carregar CSS e JS');
 assert(!html.includes('class="nav" id="nav"')&&!html.includes('class="nav-toggle"'), 'Navegação superior antiga não deve competir com novo menu');
-assert([...html.matchAll(/<(?:a|button)\b[^>]*data-to-menu-item="([^"]+)"/g)].map(m=>m[1]).join(',')==='HOME,PRODUCT', 'Menu deve ter somente HOME e PRODUCT');
+assert([...html.matchAll(/<(?:a|button)\b[^>]*data-to-menu-item="([^"]+)"/g)].map(m=>m[1]).join(',')==='HOME,SOBRE,PRODUCT', 'Menu deve preservar HOME e PRODUCT e incluir SOBRE');
 assert(/data-to-menu-item="HOME"[^>]*href="\.\/#hero"/.test(html), "HOME deve funcionar no GitHub Pages com base relativa");
 assert(/<button[^>]*data-to-menu-item="PRODUCT"[^>]*disabled/.test(html), 'PRODUCT deve ficar desabilitado');
 assert(menuCss.includes('backdrop-filter: blur(22px)')&&menuCss.includes('#FF4D00'), 'Acionador em vidro e paleta da marca');
