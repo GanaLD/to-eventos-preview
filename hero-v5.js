@@ -95,7 +95,7 @@
       trigger: stage,
       start: 'top top',
       end: () => '+=' + Math.round(innerHeight * 3.3),
-      scrub: .3,
+      scrub: true,
       pin: true,
       pinSpacing: true,
       anticipatePin: 1,
@@ -159,7 +159,7 @@
       id: 'to-hero-mobile-film-and-copy',
       trigger: stage, start: 'top top',
       end: () => '+=' + Math.round(innerHeight * 1.9),
-      scrub: .3, pin: true, pinSpacing: true,
+      scrub: true, pin: true, pinSpacing: true,
       invalidateOnRefresh: true, anticipatePin: 1, refreshPriority: 8,
       onUpdate: self => {
         timeline.progress(self.progress);

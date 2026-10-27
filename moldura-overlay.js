@@ -141,6 +141,8 @@ function startMobileFloral() {
     if (scrollRaf) return;
     scrollRaf = requestAnimationFrame(() => {scrollRaf = 0; update();});
   };
+  const scrollTrigger = window.ScrollTrigger;
+  scrollTrigger?.addEventListener('update', onScroll);
   video.addEventListener('loadedmetadata', () => {
     if (reduced) { update(); return; }
     if (progress() > .001) { update(); return; }
@@ -162,6 +164,7 @@ function startMobileFloral() {
   window.addEventListener('resize', onScroll, {passive:true});
   window.addEventListener('pagehide', () => {
     video.pause(); window.removeEventListener('scroll', onScroll);
+    scrollTrigger?.removeEventListener('update', onScroll);
     window.removeEventListener('resize', onScroll);
     if (raf) cancelAnimationFrame(raf);
     if (scrollRaf) cancelAnimationFrame(scrollRaf);
@@ -284,6 +287,8 @@ function update(){
   seekToTime();
 }
 function onScroll(){if(!frameRequest)frameRequest=requestAnimationFrame(update);}
+const scrollTrigger=window.ScrollTrigger;
+scrollTrigger?.addEventListener('update',onScroll);
 video.addEventListener('seeked',()=>{draw();seekToTime();});
 video.addEventListener('loadeddata',draw);
 video.addEventListener('timeupdate',()=>{if(!scrollStarted)draw();});
@@ -311,6 +316,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 window.addEventListener('pagehide',()=>{
  window.removeEventListener('scroll',onScroll);
+  scrollTrigger?.removeEventListener('update',onScroll);
  if(frameRequest)cancelAnimationFrame(frameRequest);
  video.pause();
 },{once:true});

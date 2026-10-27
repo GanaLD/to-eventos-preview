@@ -22,10 +22,10 @@
   <link rel="stylesheet" href="motion-v71.css">
   <link rel="stylesheet" href="mobile-v9.css">
   <!-- Camada floral opcional: overlay independente, Hero V5 intocado. -->
-  <link rel="stylesheet" href="moldura-overlay.css?v=16">
+  <link rel="stylesheet" href="moldura-overlay.css?v=17">
   <link rel="stylesheet" href="hero-mobile-v10.css">
-  <link rel="stylesheet" href="hero-thaiso.css">
-  <link rel="stylesheet" href="release-enhancements.css">
+  <link rel="stylesheet" href="hero-thaiso.css?v=20261027a">
+  <link rel="stylesheet" href="release-enhancements.css?v=20261027a">
   <link rel="stylesheet" href="accordion-gallery.css">
   <link rel="stylesheet" href="staggered-menu.css?v=20261025c">
   <link rel="stylesheet" href="whatsapp-glossy.css?v=20261025a">
@@ -36,8 +36,8 @@
   <script defer src="ui-v4.js"></script>
   <script defer src="ui-v41.js"></script>
   <script defer src="hero-source-mobile-v16.js?v=16"></script>
-  <script defer src="hero-v5.js"></script>
-  <script defer src="hero-thaiso.js"></script>
+  <script defer src="hero-v5.js?v=20261027a"></script>
+  <script defer src="hero-thaiso.js?v=20261027a"></script>
   
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script defer src="v7.js?v=20261025-pdf-fullscreen-2"></script>
@@ -45,9 +45,9 @@
   <script defer src="motion-v71.js"></script>
   <script defer src="editorial-writing.js"></script>
   <script defer src="accordion-gallery.js"></script>
-  <script defer src="moldura-overlay.js?v=16"></script>
+  <script defer src="moldura-overlay.js?v=17"></script>
   <script defer src="staggered-menu.js?v=20261025d"></script>
-  <link rel="stylesheet" href="papoulas-fundo-infinito-v77.css?v=20261025-77a">
+  <link rel="stylesheet" href="papoulas-fundo-infinito-v77.css?v=20261027a">
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
@@ -92,7 +92,7 @@
   <main id="conteudo">
     <div class="hero-scroll-stage">
     <section id="hero" class="hero section-dark" aria-labelledby="hero-heading">
-      <div class="to-hero-thaiso-backdrop" aria-hidden="true"><video muted loop playsinline preload="none" poster="assets/media/tke-thaiso-poster.jpg" disablepictureinpicture><source data-src="assets/media/tke-thaiso-background.mp4?v=20261025" type="video/mp4"></video></div>
+      <div class="to-hero-thaiso-backdrop" aria-hidden="true"><video muted loop playsinline preload="none" poster="assets/media/tke-thaiso-poster.jpg" disablepictureinpicture><source data-src="assets/media/tke-thaiso-background.mp4?v=20261027" type="video/mp4"></video></div>
       <div class="hero-film-screen" aria-label="Vídeo original de abertura da TO Eventos, controlado pelo movimento da página">
         
         <video class="hero-scrub-video" data-role="hero-film" muted playsinline preload="auto" tabindex="-1" aria-hidden="true" disablepictureinpicture><source media="(max-width: 899px) and (orientation: portrait)" src="assets/media/motion-hero-vertical-v11.mp4" type="video/mp4"><source src="assets/media/motion-hero.mp4" type="video/mp4"></video>
@@ -128,10 +128,10 @@
         </div>
         <figure class="botanical botanical-motion">
           <div class="floral-reveal">
-            <video class="about-floral-video" autoplay muted loop playsinline preload="metadata"
+            <video class="about-floral-video" muted loop playsinline preload="metadata"
                    aria-label="Animação original de papoulas laranjas em aquarela, sem recorte das pétalas"
                    disablepictureinpicture>
-              <source src="assets/media/animacao-papoulas-fundo-infinito-v77.mp4?v=20261025-v78" type="video/mp4">
+              <source src="assets/media/papoulas-invisivel-aquarela-v1.mp4?v=20261027" type="video/mp4">
             </video>
           </div>
         </figure>
@@ -169,6 +169,10 @@
                     <source src="assets/media/connect-web.mp4" type="video/mp4">
                     Seu navegador não suporta vídeo MP4. <a href="assets/media/connect-web.mp4" target="_blank" rel="noopener noreferrer">Abrir vídeo Connect</a>.
                   </video>
+                  <button class="connect-fullscreen" type="button" data-connect-fullscreen aria-label="Assistir vídeo Connect em tela cheia" aria-pressed="false" title="Tela cheia">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5"/></svg>
+                    <span class="connect-fullscreen-label">Tela cheia</span>
+                  </button>
                 </div>
                 <div class="case-caption"><span>PROJETO EM DESTAQUE</span><h3>Summit de Negócios</h3><p>Um evento que reuniu conteúdo, negócios e experiências de marca, com planejamento e produção conduzidos por Thais Ortiz.</p><strong>300 PARTICIPANTES</strong></div>
               </div>
@@ -203,7 +207,8 @@
                     <button type="button" data-pdf-action="previous" aria-label="Página anterior" disabled>Anterior</button>
                     <output class="to-pdf-counter" aria-live="polite">01 / 13</output>
                     <button type="button" data-pdf-action="next" aria-label="Próxima página">Próxima</button>
-                    <button type="button" class="to-pdf-fullscreen" data-pdf-action="fullscreen" aria-pressed="false">Tela cheia</button>
+                    <button type="button" class="to-pdf-fullscreen" data-pdf-action="fullscreen" aria-label="Abrir PDF em tela cheia" aria-pressed="false">Tela cheia</button>
+                    <button type="button" class="to-pdf-exit-fullscreen" data-pdf-action="exit-fullscreen" aria-label="Fechar visualização em tela cheia" hidden>Fechar tela cheia</button>
                     <a href="assets/docs/portfolio-thais-ortiz.pdf" target="_blank" rel="noopener noreferrer">Abrir PDF</a>
                   </div>
                 </div>
