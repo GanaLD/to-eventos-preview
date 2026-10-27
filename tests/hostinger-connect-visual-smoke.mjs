@@ -19,7 +19,7 @@ assert(html.includes('<script defer src="connect-autoplay.js"></script>'), 'Carr
 assert(workflow.includes('node tests/hostinger-connect-visual-smoke.mjs'), 'Verificação Connect na publicação');
 assert(workflow.includes('node --check site/connect-autoplay.js'), 'Validar sintaxe do controlador Connect');
 
-const backdrop = heroCss.match(/\.hero-scroll-stage \.to-hero-thaiso-backdrop video\s*\{([^}]+)\}/)?.[1];
+const backdrop = heroCss.match(/\.hero-scroll-stage \.to-hero-thaiso-backdrop video:not\(\.to-hero-thaiso-fill\)\s*\{([^}]+)\}/)?.[1];
 assert(backdrop, 'Estilos do fundo THAISO preservados');
 const opacity = Number(backdrop.match(/opacity:\s*([\d.]+)/)?.[1]);
 const brightness = Number(backdrop.match(/brightness\(([\d.]+)\)/)?.[1]);
@@ -32,16 +32,28 @@ assert(alpha.length>=2 && Math.min(...alpha)<.5, 'Pelo menos metade da composiç
 assert(heroCss.includes('.hero-scroll-stage.is-hero-framed .to-hero-thaiso-backdrop'), 'Respeitar a fase final');
 assert(html.includes('motion-hero-vertical-v11.mp4') && html.includes('data-accordion-gallery'), 'Hero mobile e sanfona intactos');
 
-const handlers={}, vhandlers={};
+const handlers={}, vhandlers={}, buttonHandlers={};
+const label={textContent:''};
+const fullscreenButton={hidden:false,attributes:{},
+  setAttribute(name,value){this.attributes[name]=value},
+  querySelector:()=>label,
+  addEventListener(name,fn){buttonHandlers[name]=fn}
+};
+const frame={classList:{add(){},remove(){}},
+  querySelector:selector=>selector==='[data-connect-fullscreen]'?fullscreenButton:null
+};
 const video = {paused:true,muted:false,playCount:0,pauseCount:0,
+  closest:selector=>selector==='.case-image'?frame:null,
   play(){this.paused=false;this.playCount++;return Promise.resolve()},
   pause(){this.paused=true;this.pauseCount++},
   addEventListener(name,fn){vhandlers[name]=fn}
 };
 let io;
 const context={
-  document:{hidden:false,querySelector:sel=>sel.includes('connect-autoplay')?video:null,
-    addEventListener:(name,fn)=>handlers[name]=fn},
+  document:{hidden:false,fullscreenElement:null,documentElement:{classList:{add(){},remove(){}}},
+    querySelector:sel=>sel.includes('connect-autoplay')?video:null,
+    addEventListener:(name,fn)=>handlers[name]=fn,
+    exitFullscreen(){this.fullscreenElement=null;handlers.fullscreenchange?.();return Promise.resolve()}},
   window:{addEventListener:(name,fn)=>handlers['window:'+name]=fn},
   IntersectionObserver:class {
     constructor(fn,options){this.notify=fn;this.options=options;io=this}
@@ -49,6 +61,7 @@ const context={
   }
 };
 vm.runInNewContext(autoplayJs,context);
+context.document.fullscreenElement=null;
 assert(io, 'Observar visibilidade real do Connect');
 io.notify([{target:video,isIntersecting:true,intersectionRatio:.75}]);
 assert.equal(video.playCount,1, 'Connect deve tocar automaticamente quando visível');
@@ -58,4 +71,10 @@ io.notify([{target:video,isIntersecting:true,intersectionRatio:.7}]);
 assert.equal(video.playCount,2,'Retornando aos projetos, deve retomar automaticamente');
 context.document.hidden=true;handlers.visibilitychange();
 assert(video.paused,'Suspender em aba oculta');
+context.document.hidden=false;
+await buttonHandlers.click({preventDefault(){},stopPropagation(){}});
+assert.equal(fullscreenButton.attributes['aria-pressed'],'true','Connect entra em tela cheia');
+assert.equal(label.textContent,'Fechar tela cheia','Botão informa como sair da tela cheia');
+await buttonHandlers.click({preventDefault(){},stopPropagation(){}});
+assert.equal(fullscreenButton.attributes['aria-pressed'],'false','Connect sai da tela cheia pelo mesmo botão');
 console.log('PASS Hostinger parity: Connect autoplay e vídeo THAISO visível; Hero mobile e sanfona preservados');

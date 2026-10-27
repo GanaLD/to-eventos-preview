@@ -24,8 +24,8 @@
 #sobre .botanical-motion video.about-floral-video{
   display:block;
   flex:none;
-  width:min(122%, calc(100vw - 16px));
-  max-width:none;
+  width:100%;
+  max-width:370px;
   min-width:0;
   height:auto!important;
   aspect-ratio:auto!important;
@@ -50,6 +50,7 @@
     width:min(100%,300px);
     max-width:300px;
   }
+  #sobre .botanical-motion video.about-floral-video{width:100%;max-width:100%}
 }
 @media(prefers-reduced-motion:reduce){
   #sobre .botanical-motion video.about-floral-video{

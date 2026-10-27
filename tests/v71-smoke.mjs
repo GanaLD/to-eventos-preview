@@ -10,7 +10,7 @@ const projects=html.slice(html.indexOf('id="projetos"'),html.indexOf('id="contat
 const contact=html.slice(html.indexOf('id="contato"'));
 assert(html.includes('motion-v71.js')&&html.includes('motion-v71.css'),'Módulo V7.1 deve ser carregado');
 assert(!about.includes('<figcaption>'),'Vídeo floral sem legenda abaixo');
-assert(about.includes('about-floral-video')&&about.includes('animacao-papoulas-fundo-infinito-v77.mp4'),'Vídeo original de papoulas completo, sem corte');
+assert(about.includes('about-floral-video')&&about.includes('papoulas-invisivel-aquarela-v1.mp4?v=20261027'),'Vídeo original novo de papoulas completo, sem corte');
 assert(/#sobre\s+\.botanical-motion\s+\.about-floral-video/.test(css)&&css.includes('object-fit:contain'),'Vídeo floral inteiro e com respiro');
 assert((cases.match(/OPERAÇÕES INTERESTADUAIS/g)||[]).length===1,'Identificação Operações Interestaduais deve aparecer uma única vez');
 assert(!cases.includes('project-asset-note'),'Nota interna de produção não deve aparecer no site');

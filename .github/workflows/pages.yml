@@ -69,23 +69,10 @@ jobs:
             cp /tmp/to-eventos-motion-hero-original.mp4 site/assets/media/motion-hero.mp4
           fi
           test "$(wc -c < site/assets/media/motion-hero.mp4)" -gt 100000
-      - name: Preparar exportação do vídeo floral sem cortes
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Gerar papoulas originais com fundo infinito
+      - name: Validar o vídeo original das papoulas enviado pela cliente
         run: |
-          python -m pip install --quiet --disable-pip-version-check numpy opencv-python-headless
-          curl --fail --location --retry 3 --connect-timeout 15 --max-time 90 \
-            'https://d2ol7oe51mr4n9.cloudfront.net/user_2wayxIrYymbrFzIPfYY8jkYgTU2/aa4ed72b-e239-4251-8a2c-d100dbf0eddc.mp4' \
-            --output /tmp/papoulas-cliente-v78.mp4
-          echo '7b6e54906ecd4e6bd661c4c9f3f59ed869250f1b9a80b2d622849a51bd723a72  /tmp/papoulas-cliente-v78.mp4' | sha256sum -c -
-          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0:s=x /tmp/papoulas-cliente-v78.mp4)" = '1150x1920'
-          python scripts/build_papoulas_infinite.py \
-            /tmp/papoulas-cliente-v78.mp4 \
-            site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4
-          test -s site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4
-          ffprobe -v error -show_entries stream=width,height,codec_name -of default=noprint_wrappers=1 site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4
+          echo '7b6e54906ecd4e6bd661c4c9f3f59ed869250f1b9a80b2d622849a51bd723a72  site/assets/media/papoulas-invisivel-aquarela-v1.mp4' | sha256sum -c -
+          test "$(wc -c < site/assets/media/papoulas-invisivel-aquarela-v1.mp4)" -gt 1000000
       - name: Preparar GitHub Pages
         uses: actions/configure-pages@v5
         with:

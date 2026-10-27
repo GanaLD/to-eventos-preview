@@ -7,9 +7,40 @@
   // SOBRE — animar os cinco grupos reais em ordem, após entrada da seção.
   const about=document.getElementById('sobre');
   const copy=about?.querySelector('.about-copy');
-  // Papoulas originais com transparência nativa: o GSAP revela apenas o conjunto.
-  // A oscilação suave fica no IMG, sem alterar a silhueta por shader ou máscara.
+  // O vídeo vertical novo entra inteiro quando a seção fica visível.
   const botanicalMedia=about?.querySelector('.floral-reveal');
+  const botanicalVideo=about?.querySelector('.about-floral-video');
+  if(botanicalVideo){
+    botanicalVideo.autoplay=false;
+    botanicalVideo.removeAttribute('autoplay');
+    botanicalVideo.muted=true;
+    botanicalVideo.loop=true;
+    botanicalVideo.playsInline=true;
+    let aboutVisible=false;
+    const playFloral=()=>{
+      if(reduce||document.hidden||!aboutVisible||!botanicalVideo.paused)return;
+      const playing=botanicalVideo.play();
+      if(playing?.catch)playing.catch(()=>{});
+    };
+    const pauseFloral=()=>{if(!botanicalVideo.paused)botanicalVideo.pause();};
+    if('IntersectionObserver' in window){
+      const floralObserver=new IntersectionObserver(entries=>{
+        aboutVisible=entries.some(entry=>entry.isIntersecting);
+        if(aboutVisible)playFloral();
+        else pauseFloral();
+      },{threshold:.12,rootMargin:'0px'});
+      floralObserver.observe(about);
+    }else if(ST){
+      ST.create({trigger:about,start:'top 88%',end:'bottom 12%',
+        onEnter:()=>{aboutVisible=true;playFloral();},
+        onEnterBack:()=>{aboutVisible=true;playFloral();},
+        onLeave:()=>{aboutVisible=false;pauseFloral();},
+        onLeaveBack:()=>{aboutVisible=false;pauseFloral();}
+      });
+    }
+    document.addEventListener('visibilitychange',()=>document.hidden?pauseFloral():playFloral());
+    window.addEventListener('pagehide',pauseFloral,{once:true});
+  }
   const copyParts=copy?[
     copy.querySelector('.overline'),
     copy.querySelector('#sobre-heading'),
@@ -21,7 +52,7 @@
   let entered=false;
   if(about&&botanicalMedia&&copyParts.length&&!reduce&&gsap&&ST){
     gsap.registerPlugin(ST);
-    gsap.set(copyParts,{y:32,autoAlpha:0});
+    gsap.set([...copyParts,botanicalMedia],{y:32,autoAlpha:0});
     const enter=()=>{
       if(entered)return;
       entered=true;
@@ -29,6 +60,7 @@
       reveal.to(copyParts,{y:0,autoAlpha:1,
         duration:(index,el)=>el.id==='sobre-heading'?2.1:1.28,
         stagger:.21},0);
+      reveal.to(botanicalMedia,{y:0,autoAlpha:1,duration:1.28,ease:'power3.out'},.3);
     };
     ST.create({
       id:'to-v7-sobre-intro',trigger:about,
@@ -84,6 +116,7 @@
   const previous=showcase.querySelector('[data-pdf-action="previous"]');
   const next=showcase.querySelector('[data-pdf-action="next"]');
   const full=showcase.querySelector('[data-pdf-action="fullscreen"]');
+  const fullExit=showcase.querySelector('[data-pdf-action="exit-fullscreen"]');
   const counter=showcase.querySelector('.to-pdf-counter');
   const loading=showcase.querySelector('.to-pdf-loading');
   const pdfjs=window.pdfjsLib;
@@ -163,13 +196,19 @@
     }
     syncFullscreen();
   };
+  const exitFullscreen=()=>{
+    if(fallbackFullscreen){exitFallbackFullscreen();return;}
+    if(document.exitFullscreen){document.exitFullscreen().catch(()=>{});return;}
+    if(document.webkitExitFullscreen)document.webkitExitFullscreen();
+  };
   full?.addEventListener('click',event=>{
     event.stopPropagation();
-    if(isFullscreen()){
-      if(fallbackFullscreen)exitFallbackFullscreen();
-      else if(document.exitFullscreen)document.exitFullscreen().catch(()=>{});
-      else if(document.webkitExitFullscreen)document.webkitExitFullscreen();
-    }else enterFallbackFullscreen();
+    if(isFullscreen())exitFullscreen();
+    else enterFallbackFullscreen();
+  });
+  fullExit?.addEventListener('click',event=>{
+    event.stopPropagation();
+    exitFullscreen();
   });
   const syncFullscreen=()=>{
     if(document.fullscreenElement===showcase&&fallbackFullscreen){
@@ -179,7 +218,11 @@
     }
     const active=isFullscreen();
     full?.setAttribute('aria-pressed',String(active));
-    if(full)full.textContent=active?'Sair da tela cheia':'Tela cheia';
+    if(full){
+      full.textContent=active?'Tela normal':'Tela cheia';
+      full.setAttribute('aria-label',active?'Voltar o PDF ao tamanho normal':'Abrir PDF em tela cheia');
+    }
+    if(fullExit)fullExit.hidden=!active;
     if(documentPDF)requestAnimationFrame(()=>renderPage());
     ST?.refresh();
   };

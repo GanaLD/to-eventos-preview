@@ -58,6 +58,8 @@
 .to-pdf-showcase.is-fullscreen-fallback .to-pdf-controls button,.to-pdf-showcase.is-fullscreen-fallback .to-pdf-controls a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 14px;border:1px solid rgba(26,26,26,.22);background:transparent;color:var(--to-graphite);font:600 12px/1.2 var(--font-ui,Inter,sans-serif);text-decoration:none;cursor:pointer}
 .to-pdf-showcase.is-fullscreen-fallback .to-pdf-controls button:hover,.to-pdf-showcase.is-fullscreen-fallback .to-pdf-controls a:hover{background:var(--to-orange);border-color:var(--to-orange)}
 html.to-pdf-fallback-active,html.to-pdf-fallback-active body{overflow:hidden;height:100%}
+#projetos .to-pdf-controls [hidden]{display:none!important}
+#projetos .to-pdf-exit-fullscreen{background:var(--to-paper);color:var(--to-graphite)}
 @media(max-width:1100px){
   #solucoes .solutions-floral-left{left:-35px;width:clamp(95px,11vw,140px)}
   #solucoes .solutions-floral-right{right:-40px;width:clamp(115px,14vw,165px)}

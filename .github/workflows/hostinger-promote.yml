@@ -41,20 +41,6 @@ jobs:
             cp /tmp/to-eventos-motion-hero-original.mp4 site/assets/media/motion-hero.mp4
           fi
           test "$(wc -c < site/assets/media/motion-hero.mp4)" -gt 100000
-      - name: Preparar exportação do vídeo floral para produção
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Gerar papoulas originais com fundo infinito para produção
-        shell: bash
-        run: |
-          set -euo pipefail
-          python -m pip install --quiet --disable-pip-version-check numpy opencv-python-headless
-          python scripts/build_papoulas_infinite.py \
-            site/assets/media/animacao-papoulas-editorial-v72.mp4 \
-            site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4
-          test -s site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4
-          ffprobe -v error -show_entries stream=width,height,codec_name -of default=noprint_wrappers=1 site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4
       - name: Copy the approved site into the production branch
         shell: bash
         run: |
@@ -63,17 +49,15 @@ jobs:
           generated_assets="$RUNNER_TEMP/hostinger-generated-assets"
           mkdir -p "$generated_assets"
           cp site/assets/media/motion-hero.mp4 "$generated_assets/"
-          cp site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4 "$generated_assets/"
           # These generated files live inside site/ on the main checkout. Remove them after
           # copying to the runner temp folder so checkout can replace the site/ tree cleanly.
-          rm -f site/assets/media/motion-hero.mp4 site/assets/media/animacao-papoulas-fundo-infinito-v77.mp4
+          rm -f site/assets/media/motion-hero.mp4
           git fetch origin hostinger-production
           git checkout -B hostinger-production origin/hostinger-production
           git rm -r --quiet -- .
           git archive "${source_sha}:site" | tar -x
           mkdir -p assets/media
           cp "$generated_assets/motion-hero.mp4" assets/media/
-          cp "$generated_assets/animacao-papoulas-fundo-infinito-v77.mp4" assets/media/
           python3 - <<'PY'
           from pathlib import Path
           for path in (Path("index.html"), Path("sobre/index.html")):

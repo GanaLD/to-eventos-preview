@@ -17,5 +17,5 @@ assert(overlay.includes('function reconcileFloralLayer()'),'Overlays devem reagi
 assert(overlay.includes('function startDesktopFloral()'),'Canvas original desktop deve ser inicializado somente quando necessário');
 assert(overlay.includes('syncLayerBounds()'),'Overlay mobile acompanha borda do Hero real');
 assert(floralCss.includes('html.to-hero-mobile-portrait-forced #to-floral-mobile-v15'),'Mídia mobile deve funcionar em preview embutido');
-assert(html.includes('moldura-overlay.css?v=16')&&html.includes('moldura-overlay.js?v=16'),'Ambas folhas devem ser atualizadas');
+assert(html.includes('moldura-overlay.css?v=17')&&html.includes('moldura-overlay.js?v=17'),'Ambas folhas devem ser atualizadas');
 console.log('PASS hero mobile portrait V16 source selection, overlay geometry and desktop preservation');
