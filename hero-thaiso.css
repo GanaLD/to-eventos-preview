@@ -31,21 +31,11 @@
   display:block;
   width:100%;
   height:100%;
-}
-.hero-scroll-stage .to-hero-thaiso-backdrop .to-hero-thaiso-fill{
-  z-index:1;
   object-fit:cover;
-  object-position:center;
-  filter:blur(10px) saturate(.92) brightness(.72);
-  opacity:1;
-  transform:scale(1.12);
-}
-.hero-scroll-stage .to-hero-thaiso-backdrop video:not(.to-hero-thaiso-fill){
-  z-index:2;
-  object-fit:contain;
-  object-position:center;
+  object-position:center center;
   filter:saturate(.88) brightness(.93);
-  opacity:.94;
+  opacity:1;
+  transform:none;
 }
 .hero-scroll-stage .to-hero-thaiso-backdrop::after{
   content:"";
@@ -56,8 +46,14 @@
 }
 .hero-scroll-stage .hero-grid,
 .hero-scroll-stage .hero-foot{position:relative;z-index:1}
+@media(min-width:900px){
+  .hero-scroll-stage.is-hero-framed .hero-title{
+    font-size:clamp(44px,3.8vw,72px);
+    max-width:100%;
+  }
+}
 @media(max-width:899px){
-  .hero-scroll-stage .to-hero-thaiso-backdrop video{opacity:.92;object-position:center}
+  .hero-scroll-stage .to-hero-thaiso-backdrop video{opacity:1;object-fit:cover;object-position:center center}
   .hero-scroll-stage .to-hero-thaiso-backdrop::after{
     background:linear-gradient(180deg,rgba(26,26,26,.34),rgba(26,26,26,.16));
   }
