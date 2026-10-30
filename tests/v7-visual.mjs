@@ -35,9 +35,9 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  assert.equal(visualHero.cueBorder,'0px','Mouse scroll sem borda de cartão');
  assert.equal(visualHero.cueShadow,'none','Mouse scroll sem sombra de cartão');
  assert.equal(visualHero.filmBackground,'rgb(255, 97, 8)','Bordas laterais devem ter a cor do vídeo');
- assert.equal(visualHero.videoBackground,'rgba(0, 0, 0, 0)','O vídeo deve ter letterbox transparente para revelar bordas dinâmicas');
- assert(visualHero.edgeCanvas,'O canvas deve completar somente as faixas laterais/verticais');
- assert.equal(visualHero.fit,'contain','Não cortar o vídeo para preencher a tela');
+ assert.equal(visualHero.videoBackground,'rgb(255, 97, 8)','Fallback do vídeo deve manter o laranja aprovado sob as bordas dinâmicas');
+ assert(!visualHero.edgeCanvas,'V7.3 mantém um único vídeo, sem canvas de borda');
+ assert.equal(visualHero.fit,item.width/item.height<=1.5?'contain':'cover','Ajustar o vídeo ao formato do viewport segundo o contrato V7.3');
  assert(Math.abs(visualHero.filmWidth-item.width)<2,'Vídeo precisa preencher toda a largura da viewport');
  const cuePosition=await page.evaluate(()=>{
    const r=document.querySelector('.to-hero-scroll-cue').getBoundingClientRect();
@@ -55,6 +55,41 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  await page.waitForTimeout(2100);
  const heroDebug=await page.evaluate(()=>({gsap:!!window.gsap,ST:!!window.ScrollTrigger,triggers:window.ScrollTrigger?.getAll().map(t=>({id:t.vars.id,start:t.start,end:t.end,progress:t.progress})),scrollY:scrollY,body:document.body.scrollHeight,ready:document.readyState}));
  console.log('QA HERO DEBUG '+item.tag,JSON.stringify(heroDebug),'pageErrors',JSON.stringify(errors));
+ const thaiso=await page.evaluate(()=>{
+   const stage=document.querySelector('.hero-scroll-stage');
+   const backdrop=stage?.querySelector('.to-hero-thaiso-backdrop');
+   const video=backdrop?.querySelector('video');
+   const title=document.querySelector('.hero-title');
+   const visual=document.querySelector('.hero-visual');
+   const b=backdrop?.getBoundingClientRect();
+   const v=video?.getBoundingClientRect();
+   const box=visual?.getBoundingClientRect();
+   let titleRight=-Infinity;
+   if(title){
+     const walker=document.createTreeWalker(title,NodeFilter.SHOW_TEXT);
+     while(walker.nextNode()){
+       if(!walker.currentNode.textContent.trim())continue;
+       const range=document.createRange();range.selectNodeContents(walker.currentNode);
+       titleRight=Math.max(titleRight,range.getBoundingClientRect().right);
+     }
+   }
+   return {
+     framed:stage?.classList.contains('is-hero-framed'),
+     fit:video?getComputedStyle(video).objectFit:null,
+     backdrop:{left:b?.left,right:b?.right,top:b?.top,bottom:b?.bottom,width:b?.width,height:b?.height},
+     video:{left:v?.left,right:v?.right,top:v?.top,bottom:v?.bottom,width:v?.width,height:v?.height,readyState:video?.readyState,currentTime:video?.currentTime,src:video?.currentSrc},
+     videos:backdrop?.querySelectorAll('video').length||0,
+     title:{fontSize:title?getComputedStyle(title).fontSize:null,right:titleRight,visualLeft:box?.left,gap:box?box.left-titleRight:null,visualDisplay:visual?getComputedStyle(visual).display:null},
+     viewport:{width:innerWidth,height:innerHeight}
+   };
+ });
+ assert(thaiso.framed,'Take THAISO deve aparecer na etapa final do HERO: '+JSON.stringify(thaiso));
+ assert.equal(thaiso.fit,'cover','O take THAISO deve usar zoom para preencher o viewport: '+JSON.stringify(thaiso));
+ assert.equal(thaiso.videos,1,'A camada THAISO deve usar uma única cópia do vídeo');
+ assert(thaiso.backdrop.left<=1&&thaiso.backdrop.right>=thaiso.viewport.width-1&&thaiso.backdrop.top<=1&&thaiso.backdrop.bottom>=thaiso.viewport.height-1,'O fundo THAISO deve cobrir a viewport inteira: '+JSON.stringify(thaiso));
+ assert(thaiso.video.readyState>=2&&thaiso.video.currentTime>0,'O take THAISO deve carregar e tocar na fase final: '+JSON.stringify(thaiso.video));
+ if(item.tag==='desktop')assert(thaiso.title.gap>=40,'O título deve manter distância visível do bloco laranja: '+JSON.stringify(thaiso.title));
+ await page.screenshot({path:out+'/hero-framed-'+item.tag+'.png'});
  const heroMedia=await page.locator('[data-role="hero-film"]').evaluate(v=>({readyState:v.readyState,currentTime:v.currentTime,duration:v.duration,networkState:v.networkState,seeking:v.seeking,src:v.currentSrc,error:v.error?.message||null}));
  const seekable=await page.locator('[data-role="hero-film"]').evaluate(v=>v.seekable.length?{start:v.seekable.start(0),end:v.seekable.end(0)}:null);
  assert(seekable && seekable.end>=9,'QA server must support byte-range playback: '+JSON.stringify(seekable));
@@ -111,7 +146,7 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  assert.equal((await pdf.locator('.to-pdf-counter').textContent())?.trim(),'01 / 13','PDF deve permitir voltar');
  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
  assert(overflow<=2,'Overflow horizontal de '+overflow+'px no '+item.tag);
- results.push({viewport:item.tag,hero,heroMedia,aboutMedia,mediaResponses,floral,mediaSrc,overflow,pdf:'01/13 -> 02/13 -> 01/13',pageErrors:errors});
+ results.push({viewport:item.tag,hero,thaiso,heroMedia,aboutMedia,mediaResponses,floral,mediaSrc,overflow,pdf:'01/13 -> 02/13 -> 01/13',pageErrors:errors});
  await page.close();
 }
 for (const item of [
@@ -135,23 +170,27 @@ for (const item of [
     assert(clipping.html==='clip' && clipping.body==='clip','Overflow decorativo sem contenção em '+item.tag+': '+JSON.stringify(clipping));
   }
   if(item.tag==='referencia'){
-    await locate(page,'to-hero-film-and-copy',.55);
-    await page.waitForFunction(()=>document.querySelector('.hero-edge-canvas')?.dataset.frameRendered==='true',{timeout:10000}).catch(()=>{});
-    const edge=await page.evaluate(()=>{
-      const c=document.querySelector('.hero-edge-canvas');const v=document.querySelector('[data-role="hero-film"]');
-      if(!c)return null;
-      const ctx=c.getContext('2d');const x=Math.max(1,Math.floor(c.width*.015));
-      const unique=new Set();
-      for(let i=0;i<20;i++){
-        const y=Math.min(c.height-1,Math.floor(c.height*(.05+i*.045)));
-        const p=ctx.getImageData(x,y,1,1).data;
-        unique.add(p[0]+','+p[1]+','+p[2]);
-      }
-      return {mode:c.dataset.bleedMode,rendered:c.dataset.frameRendered,unique:unique.size,fit:getComputedStyle(v).objectFit,aspect:v.videoWidth/v.videoHeight};
+    await locate(page,'to-hero-film-and-copy',.92);
+    await page.waitForTimeout(1800);
+    const frame=await page.evaluate(()=>{
+      const stage=document.querySelector('.hero-scroll-stage');
+      const backdrop=stage?.querySelector('.to-hero-thaiso-backdrop');
+      const video=backdrop?.querySelector('video');
+      const title=document.querySelector('.hero-title');
+      const visual=document.querySelector('.hero-visual')?.getBoundingClientRect();
+      const b=backdrop?.getBoundingClientRect();
+      let titleRight=-Infinity;
+      if(title){const walker=document.createTreeWalker(title,NodeFilter.SHOW_TEXT);while(walker.nextNode()){if(!walker.currentNode.textContent.trim())continue;const range=document.createRange();range.selectNodeContents(walker.currentNode);titleRight=Math.max(titleRight,range.getBoundingClientRect().right);}}
+      return {framed:stage?.classList.contains('is-hero-framed'),fit:video?getComputedStyle(video).objectFit:null,videos:backdrop?.querySelectorAll('video').length||0,readyState:video?.readyState,currentTime:video?.currentTime,backdrop:{left:b?.left,right:b?.right,top:b?.top,bottom:b?.bottom,width:b?.width,height:b?.height},viewport:{width:innerWidth,height:innerHeight},title:{fontSize:title?getComputedStyle(title).fontSize:null,gap:visual?visual.left-titleRight:null}};
     });
-    assert(edge && edge.mode==='sides' && edge.rendered==='true','Em tela larga, prolongar lateralmente o frame inteiro: '+JSON.stringify(edge));
-    assert(edge.unique>=3,'Bordas não podem continuar sendo uma faixa laranja chapada: '+JSON.stringify(edge));
-    assert(edge.fit==='contain' && Math.abs(edge.aspect-16/9)<.02,'Vídeo central sem cortes ou distorção: '+JSON.stringify(edge));
+    assert(frame.framed,'Take THAISO deve estar ativo na fase final: '+JSON.stringify(frame));
+    assert.equal(frame.fit,'cover','Take THAISO deve preencher a tela sem bordas: '+JSON.stringify(frame));
+    assert.equal(frame.videos,1,'Um único vídeo THAISO, sem cópia desfocada');
+    assert(frame.readyState>=2&&frame.currentTime>0,'Take THAISO deve carregar e tocar na fase final');
+    assert(frame.backdrop.left<=1&&frame.backdrop.right>=item.width-1&&frame.backdrop.top<=1&&frame.backdrop.bottom>=item.height-1,'Take deve cobrir a viewport de referência inteira: '+JSON.stringify(frame.backdrop));
+    assert(frame.title.gap>=40,'Título deve manter distância do bloco laranja: '+JSON.stringify(frame.title));
+    await page.screenshot({path:out+'/hero-framed-'+item.tag+'.png'});
+    results.push({viewport:item.tag,framed:frame,overflow});
  }
  await page.screenshot({path:out+'/hero-'+item.tag+'.png'});
  results.push({viewport:item.tag,hero:box,overflow});
