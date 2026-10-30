@@ -19,12 +19,14 @@ assert(html.includes('<script defer src="connect-autoplay.js"></script>'), 'Carr
 assert(workflow.includes('node tests/hostinger-connect-visual-smoke.mjs'), 'Verificação Connect na publicação');
 assert(workflow.includes('node --check site/connect-autoplay.js'), 'Validar sintaxe do controlador Connect');
 
-const backdrop = heroCss.match(/\.hero-scroll-stage \.to-hero-thaiso-backdrop video:not\(\.to-hero-thaiso-fill\)\s*\{([^}]+)\}/)?.[1];
+const backdrop = heroCss.match(/\.hero-scroll-stage \.to-hero-thaiso-backdrop video\s*\{([^}]+)\}/)?.[1];
 assert(backdrop, 'Estilos do fundo THAISO preservados');
 const opacity = Number(backdrop.match(/opacity:\s*([\d.]+)/)?.[1]);
 const brightness = Number(backdrop.match(/brightness\(([\d.]+)\)/)?.[1]);
 assert(opacity >= .75, 'Take THAISO deve ser efetivamente visível; opacidade anterior apagava a imagem');
 assert(brightness >= .8, 'Não escurecer excessivamente o take THAISO');
+assert(/object-fit:\s*cover/.test(backdrop), 'Vídeo THAISO deve dar zoom e cobrir a tela, sem faixas nas bordas');
+assert(/width:\s*100%/.test(backdrop) && /height:\s*100%/.test(backdrop), 'Vídeo THAISO deve ocupar toda a área responsiva');
 const over = heroCss.match(/\.hero-scroll-stage \.to-hero-thaiso-backdrop::after\s*\{([^}]+)\}/)?.[1];
 assert(over, 'Gradiente de legibilidade deve existir');
 const alpha = [...over.matchAll(/rgba\(26,26,26,([\d.]+)\)/g)].map(m=>Number(m[1]));
