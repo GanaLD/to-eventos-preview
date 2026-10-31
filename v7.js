@@ -126,7 +126,7 @@
   const counter=showcase.querySelector('.to-pdf-counter');
   const loading=showcase.querySelector('.to-pdf-loading');
   let documentPDF=null,pageNumber=1,pageTotal=13,renderTask=null,serial=0;
-  let fallbackFullscreen=false,fullscreenCopy=null,nativeFullscreen=false,lastFullscreen=false;
+  let fallbackFullscreen=false,fullscreenCopy=null,fullscreenDialog=null,nativeFullscreen=false,lastFullscreen=false;
 
   const syncFullscreenCopy=()=>{
     if(!fullscreenCopy)return;
@@ -206,8 +206,10 @@
   };
   previous?.addEventListener('click',event=>{event.stopPropagation();selectPage(pageNumber-1);});
   next?.addEventListener('click',event=>{event.stopPropagation();selectPage(pageNumber+1);});
-  const isNativeFullscreen=()=>
-    (document.fullscreenElement||document.webkitFullscreenElement)===showcase;
+  const isNativeFullscreen=()=>{
+    const element=document.fullscreenElement||document.webkitFullscreenElement;
+    return !!element&&!!fullscreenDialog?.contains(element);
+  };
   const isFullscreen=()=>isNativeFullscreen()||fallbackFullscreen;
   const enterFallbackFullscreen=()=>{
     if(fallbackFullscreen)return;
@@ -224,18 +226,38 @@
     fullscreenCopy.querySelector('[data-pdf-action="fullscreen"]').hidden=true;
     const close=fullscreenCopy.querySelector('[data-pdf-action="exit-fullscreen"]');
     close.hidden=false;
+    close.textContent='Fechar · Esc';
     close.addEventListener('click',exitFallbackFullscreen);
-    document.body.appendChild(fullscreenCopy);
+    fullscreenDialog=document.createElement('dialog');
+    fullscreenDialog.className='to-media-dialog to-pdf-dialog';
+    fullscreenDialog.setAttribute('aria-label','Portfólio em tela cheia');
+    fullscreenDialog.addEventListener('cancel',event=>{event.preventDefault();exitFallbackFullscreen();});
+    fullscreenDialog.addEventListener('close',()=>{if(fallbackFullscreen)exitFallbackFullscreen();});
+    fullscreenDialog.appendChild(fullscreenCopy);
+    document.body.appendChild(fullscreenDialog);
     fallbackFullscreen=true;
     document.documentElement.classList.add('to-pdf-fallback-active');
+    if(fullscreenDialog.showModal)fullscreenDialog.showModal();
+    else fullscreenDialog.setAttribute('open','');
     setCounter();syncFullscreenCopy();
     syncFullscreen();
     close.focus({preventScroll:true});
   };
   const exitFallbackFullscreen=()=>{
+    if(!fallbackFullscreen)return;
+    const closing=fullscreenDialog;
+    const native=isNativeFullscreen();
     fallbackFullscreen=false;
+    nativeFullscreen=false;
+    if(native){
+      try{
+        if(document.exitFullscreen)document.exitFullscreen()?.catch(()=>{});
+        else document.webkitExitFullscreen?.();
+      }catch(_){}
+    }
     document.documentElement.classList.remove('to-pdf-fallback-active');
-    fullscreenCopy?.remove();fullscreenCopy=null;
+    if(closing?.open&&closing.close)closing.close();
+    closing?.remove();fullscreenCopy=null;fullscreenDialog=null;
     syncFullscreen();
     full?.focus({preventScroll:true});
   };
@@ -244,24 +266,14 @@
     if(document.exitFullscreen){document.exitFullscreen().catch(()=>{});return;}
     if(document.webkitExitFullscreen)document.webkitExitFullscreen();
   };
-  full?.addEventListener('click',async event=>{
-    event.stopPropagation();
+  full?.addEventListener('click',event=>{
+    event.preventDefault();event.stopPropagation();
     if(isFullscreen()){exitFullscreen();return;}
-    try{
-      if(showcase.requestFullscreen){
-        const request=showcase.requestFullscreen({navigationUI:'hide'});
-        const entered=await Promise.race([
-          Promise.resolve(request).then(()=>true,()=>false),
-          new Promise(resolve=>setTimeout(()=>resolve(false),700))
-        ]);
-        if(entered&&isNativeFullscreen()){nativeFullscreen=true;syncFullscreen();return;}
-      }else if(showcase.webkitRequestFullscreen){
-        showcase.webkitRequestFullscreen();
-        await new Promise(resolve=>setTimeout(resolve,350));
-        if(isNativeFullscreen()){nativeFullscreen=true;syncFullscreen();return;}
-      }
-    }catch(_){}
     enterFallbackFullscreen();
+    try{
+      if(fullscreenCopy.requestFullscreen)fullscreenCopy.requestFullscreen({navigationUI:'hide'})?.catch(()=>{});
+      else fullscreenCopy.webkitRequestFullscreen?.();
+    }catch(_){}
   });
   fullExit?.addEventListener('click',event=>{
     event.stopPropagation();
@@ -282,8 +294,9 @@
   };
   const onFullscreenChange=()=>{
     const active=isNativeFullscreen();
-    if(active&&fallbackFullscreen)exitFallbackFullscreen();
-    if(active||nativeFullscreen){nativeFullscreen=active;syncFullscreen();}
+    if(active)nativeFullscreen=true;
+    else if(nativeFullscreen&&fallbackFullscreen)exitFallbackFullscreen();
+    syncFullscreen();
   };
   document.addEventListener('fullscreenchange',onFullscreenChange);
   document.addEventListener('webkitfullscreenchange',onFullscreenChange);
