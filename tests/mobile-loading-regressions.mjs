@@ -20,9 +20,11 @@ try{
     assert(!requested.some(url=>url.includes(media)),media+' carregou antes da seção');
   }
   const florals=await page.locator('.solutions-floral').evaluateAll(images=>images.map(image=>image.currentSrc));
-  assert(florals.some(Boolean)&&florals.filter(Boolean).every(url=>url.includes('-mobile.webp')),'Imagens mobile dos florais não foram selecionadas: '+florals.join(', '));
+  assert(florals.filter(Boolean).every(url=>url.includes('-mobile.webp')),'Imagens mobile dos florais não foram selecionadas: '+florals.join(', '));
   await page.evaluate(()=>{const t=ScrollTrigger.getById('to-v7-sobre-intro');scrollTo(0,t.start+100)});
   await page.waitForFunction(()=>{const v=document.querySelector('.about-floral-video');return v.currentSrc.includes('papoulas-invisivel-aquarela-v1.mp4')&&!v.paused},{},{timeout:30000});
+  await page.evaluate(()=>{const t=ScrollTrigger.getById('to-v7-lateral-papoulas');scrollTo(0,t.start+100)});
+  await page.waitForFunction(()=>[...document.querySelectorAll('.solutions-floral')].every(image=>image.currentSrc.includes('-mobile.webp')&&image.complete),{},{timeout:30000});
   await page.evaluate(()=>{const t=ScrollTrigger.getAll().find(t=>t.trigger?.id==='projetos');scrollTo(0,t.start+20)});
   await page.waitForFunction(()=>{const v=document.querySelector('[data-role="connect-autoplay"]');return v.currentSrc.includes('connect-web.mp4')&&!v.paused},{},{timeout:30000});
   await page.evaluate(()=>{const t=ScrollTrigger.getAll().find(t=>t.trigger?.id==='projetos');scrollTo(0,t.end-10)});
