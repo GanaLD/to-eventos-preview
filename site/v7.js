@@ -295,7 +295,10 @@
   const onFullscreenChange=()=>{
     const active=isNativeFullscreen();
     if(active)nativeFullscreen=true;
-    else if(nativeFullscreen&&fallbackFullscreen)exitFallbackFullscreen();
+    else if(nativeFullscreen&&fallbackFullscreen){
+      nativeFullscreen=false;
+      if(document.hasFocus()&&!document.hidden)exitFallbackFullscreen();
+    }
     syncFullscreen();
   };
   document.addEventListener('fullscreenchange',onFullscreenChange);

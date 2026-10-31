@@ -103,7 +103,10 @@
   const fullscreenChanged = () => {
     const current = document.fullscreenElement || document.webkitFullscreenElement;
     if (expanded && current && viewer?.contains(current)) nativeEntered = true;
-    else if (expanded && nativeEntered) exitExpanded();
+    else if (expanded && nativeEntered) {
+      nativeEntered = false;
+      if (document.hasFocus() && !document.hidden) exitExpanded();
+    }
   };
   document.addEventListener('fullscreenchange', fullscreenChanged);
   document.addEventListener('webkitfullscreenchange', fullscreenChanged);

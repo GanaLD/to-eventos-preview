@@ -19,6 +19,7 @@ Data: 2026-10-31.
 3. [P0] Expansão dependente da conclusão da API nativa. Correção: diálogo na camada superior abre imediatamente, fora dos ancestrais transformados do GSAP. Tela cheia nativa é solicitada no conteúdo do diálogo quando permitida. Recusa e promessa pendente mantêm a expansão utilizável. Botão e Esc fecham em todos esses cenários.
 4. [P0] Revisão visual intermediária encontrou barra do PDF fora da altura visível e página cortada. Correção: linha do diálogo com mínimo zero, canvas com `object-fit: contain` e barra reservada. Evidência final: `qa-artifacts/pdf-expanded-denied-1705.png` e `qa-artifacts/pdf-expanded-allowed-390.png`. Botão de fechar ocupa y=801–843 no desktop de 867 px e y=728–770 no celular de 844 px.
 5. [P2] Verificação em notebook de 1280 × 600 encontrou altura mínima do painel maior que a janela. Correção restrita ao primeiro projeto: conteúdo usa a altura real da janela e título menor nesse breakpoint. Vídeo termina em y=546,1, sem cortar a mídia ou esconder controles. Evidência: `qa-artifacts/connect-layout-1280.png`.
+6. [P0] No Chrome do perfil do usuário, a solicitação nativa de tela cheia da versão publicada voltou ao estado normal. O novo visualizador mantém o diálogo aberto se a tela cheia nativa termina com perda de foco. Regressão reproduz essa condição em vídeo e PDF nos quatro tamanhos: ambos continuam visíveis e fecham pelo botão. A causa específica da saída nativa no perfil não foi isolada.
 
 ## Superfícies de fidelidade
 

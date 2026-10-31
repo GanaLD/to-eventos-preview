@@ -37,6 +37,13 @@ for(const viewport of [{width:1705,height:867},{width:1440,height:900},{width:12
   const closeBox=await dialog.locator('[data-connect-fullscreen]').boundingBox();
   assert(closeBox.y>=0&&closeBox.y+closeBox.height<=viewport.height,'Connect close button is outside the viewport: '+JSON.stringify(closeBox));
   await page.screenshot({path:`qa-artifacts/connect-expanded-${mode}-${viewport.width}.png`});
+  if(mode==='allowed'){
+   await page.waitForFunction(()=>!!document.fullscreenElement);
+   await page.evaluate(async()=>{Object.defineProperty(document,'hasFocus',{configurable:true,value:()=>false});await document.exitFullscreen();});
+   await page.waitForTimeout(250);
+   assert(await dialog.isVisible(),'Connect must remain expanded after native fullscreen loses focus');
+   await page.evaluate(()=>delete document.hasFocus);
+  }
   if(mode!=='pending')await dialog.locator('[data-connect-fullscreen]').click();else await page.keyboard.press('Escape');
   await dialog.waitFor({state:'detached'});
  }
@@ -55,6 +62,13 @@ for(const viewport of [{width:1705,height:867},{width:1440,height:900},{width:12
   assert(closeBox.y>=0&&closeBox.y+closeBox.height<=viewport.height,'PDF close button is outside the viewport: '+JSON.stringify(closeBox));
   assert(await dialog.evaluate(el=>el.scrollHeight<=el.clientHeight+2),'PDF dialog must not hide controls below its viewport');
   await page.screenshot({path:`qa-artifacts/pdf-expanded-${mode}-${viewport.width}.png`});
+  if(mode==='allowed'){
+   await page.waitForFunction(()=>!!document.fullscreenElement);
+   await page.evaluate(async()=>{Object.defineProperty(document,'hasFocus',{configurable:true,value:()=>false});await document.exitFullscreen();});
+   await page.waitForTimeout(250);
+   assert(await dialog.isVisible(),'PDF must remain expanded after native fullscreen loses focus');
+   await page.evaluate(()=>delete document.hasFocus);
+  }
   if(mode!=='pending')await dialog.locator('[data-pdf-action="exit-fullscreen"]').click();else await page.keyboard.press('Escape');
   await dialog.waitFor({state:'detached'});
   const after=await page.evaluate(()=>({y:scrollY,counter:document.querySelector('#to-pdf-showcase output').textContent,sameFrame:document.querySelector('#to-pdf-showcase iframe')===window.__originalPdfFrame}));
