@@ -83,6 +83,8 @@
       duration: 14, ease: 'power2.inOut', borderWidth: 1
     }, 70);
     timeline.to(copy, {y: 0, opacity: 1, duration: 11, stagger: 1.1, ease: 'power2.out'}, revealStart);
+    // O quadro desaparece junto à entrada dos textos e retorna no scroll inverso.
+    timeline.to(film, {opacity: 0, duration: 10, ease: 'none'}, revealStart);
     if (title) {
       const steps = Math.max(12, Math.min(42, [...title.textContent.trim()].length));
       gsap.set(title, {clipPath: 'inset(0 100% 0 0)'});
@@ -123,8 +125,7 @@
     gsap.set(foot, {opacity: 0});
     gsap.set(film, {top: 0, left: 0, width: '100%', height: '100%', opacity: 1, visibility: 'visible'});
 
-    // Mesmo enquadramento que o desktop: o vídeo termina em seu card,
-    // sem fade e sem alterar a proporção da arte original.
+    // Mesmo enquadramento que o desktop, mantendo a proporção da arte original.
     const slot = () => {
       const outer = hero.getBoundingClientRect();
       const rect = destination.getBoundingClientRect();
@@ -148,6 +149,7 @@
       borderWidth: 1
     }, 70);
     timeline.to(copy, {y: 0, opacity: 1, duration: 11, stagger: 1.1, ease: 'power2.out'}, revealStart);
+    timeline.to(film, {opacity: 0, duration: 10, ease: 'none'}, revealStart);
     if (title) {
       const steps = Math.max(12, Math.min(42, [...title.textContent.trim()].length));
       gsap.set(title, {clipPath: 'inset(0 100% 0 0)'});

@@ -82,6 +82,7 @@ jobs:
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/ -o /dev/null && break || sleep 1; done
           node tests/mobile-loading-regressions.mjs
+          node tests/hero-orange-fade-regressions.mjs
           node tests/media-dialog-regressions.mjs
           node tests/interaction-regressions.mjs
       - name: Preparar GitHub Pages
