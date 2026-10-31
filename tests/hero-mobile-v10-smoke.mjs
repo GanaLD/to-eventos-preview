@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const html=read('site/index.html'), css=read('site/hero-mobile-v10.css'), js=read('site/hero-v5.js');
-assert(/<source\s+media="\(max-width: 899px\) and \(orientation: portrait\)"\s+src="assets\/media\/motion-hero-vertical-v11.mp4"/.test(html),'HERO precisa fonte mobile 9:16 como primeira source');
+assert(/<source\s+media="\(max-width: 899px\) and \(orientation: portrait\)"\s+src="assets\/media\/motion-hero-vertical-v11.mp4(?:\?v=[^"]+)?"/.test(html),'HERO precisa fonte mobile 9:16 como primeira source');
 assert(html.includes('hero-mobile-v10.css'),'Deve carregar CSS depois de mobile-v9.css');
 assert(html.indexOf('mobile-v9.css')<html.indexOf('hero-mobile-v10.css'),'Override mobile em ordem correta');
 assert(css.includes('aspect-ratio:9/16') || css.includes('aspect-ratio:9 / 16'),'Frame final deve preservar proporção vertical');

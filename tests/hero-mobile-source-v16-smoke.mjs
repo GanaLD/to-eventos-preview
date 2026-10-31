@@ -5,8 +5,8 @@ const helper=fs.readFileSync(new URL('../site/hero-source-mobile-v16.js',import.
 const original=fs.readFileSync(new URL('../site/hero-v5.js',import.meta.url),'utf8');
 const overlay=fs.readFileSync(new URL('../site/moldura-overlay.js',import.meta.url),'utf8');
 const floralCss=fs.readFileSync(new URL('../site/moldura-overlay.css',import.meta.url),'utf8');
-assert(html.includes('hero-source-mobile-v16.js?v=16'),'Paginacao deve carregar seletor responsivo');
-assert(html.indexOf('hero-source-mobile-v16.js?v=16')<html.indexOf('hero-v5.js'),'Seletor roda ANTES do controlador original');
+assert(/hero-source-mobile-v16\.js\?v=[^"']+/.test(html),'Pagina deve carregar seletor responsivo');
+assert(html.indexOf('hero-source-mobile-v16.js')<html.indexOf('hero-v5.js'),'Seletor roda ANTES do controlador original');
 assert(helper.includes('motion-hero-vertical-v11.mp4'),'Arquivo vertical precisa ser forçado no mobile');
 assert(helper.includes('video.setAttribute(\'src\', portraitMedia)'), 'Fonte portrait precisa prevalecer sobre source HTML');
 assert(helper.includes('video.removeAttribute(\'src\')'),'Ao retornar ao desktop deve voltar ao source original');

@@ -6,7 +6,8 @@
   const video = document.querySelector('[data-role="hero-film"]');
   const hero = document.getElementById('hero');
   if (!video || !hero) return;
-  const portraitMedia = 'assets/media/motion-hero-vertical-v11.mp4';
+  const portraitMedia = 'assets/media/motion-hero-vertical-v11.mp4?v=20261031-mobile-performance';
+  const floralMedia = 'assets/media/floral-mobile-v14.mp4?v=20261031-mobile-performance';
   const mq = window.matchMedia('(max-width: 899px) and (orientation: portrait)');
   let forced = false;
   function wantsPortrait() {
@@ -19,6 +20,9 @@
   function syncSource() {
     const mobile = wantsPortrait();
     document.documentElement.classList.toggle('to-hero-mobile-portrait-forced', mobile);
+    if (mobile && !window.__TO_PREVIEW_MEDIA__?.mobileMp4) {
+      window.__TO_PREVIEW_MEDIA__ = {...window.__TO_PREVIEW_MEDIA__, mobileMp4: floralMedia};
+    }
     if (mobile && !forced) {
       forced = true;
       video.setAttribute('src', portraitMedia);
