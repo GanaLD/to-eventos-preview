@@ -154,6 +154,10 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
           const t = ScrollTrigger.getById('to-hero-film-and-copy') || ScrollTrigger.getById('to-hero-mobile-film-and-copy');
           scrollTo({ top: t.start + (t.end - t.start) * fraction, behavior: 'instant' });
         }, fraction);
+        await page.waitForFunction(fraction => {
+          const t = ScrollTrigger.getById('to-hero-film-and-copy') || ScrollTrigger.getById('to-hero-mobile-film-and-copy');
+          return Math.abs(t.progress - fraction) < .02;
+        }, fraction, { timeout: 10000 });
         await page.waitForFunction(() => {
           const t = ScrollTrigger.getById('to-hero-film-and-copy') || ScrollTrigger.getById('to-hero-mobile-film-and-copy');
           const video = document.querySelector('[data-role="hero-film"]');
