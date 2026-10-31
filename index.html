@@ -39,9 +39,8 @@
   <script defer src="hero-v5.js?v=20261030c-interactions"></script>
   <script defer src="hero-thaiso.js?v=20261030a"></script>
   
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script defer src="v7.js?v=20261031-projects"></script>
-  <script defer src="connect-autoplay.js?v=20261031-projects"></script>
+  <script defer src="v7.js?v=20261031-mobile-performance"></script>
+  <script defer src="connect-autoplay.js?v=20261031-mobile-performance"></script>
   <script defer src="motion-v71.js"></script>
   <script defer src="editorial-writing.js"></script>
   <script defer src="accordion-gallery.js"></script>
@@ -131,7 +130,7 @@
             <video class="about-floral-video" muted loop playsinline preload="metadata"
                    aria-label="Animação original de papoulas laranjas em aquarela, sem recorte das pétalas"
                    disablepictureinpicture>
-              <source src="assets/media/papoulas-invisivel-aquarela-v1.mp4?v=20261027" type="video/mp4">
+              <source data-src="assets/media/papoulas-invisivel-aquarela-v1.mp4?v=20261027" type="video/mp4">
             </video>
           </div>
         </figure>
@@ -140,8 +139,8 @@
 
     <section id="solucoes" class="section-dark section-space" aria-labelledby="solucoes-heading">
       <div class="solutions-florals" aria-hidden="true">
-        <img class="solutions-floral solutions-floral-left" src="assets/media/papoula-3-esquerda-crop.webp" width="720" height="1613" loading="lazy" decoding="async" alt="">
-        <img class="solutions-floral solutions-floral-right" src="assets/media/papoula-2-direita-crop.webp" width="706" height="1527" loading="lazy" decoding="async" alt="">
+        <img class="solutions-floral solutions-floral-left" src="assets/media/papoula-3-esquerda-crop.webp" srcset="assets/media/papoula-3-esquerda-mobile.webp 360w, assets/media/papoula-3-esquerda-crop.webp 723w" sizes="(max-width: 720px) 94px, 723px" width="720" height="1613" loading="lazy" decoding="async" alt="">
+        <img class="solutions-floral solutions-floral-right" src="assets/media/papoula-2-direita-crop.webp" srcset="assets/media/papoula-2-direita-mobile.webp 360w, assets/media/papoula-2-direita-crop.webp 709w" sizes="(max-width: 720px) 108px, 709px" width="706" height="1527" loading="lazy" decoding="async" alt="">
       </div>
       <div class="shell">
         <div class="section-kicker"><span>COMPETÊNCIAS INTEGRADAS</span></div>
@@ -168,8 +167,8 @@
               <div class="case case-featured">
                 <div class="case-image">
                   <video data-role="connect-autoplay" autoplay muted loop controls playsinline preload="metadata" poster="assets/media/connect-poster.webp" aria-label="Vídeo Connect — cobertura audiovisual do evento">
-                    <source src="assets/media/connect-web.mp4" type="video/mp4">
-                    <source src="assets/media/connect-web.webm" type="video/webm">
+                    <source data-src="assets/media/connect-web.mp4" type="video/mp4">
+                    <source data-src="assets/media/connect-web.webm" type="video/webm">
                     Seu navegador não suporta vídeo MP4. <a href="assets/media/connect-web.mp4" target="_blank" rel="noopener noreferrer">Abrir vídeo Connect</a>.
                   </video>
                   <button class="connect-fullscreen" type="button" data-connect-fullscreen aria-label="Assistir vídeo Connect em tela cheia" aria-pressed="false" title="Tela cheia">

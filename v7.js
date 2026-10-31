@@ -17,8 +17,14 @@
     botanicalVideo.loop=true;
     botanicalVideo.playsInline=true;
     let aboutVisible=false;
+    let botanicalLoaded=false;
     const playFloral=()=>{
       if(reduce||document.hidden||!aboutVisible||!botanicalVideo.paused)return;
+      if(!botanicalLoaded){
+        botanicalLoaded=true;
+        botanicalVideo.querySelectorAll('source[data-src]').forEach(source=>{source.src=source.dataset.src;});
+        botanicalVideo.load();
+      }
       const playing=botanicalVideo.play();
       if(playing?.catch)playing.catch(()=>{});
     };
@@ -119,7 +125,6 @@
   const fullExit=showcase.querySelector('[data-pdf-action="exit-fullscreen"]');
   const counter=showcase.querySelector('.to-pdf-counter');
   const loading=showcase.querySelector('.to-pdf-loading');
-  const pdfjs=window.pdfjsLib;
   let documentPDF=null,pageNumber=1,pageTotal=13,renderTask=null,serial=0;
   let fallbackFullscreen=false,fullscreenCopy=null,nativeFullscreen=false,lastFullscreen=false;
 
@@ -289,13 +294,22 @@
   },true);
   syncFullscreen();
   setCounter();
-  if(!pdfjs){renderFallback();return;}
-  pdfjs.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   // Começa carregamento do PDF somente ao aproximar-se, economizando memória no HERO.
   let started=false;
   const start=async()=>{
     if(started)return;started=true;
     try{
+      if(!window.pdfjsLib){
+        await new Promise((resolve,reject)=>{
+          const script=document.createElement('script');
+          script.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+          script.onload=resolve;script.onerror=reject;
+          document.head.appendChild(script);
+        });
+      }
+      const pdfjs=window.pdfjsLib;
+      if(!pdfjs)throw new Error('PDF.js indisponível');
+      pdfjs.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       const loadingTask=pdfjs.getDocument({url:src});
       documentPDF=await loadingTask.promise;
       pageTotal=documentPDF.numPages;
