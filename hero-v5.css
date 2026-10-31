@@ -53,6 +53,8 @@
 .hero-scroll-stage .hero-visual-line,
 .hero-scroll-stage .hero-pending,
 .hero-scroll-stage .hero-visual-foot{display:none}
+/* A moldura é apenas destino geométrico durante o scroll, sem fundo próprio. */
+.hero-scroll-stage.is-motion-hero .hero-visual{background:transparent;border-color:transparent}
 .hero-scroll-stage .hero-film-screen{
   display:none;
   position:absolute;
