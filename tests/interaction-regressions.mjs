@@ -44,7 +44,12 @@ async function checkConnect(viewport, fallback) {
     await open(page); await projectPosition(page);
     if (fallback) {
       await page.waitForFunction(() => document.querySelector('.case-featured video').readyState >= 1, null, { timeout: 20000 });
+      assert(await page.evaluate(() => document.querySelector('.case-featured video').currentSrc.endsWith('/connect-web.mp4')), 'Connect must select the seekable MP4');
       await page.locator('.case-featured video').evaluate(async video => { video.muted = true; video.currentTime = 10; await video.play(); });
+      await page.waitForFunction(() => {
+        const video = document.querySelector('.case-featured video');
+        return !video.seeking && video.currentTime >= 9.5;
+      }, null, { timeout: 15000 });
     }
     const before = await page.evaluate(() => {
       window.__connectOriginal = document.querySelector('.case-featured video');
