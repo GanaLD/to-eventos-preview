@@ -123,9 +123,16 @@
   video.muted = true;
   video.defaultMuted = true;
   let inView = false;
+  let sourceLoaded = false;
 
   const playIfVisible = () => {
     if (fallbackFullscreen || !inView || document.hidden || !video.paused) return;
+    if (!sourceLoaded) {
+      sourceLoaded = true;
+      const sources = video.querySelectorAll?.('source[data-src]') || [];
+      sources.forEach(source => { source.src = source.dataset.src; });
+      if (sources.length) video.load();
+    }
     const attempt = video.play();
     if (attempt && typeof attempt.catch === 'function') {
       attempt.catch(() => { /* Reprodução manual continua disponível. */ });
