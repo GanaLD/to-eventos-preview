@@ -16,7 +16,7 @@ async function open(page, hash = '', { blockPdf = false } = {}) {
   await page.route('https://cdnjs.cloudflare.com/ajax/libs/**', route => {
     const name = new URL(route.request().url()).pathname.split('/').pop();
     if (blockPdf && name === 'pdf.min.js') return route.abort();
-    if (['gsap.min.js','ScrollTrigger.min.js','pdf.min.js','pdf.worker.min.js'].includes(name)) {
+    if (!process.env.TO_CDN_LIVE && ['gsap.min.js','ScrollTrigger.min.js','pdf.min.js','pdf.worker.min.js'].includes(name)) {
       return route.fulfill({ path: fileURLToPath(new URL('../site/vendor/' + name, import.meta.url)), contentType: 'application/javascript' });
     }
     return route.continue();
@@ -33,7 +33,7 @@ async function projectPosition(page, end = false) {
   await page.waitForTimeout(1800);
 }
 
-async function checkConnect(viewport, fallback) {
+async function checkConnect(viewport, fallback, escape = false) {
   const page = await browser.newPage({ viewport, isMobile: viewport.width < 900, hasTouch: viewport.width < 900 });
   try {
     if (fallback) await page.addInitScript(() => {
@@ -75,7 +75,8 @@ async function checkConnect(viewport, fallback) {
       }, null, { timeout: 15000 });
     }
     const close = fallback ? page.locator('body > .is-connect-fullscreen-fallback [data-connect-fullscreen]') : page.locator('[data-connect-fullscreen]');
-    await close.click();
+    if (escape) await page.keyboard.press('Escape');
+    else await close.click();
     await page.waitForTimeout(500);
     assert.equal(await page.evaluate(() => !!document.fullscreenElement || !!document.querySelector('.is-connect-fullscreen-fallback')), false);
     assert(await page.evaluate(() => document.querySelector('.case-featured video') === window.__connectOriginal));
@@ -84,7 +85,7 @@ async function checkConnect(viewport, fallback) {
   } finally { await page.close(); }
 }
 
-async function checkPdf(viewport, fallback) {
+async function checkPdf(viewport, fallback, escape = false) {
   const page = await browser.newPage({ viewport, isMobile: viewport.width < 900, hasTouch: viewport.width < 900 });
   try {
     if (fallback) {
@@ -119,7 +120,9 @@ async function checkPdf(viewport, fallback) {
     assert(openState.active && openState.copy === fallback, JSON.stringify(openState));
     assert(openState.width >= openState.viewport[0] - 2 && openState.height >= openState.viewport[1] - 2, JSON.stringify(openState));
     const exit = fallback ? page.locator('body > .to-pdf-showcase.is-fullscreen-fallback [data-pdf-action="exit-fullscreen"]') : page.locator('#to-pdf-showcase [data-pdf-action="exit-fullscreen"]');
-    await exit.click(); await page.waitForTimeout(1000);
+    if (escape) await page.keyboard.press('Escape');
+    else await exit.click();
+    await page.waitForTimeout(1000);
     const after = await page.evaluate(() => {
       const x = document.querySelector('#to-pdf-showcase');
       return { y: scrollY, counter: x.querySelector('output').textContent, navigation: performance.getEntriesByType('navigation').length, sameFrame: x.querySelector('iframe') === window.__pdfOriginal, loads: window.__pdfLoads };
@@ -134,8 +137,12 @@ async function checkPdf(viewport, fallback) {
 for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
   await scenario('Connect native fullscreen at ' + viewport.width, () => checkConnect(viewport, false));
   await scenario('Connect fallback fullscreen at ' + viewport.width, () => checkConnect(viewport, true));
+  await scenario('Connect Escape native at ' + viewport.width, () => checkConnect(viewport, false, true));
+  await scenario('Connect Escape fallback at ' + viewport.width, () => checkConnect(viewport, true, true));
   await scenario('PDF preserves page and position at ' + viewport.width, () => checkPdf(viewport, false));
   await scenario('PDF fallback keeps its original iframe at ' + viewport.width, () => checkPdf(viewport, true));
+  await scenario('PDF Escape native at ' + viewport.width, () => checkPdf(viewport, false, true));
+  await scenario('PDF Escape fallback at ' + viewport.width, () => checkPdf(viewport, true, true));
   await scenario('Hero returns from a direct #contato visit at ' + viewport.width, async () => {
     const page = await browser.newPage({ viewport, isMobile: viewport.width < 900, hasTouch: viewport.width < 900 });
     try {

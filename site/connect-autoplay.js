@@ -112,8 +112,10 @@
   video.addEventListener('webkitbeginfullscreen', () => { webkitVideoFullscreen = true; syncFullscreenButton(); });
   video.addEventListener('webkitendfullscreen', () => { webkitVideoFullscreen = false; syncFullscreenButton(); });
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && fallbackFullscreen) exitFallbackFullscreen();
-  });
+    if (event.key !== 'Escape' || !isFullscreen()) return;
+    event.preventDefault();
+    leaveFullscreen();
+  }, true);
   syncFullscreenButton();
 
   // Autoplay com áudio é bloqueado por navegadores: o visitante pode

@@ -244,8 +244,12 @@
     if(isFullscreen()){exitFullscreen();return;}
     try{
       if(showcase.requestFullscreen){
-        await showcase.requestFullscreen({navigationUI:'hide'});
-        if(isNativeFullscreen()){nativeFullscreen=true;syncFullscreen();return;}
+        const request=showcase.requestFullscreen({navigationUI:'hide'});
+        const entered=await Promise.race([
+          Promise.resolve(request).then(()=>true,()=>false),
+          new Promise(resolve=>setTimeout(()=>resolve(false),700))
+        ]);
+        if(entered&&isNativeFullscreen()){nativeFullscreen=true;syncFullscreen();return;}
       }else if(showcase.webkitRequestFullscreen){
         showcase.webkitRequestFullscreen();
         await new Promise(resolve=>setTimeout(resolve,350));
@@ -273,13 +277,16 @@
   };
   const onFullscreenChange=()=>{
     const active=isNativeFullscreen();
+    if(active&&fallbackFullscreen)exitFallbackFullscreen();
     if(active||nativeFullscreen){nativeFullscreen=active;syncFullscreen();}
   };
   document.addEventListener('fullscreenchange',onFullscreenChange);
   document.addEventListener('webkitfullscreenchange',onFullscreenChange);
   document.addEventListener('keydown',event=>{
-    if(event.key==='Escape'&&fallbackFullscreen)exitFallbackFullscreen();
-  });
+    if(event.key!=='Escape'||!isFullscreen())return;
+    event.preventDefault();
+    exitFullscreen();
+  },true);
   syncFullscreen();
   setCounter();
   if(!pdfjs){renderFallback();return;}
