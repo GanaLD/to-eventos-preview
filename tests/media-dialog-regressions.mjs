@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
 const browser=await chromium.launch({channel:'chrome',headless:true});
 const url=process.env.TO_PREVIEW_URL || 'http://127.0.0.1:8765/';
-for(const viewport of [{width:1705,height:867},{width:1440,height:900},{width:390,height:844}]){
+for(const viewport of [{width:1705,height:867},{width:1440,height:900},{width:1280,height:600},{width:390,height:844}]){
  if(process.env.TO_LAYOUT_WIDTH&&viewport.width!==Number(process.env.TO_LAYOUT_WIDTH))continue;
  const page=await browser.newPage({viewport,isMobile:viewport.width<900,hasTouch:viewport.width<900});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));

@@ -56,6 +56,15 @@
 #projetos .project-panel-summit .case-caption>span,#projetos .project-panel-summit .case-caption strong{font-size:12px;line-height:1.2}
 #projetos .project-panel-summit .case-featured{display:block;width:100%;margin:0}
 #projetos .project-panel-summit .case-featured .case-image{width:100%;max-width:none;margin:0}
+@media(min-width:900px) and (max-height:740px){
+  #projetos .project-panel-summit .project-panel-inner{align-self:flex-start;height:100dvh;width:min(var(--shell),calc((100dvh - 225px)*1.77778));padding-top:24px;padding-bottom:56px}
+  #projetos .project-panel-summit .section-kicker{margin-bottom:12px}
+  #projetos .project-panel-summit .projects-top{gap:24px;margin-bottom:14px}
+  #projetos .project-panel-summit .projects-top .display-heading{font-size:clamp(28px,4.6vh,36px)}
+  #projetos .project-panel-summit .projects-top .case-caption{gap:6px}
+  #projetos .project-panel-summit .case-caption h3{font-size:22px}
+  #projetos .project-panel-summit .case-caption p{font-size:12px;line-height:1.4}
+}
 @media(max-width:899px){
   .is-gsap-active #projetos .project-panel-summit .project-panel-inner,#projetos .project-panel-summit .project-panel-inner{width:var(--shell);padding-top:60px;padding-bottom:80px}
   #projetos .project-panel-summit .projects-top{grid-template-columns:minmax(0,1fr);gap:12px}

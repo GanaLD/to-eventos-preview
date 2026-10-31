@@ -18,6 +18,7 @@ Data: 2026-10-31.
 2. [P2] Vídeo perto do indicador inferior. Correção: reservar altura para textos e controles da seção. O vídeo termina em y=798,6 no viewport de 867 px; termina em y=831,2 no viewport de 900 px. Não há overflow horizontal.
 3. [P0] Expansão dependente da conclusão da API nativa. Correção: diálogo na camada superior abre imediatamente, fora dos ancestrais transformados do GSAP. Tela cheia nativa é solicitada no conteúdo do diálogo quando permitida. Recusa e promessa pendente mantêm a expansão utilizável. Botão e Esc fecham em todos esses cenários.
 4. [P0] Revisão visual intermediária encontrou barra do PDF fora da altura visível e página cortada. Correção: linha do diálogo com mínimo zero, canvas com `object-fit: contain` e barra reservada. Evidência final: `qa-artifacts/pdf-expanded-denied-1705.png` e `qa-artifacts/pdf-expanded-allowed-390.png`. Botão de fechar ocupa y=801–843 no desktop de 867 px e y=728–770 no celular de 844 px.
+5. [P2] Verificação em notebook de 1280 × 600 encontrou altura mínima do painel maior que a janela. Correção restrita ao primeiro projeto: conteúdo usa a altura real da janela e título menor nesse breakpoint. Vídeo termina em y=546,1, sem cortar a mídia ou esconder controles. Evidência: `qa-artifacts/connect-layout-1280.png`.
 
 ## Superfícies de fidelidade
 
@@ -30,7 +31,7 @@ Data: 2026-10-31.
 ## Verificação funcional
 
 - `tests/interaction-regressions.mjs`: passou em desktop e celular emulado; API nativa e modo sem API; botão e Esc; vídeo retoma o ponto; PDF conserva página, iframe e scroll; Hero percorre ida e volta.
-- `tests/media-dialog-regressions.mjs`: passou em 1705 × 867, 1440 × 900 e 390 × 844; API permitida, recusada e pendente; modais na camada superior; botão de fechar dentro da viewport; PDF sem barra escondida; posição preservada.
+- `tests/media-dialog-regressions.mjs`: passou em 1705 × 867, 1440 × 900, 1280 × 600 e 390 × 844; API permitida, recusada e pendente; modais na camada superior; botão de fechar dentro da viewport; PDF sem barra escondida; posição preservada.
 - `tests/mobile-loading-regressions.mjs`: passou; carregamento adiado e mídias ativadas ao chegar às seções.
 - Console: nenhuma exceção de página nos cenários de diálogo capturados.
 - Limite: Chrome isolado com emulação móvel; não representa validação em aparelho físico ou em todas as extensões do perfil pessoal.
