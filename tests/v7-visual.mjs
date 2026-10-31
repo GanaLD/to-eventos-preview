@@ -2,7 +2,7 @@ import {chromium} from 'playwright';
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const target=process.env.TO_PREVIEW_URL || 'https://ganald.github.io/to-eventos-preview/?v=7-qa';
-const out='qa-artifacts';await fs.mkdir(out,{recursive:true});
+const out=process.env.TO_QA_DIR || 'qa-artifacts';await fs.mkdir(out,{recursive:true});
 const browser=await chromium.launch({channel:'chrome',headless:true,args:['--disable-dev-shm-usage','--no-sandbox']});
 let results=[];
 async function locate(page,id,at){
@@ -118,9 +118,9 @@ for (const item of [{width:1440,height:900,tag:'desktop'},{width:390,height:844,
  await page.screenshot({path:out+'/connect-'+item.tag+'.png'});
  const connect=await page.locator('.case-featured video').count();
  assert.equal(connect,1,'Vídeo Connect deveria substituir o frame');
- const mediaSrc=await page.locator('.case-featured video source').first().getAttribute('src');
- assert.equal(mediaSrc,'assets/media/connect-web.webm');
- assert.equal(await page.locator('.case-featured video source[type="video/mp4"]').getAttribute('src'),'assets/media/connect-web.mp4');
+ const mediaSrc=await page.locator('.case-featured video source').first().evaluate(source=>source.getAttribute('data-src')||source.getAttribute('src'));
+ assert.equal(mediaSrc,'assets/media/connect-web.mp4','MP4 deve ter prioridade para permitir busca e retomada');
+ assert.equal(await page.locator('.case-featured video source[type="video/webm"]').evaluate(source=>source.getAttribute('data-src')||source.getAttribute('src')),'assets/media/connect-web.webm');
  if(item.tag==='desktop'){
    await locate(page,'to-v7-lateral-papoulas',.5);
    // O showcase ocupa o último painel do GSAP, acessado pelo final do pin.
