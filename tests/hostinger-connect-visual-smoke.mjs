@@ -15,7 +15,7 @@ for(const attr of ['autoplay','muted','loop','playsinline','controls','preload="
   assert(new RegExp('(?:\\s|^)'+attr+'(?:\\s|>|$)').test(connect), 'Connect deve conter: '+attr);
 }
 assert(projects.includes('connect-web.webm') && projects.includes('connect-web.mp4'), 'Preservar mídias Connect');
-assert(html.includes('<script defer src="connect-autoplay.js"></script>'), 'Carregar controlador de reprodução Connect');
+assert(/<script defer src="connect-autoplay\.js(?:\?[^"]*)?">\s*<\/script>/.test(html), 'Carregar controlador de reprodução Connect');
 assert(workflow.includes('node tests/hostinger-connect-visual-smoke.mjs'), 'Verificação Connect na publicação');
 assert(workflow.includes('node --check site/connect-autoplay.js'), 'Validar sintaxe do controlador Connect');
 
@@ -57,11 +57,13 @@ const context={
     addEventListener:(name,fn)=>handlers[name]=fn,
     exitFullscreen(){this.fullscreenElement=null;handlers.fullscreenchange?.();return Promise.resolve()}},
   window:{addEventListener:(name,fn)=>handlers['window:'+name]=fn},
+  setTimeout,
   IntersectionObserver:class {
     constructor(fn,options){this.notify=fn;this.options=options;io=this}
     observe(node){assert.equal(node,video)}
   }
 };
+frame.requestFullscreen=()=>{context.document.fullscreenElement=frame;handlers.fullscreenchange?.();return Promise.resolve()};
 vm.runInNewContext(autoplayJs,context);
 context.document.fullscreenElement=null;
 assert(io, 'Observar visibilidade real do Connect');

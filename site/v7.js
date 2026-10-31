@@ -121,47 +121,76 @@
   const loading=showcase.querySelector('.to-pdf-loading');
   const pdfjs=window.pdfjsLib;
   let documentPDF=null,pageNumber=1,pageTotal=13,renderTask=null,serial=0;
-  let fallbackFullscreen=false;
-  let fullscreenPlaceholder=null;
+  let fallbackFullscreen=false,fullscreenCopy=null,nativeFullscreen=false,lastFullscreen=false;
+
+  const syncFullscreenCopy=()=>{
+    if(!fullscreenCopy)return;
+    fullscreenCopy.classList.toggle('is-fallback',showcase.classList.contains('is-fallback'));
+    fullscreenCopy.classList.toggle('is-ready',showcase.classList.contains('is-ready'));
+    const copyFrame=fullscreenCopy.querySelector('.to-pdf-fallback');
+    const frameSrc=fallback.getAttribute('src');
+    if(frameSrc&&copyFrame.getAttribute('src')!==frameSrc)copyFrame.setAttribute('src',frameSrc);
+    const copyCanvas=fullscreenCopy.querySelector('canvas');
+    if(!showcase.classList.contains('is-fallback')&&canvas.width&&canvas.height){
+      copyCanvas.width=canvas.width;copyCanvas.height=canvas.height;
+      copyCanvas.getContext('2d').drawImage(canvas,0,0);
+    }
+  };
 
   const setCounter=()=>{
     counter.textContent=String(pageNumber).padStart(2,'0')+' / '+String(pageTotal).padStart(2,'0');
     previous.disabled=pageNumber<=1;
     next.disabled=pageNumber>=pageTotal;
+    if(fullscreenCopy){
+      fullscreenCopy.querySelector('.to-pdf-counter').textContent=counter.textContent;
+      fullscreenCopy.querySelector('[data-pdf-action="previous"]').disabled=previous.disabled;
+      fullscreenCopy.querySelector('[data-pdf-action="next"]').disabled=next.disabled;
+    }
   };
   const renderFallback=()=>{
     showcase.classList.add('is-fallback','is-ready');
     fallback.title='Visualizador nativo do portfólio oficial';
-    fallback.src=src+'#page='+pageNumber+'&zoom=page-fit';
+    const url=src+'#page='+pageNumber+'&zoom=page-fit';
+    if(fallback.getAttribute('src')!==url)fallback.setAttribute('src',url);
     loading.textContent='Abrir portfólio em PDF';
+    syncFullscreenCopy();
   };
   const renderPage=async()=>{
     if(!documentPDF){renderFallback();setCounter();return;}
     const mySerial=++serial;
     if(renderTask){
-      try{renderTask.cancel();await renderTask.promise;}catch(_){}
-      renderTask=null;
+      const previousTask=renderTask;renderTask=null;
+      try{previousTask.cancel();await previousTask.promise;}catch(_){}
     }
+    if(mySerial!==serial)return;
+    let task=null;
     try{
       const page=await documentPDF.getPage(pageNumber);
       if(mySerial!==serial)return;
       const base=page.getViewport({scale:1});
-      const width=Math.max(160,stage.clientWidth||720);
+      const visibleStage=fullscreenCopy?.querySelector('.to-pdf-stage')||stage;
+      const width=Math.max(160,visibleStage.clientWidth||720);
       const ratio=Math.min(2,window.devicePixelRatio||1);
       const viewport=page.getViewport({scale:width/base.width*ratio});
-      canvas.width=Math.ceil(viewport.width);
-      canvas.height=Math.ceil(viewport.height);
+      // Manter a página anterior visível até a nova renderização terminar.
+      const buffer=document.createElement('canvas');
+      buffer.width=Math.ceil(viewport.width);buffer.height=Math.ceil(viewport.height);
       canvas.style.width='100%';
       canvas.style.height='auto';
-      const ctx=canvas.getContext('2d',{alpha:false});
-      renderTask=page.render({canvasContext:ctx,viewport});
-      await renderTask.promise;
-      if(mySerial===serial){showcase.classList.add('is-ready');loading.hidden=true;}
+      task=page.render({canvasContext:buffer.getContext('2d',{alpha:false}),viewport});
+      renderTask=task;
+      await task.promise;
+      if(mySerial===serial){
+        canvas.width=buffer.width;canvas.height=buffer.height;
+        canvas.getContext('2d',{alpha:false}).drawImage(buffer,0,0);
+        showcase.classList.add('is-ready');loading.hidden=true;
+        syncFullscreenCopy();
+      }
     }catch(error){
       if(error?.name==='RenderingCancelledException')return;
       console.warn('TO Eventos PDF: visualizador nativo ativado',error);
       renderFallback();
-    }finally{setCounter();}
+    }finally{if(renderTask===task)renderTask=null;setCounter();}
   };
   const selectPage=p=>{
     const target=Math.max(1,Math.min(pageTotal,p));
@@ -172,50 +201,64 @@
   };
   previous?.addEventListener('click',event=>{event.stopPropagation();selectPage(pageNumber-1);});
   next?.addEventListener('click',event=>{event.stopPropagation();selectPage(pageNumber+1);});
-  const isFullscreen=()=>
-    (document.fullscreenElement||document.webkitFullscreenElement)===showcase || fallbackFullscreen;
+  const isNativeFullscreen=()=>
+    (document.fullscreenElement||document.webkitFullscreenElement)===showcase;
+  const isFullscreen=()=>isNativeFullscreen()||fallbackFullscreen;
   const enterFallbackFullscreen=()=>{
-    if(!fullscreenPlaceholder&&showcase.parentNode){
-      fullscreenPlaceholder=document.createComment('to-pdf-showcase-position');
-      showcase.parentNode.insertBefore(fullscreenPlaceholder,showcase);
-      document.body.appendChild(showcase);
-    }
+    if(fallbackFullscreen)return;
+    // A cópia fica na camada superior; o iframe original nunca é removido
+    // do documento, pois removê-lo faz o navegador recarregar o PDF.
+    fullscreenCopy=showcase.cloneNode(true);
+    fullscreenCopy.removeAttribute('id');
+    fullscreenCopy.classList.add('is-fullscreen-fallback');
+    fullscreenCopy.setAttribute('role','dialog');
+    fullscreenCopy.setAttribute('aria-modal','true');
+    fullscreenCopy.setAttribute('aria-label','Portfólio em tela cheia');
+    fullscreenCopy.querySelector('[data-pdf-action="previous"]').addEventListener('click',()=>selectPage(pageNumber-1));
+    fullscreenCopy.querySelector('[data-pdf-action="next"]').addEventListener('click',()=>selectPage(pageNumber+1));
+    fullscreenCopy.querySelector('[data-pdf-action="fullscreen"]').hidden=true;
+    const close=fullscreenCopy.querySelector('[data-pdf-action="exit-fullscreen"]');
+    close.hidden=false;
+    close.addEventListener('click',exitFallbackFullscreen);
+    document.body.appendChild(fullscreenCopy);
     fallbackFullscreen=true;
-    showcase.classList.add('is-fullscreen-fallback');
     document.documentElement.classList.add('to-pdf-fallback-active');
+    setCounter();syncFullscreenCopy();
     syncFullscreen();
+    close.focus({preventScroll:true});
   };
   const exitFallbackFullscreen=()=>{
     fallbackFullscreen=false;
-    showcase.classList.remove('is-fullscreen-fallback');
     document.documentElement.classList.remove('to-pdf-fallback-active');
-    if(fullscreenPlaceholder?.parentNode){
-      fullscreenPlaceholder.parentNode.insertBefore(showcase,fullscreenPlaceholder);
-      fullscreenPlaceholder.remove();
-      fullscreenPlaceholder=null;
-    }
+    fullscreenCopy?.remove();fullscreenCopy=null;
     syncFullscreen();
+    full?.focus({preventScroll:true});
   };
   const exitFullscreen=()=>{
     if(fallbackFullscreen){exitFallbackFullscreen();return;}
     if(document.exitFullscreen){document.exitFullscreen().catch(()=>{});return;}
     if(document.webkitExitFullscreen)document.webkitExitFullscreen();
   };
-  full?.addEventListener('click',event=>{
+  full?.addEventListener('click',async event=>{
     event.stopPropagation();
-    if(isFullscreen())exitFullscreen();
-    else enterFallbackFullscreen();
+    if(isFullscreen()){exitFullscreen();return;}
+    try{
+      if(showcase.requestFullscreen){
+        await showcase.requestFullscreen({navigationUI:'hide'});
+        if(isNativeFullscreen()){nativeFullscreen=true;syncFullscreen();return;}
+      }else if(showcase.webkitRequestFullscreen){
+        showcase.webkitRequestFullscreen();
+        await new Promise(resolve=>setTimeout(resolve,350));
+        if(isNativeFullscreen()){nativeFullscreen=true;syncFullscreen();return;}
+      }
+    }catch(_){}
+    enterFallbackFullscreen();
   });
   fullExit?.addEventListener('click',event=>{
     event.stopPropagation();
     exitFullscreen();
   });
   const syncFullscreen=()=>{
-    if(document.fullscreenElement===showcase&&fallbackFullscreen){
-      fallbackFullscreen=false;
-      showcase.classList.remove('is-fullscreen-fallback');
-      document.documentElement.classList.remove('to-pdf-fallback-active');
-    }
     const active=isFullscreen();
     full?.setAttribute('aria-pressed',String(active));
     if(full){
@@ -223,11 +266,17 @@
       full.setAttribute('aria-label',active?'Voltar o PDF ao tamanho normal':'Abrir PDF em tela cheia');
     }
     if(fullExit)fullExit.hidden=!active;
-    if(documentPDF)requestAnimationFrame(()=>renderPage());
-    ST?.refresh();
+    if(active!==lastFullscreen){
+      lastFullscreen=active;
+      if(documentPDF)requestAnimationFrame(()=>renderPage());
+    }
   };
-  document.addEventListener('fullscreenchange',syncFullscreen);
-  document.addEventListener('webkitfullscreenchange',syncFullscreen);
+  const onFullscreenChange=()=>{
+    const active=isNativeFullscreen();
+    if(active||nativeFullscreen){nativeFullscreen=active;syncFullscreen();}
+  };
+  document.addEventListener('fullscreenchange',onFullscreenChange);
+  document.addEventListener('webkitfullscreenchange',onFullscreenChange);
   document.addEventListener('keydown',event=>{
     if(event.key==='Escape'&&fallbackFullscreen)exitFallbackFullscreen();
   });

@@ -176,6 +176,56 @@
     };
   });
 
+  // Ao abrir uma âncora distante, um refresh pode medir o pin do HERO antes
+  // de restaurar o seu spacer. Nesse caso ele recebe um início negativo e
+  // deixa uma área cinza ao voltar. Recalcule no topo e preserve a posição.
+  const initialHash = location.hash;
+  let repairingPin = false, repairFrame = 0, userInteracted = false;
+  const markInteraction = () => { userInteracted = true; };
+  ['wheel','touchstart','pointerdown','keydown'].forEach(type =>
+    window.addEventListener(type, markInteraction, {once:true, passive:true})
+  );
+  const repairPin = () => {
+    repairFrame = 0;
+    if (document.readyState !== 'complete' || repairingPin) return;
+    const trigger = ScrollTrigger.getById('to-hero-film-and-copy') || ScrollTrigger.getById('to-hero-mobile-film-and-copy');
+    if (!trigger || trigger.start >= -1) return;
+    const x = window.scrollX, y = window.scrollY;
+    const root = document.documentElement;
+    const previousBehavior = root.style.scrollBehavior;
+    repairingPin = true;
+    try {
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo({left:0, top:0, behavior:'instant'});
+      ScrollTrigger.refresh();
+      window.scrollTo({left:x, top:y, behavior:'instant'});
+      ScrollTrigger.update();
+    } finally {
+      root.style.scrollBehavior = previousBehavior;
+      repairingPin = false;
+    }
+  };
+  const schedulePinRepair = () => {
+    if (!repairingPin && !repairFrame && document.readyState === 'complete') {
+      repairFrame = requestAnimationFrame(repairPin);
+    }
+  };
+  const restoreInitialAnchor = () => {
+    if (!initialHash || userInteracted) return;
+    let target;
+    try { target = document.getElementById(decodeURIComponent(initialHash.slice(1))); } catch { return; }
+    if (!target) return;
+    window.scrollTo({top:target.getBoundingClientRect().top + window.scrollY, behavior:'instant'});
+    ScrollTrigger.update();
+  };
+  ScrollTrigger.addEventListener('refresh', schedulePinRepair);
+  if (document.readyState === 'complete') schedulePinRepair();
+  else window.addEventListener('load', () => {
+    schedulePinRepair();
+    requestAnimationFrame(() => requestAnimationFrame(restoreInitialAnchor));
+  }, {once:true});
+  window.addEventListener('pageshow', schedulePinRepair);
+
   const sync = () => ScrollTrigger.refresh();
   document.fonts?.ready?.then(sync).catch(() => {});
   window.addEventListener('pagehide', () => cancelAnimationFrame(raf), {once:true});

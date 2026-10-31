@@ -9,7 +9,9 @@
   const canFullscreen = Boolean(frame);
   let fallbackFullscreen = false;
   let webkitVideoFullscreen = false;
-  let fullscreenPlaceholder = null;
+  let fullscreenOverlay = null;
+  let fullscreenVideo = null;
+  let fallbackWasPlaying = false;
   const isFullscreen = () => document.fullscreenElement === frame || document.webkitFullscreenElement === frame || fallbackFullscreen || webkitVideoFullscreen;
   const syncFullscreenButton = () => {
     if (!fullscreenButton) return;
@@ -21,29 +23,59 @@
     if (label) label.textContent = active ? 'Fechar tela cheia' : 'Tela cheia';
   };
   const enterFallbackFullscreen = () => {
-    if (!frame) return;
-    if (!fullscreenPlaceholder && frame.parentNode) {
-      fullscreenPlaceholder = document.createComment('connect-video-position');
-      frame.parentNode.insertBefore(fullscreenPlaceholder, frame);
-      document.body.appendChild(frame);
-    }
+    if (!frame || fallbackFullscreen) return;
+    const position = video.currentTime || 0;
+    fallbackWasPlaying = !video.paused;
+    fullscreenOverlay = frame.cloneNode(true);
+    fullscreenOverlay.classList.add('is-connect-fullscreen-fallback');
+    fullscreenOverlay.setAttribute('role','dialog');
+    fullscreenOverlay.setAttribute('aria-modal','true');
+    fullscreenOverlay.setAttribute('aria-label','Vídeo Connect em tela cheia');
+    fullscreenVideo = fullscreenOverlay.querySelector('video');
+    fullscreenVideo.autoplay = false;
+    fullscreenVideo.muted = video.muted;
+    fullscreenVideo.volume = video.volume;
+    fullscreenVideo.playbackRate = video.playbackRate;
+    const close = fullscreenOverlay.querySelector('[data-connect-fullscreen]');
+    close.setAttribute('aria-label','Fechar tela cheia do vídeo Connect');
+    close.setAttribute('aria-pressed','true');
+    const label = close.querySelector('.connect-fullscreen-label');
+    if (label) label.textContent = 'Fechar tela cheia';
+    close.addEventListener('click', exitFallbackFullscreen);
     fallbackFullscreen = true;
-    frame.classList.add('is-connect-fullscreen-fallback');
+    video.pause();
+    document.body.appendChild(fullscreenOverlay);
     document.documentElement.classList.add('connect-fallback-active');
+    const overlay = fullscreenOverlay;
+    const start = () => {
+      if (fullscreenOverlay !== overlay) return;
+      try { fullscreenVideo.currentTime = position; } catch { /* metadata may still be loading */ }
+    };
+    if (fullscreenVideo.readyState >= 1) start();
+    else fullscreenVideo.addEventListener('loadedmetadata', start, {once:true});
+    // Inicie dentro do gesto do visitante para preservar o áudio quando ele
+    // já tiver sido habilitado nos controles do vídeo original.
+    if (fallbackWasPlaying) fullscreenVideo.play()?.catch(() => {});
     syncFullscreenButton();
-    window.ScrollTrigger?.refresh();
+    close.focus({preventScroll:true});
   };
   const exitFallbackFullscreen = () => {
-    fallbackFullscreen = false;
-    frame?.classList.remove('is-connect-fullscreen-fallback');
-    document.documentElement.classList.remove('connect-fallback-active');
-    if (fullscreenPlaceholder?.parentNode && frame) {
-      fullscreenPlaceholder.parentNode.insertBefore(frame, fullscreenPlaceholder);
-      fullscreenPlaceholder.remove();
-      fullscreenPlaceholder = null;
+    if (!fallbackFullscreen) return;
+    const position = fullscreenVideo?.readyState >= 1 ? fullscreenVideo.currentTime : video.currentTime;
+    const shouldPlay = fullscreenVideo?.readyState >= 1 ? !fullscreenVideo.paused : fallbackWasPlaying;
+    if (fullscreenVideo) {
+      video.muted = fullscreenVideo.muted;
+      video.volume = fullscreenVideo.volume;
+      video.playbackRate = fullscreenVideo.playbackRate;
+      fullscreenVideo.pause();
     }
+    fallbackFullscreen = false;
+    document.documentElement.classList.remove('connect-fallback-active');
+    fullscreenOverlay?.remove();fullscreenOverlay = null;fullscreenVideo = null;
+    try { video.currentTime = position; } catch { /* preserve the current frame if seeking is unavailable */ }
+    if (shouldPlay && !document.hidden) video.play()?.catch(() => {});
     syncFullscreenButton();
-    window.ScrollTrigger?.refresh();
+    fullscreenButton?.focus({preventScroll:true});
   };
   const leaveFullscreen = () => {
     if (fallbackFullscreen) { exitFallbackFullscreen(); return; }
@@ -71,8 +103,12 @@
     } catch { enterFallbackFullscreen(); }
     syncFullscreenButton();
   });
-  document.addEventListener('fullscreenchange', syncFullscreenButton);
-  document.addEventListener('webkitfullscreenchange', syncFullscreenButton);
+  const onFullscreenChange = () => {
+    if ((document.fullscreenElement || document.webkitFullscreenElement) === frame && fallbackFullscreen) exitFallbackFullscreen();
+    syncFullscreenButton();
+  };
+  document.addEventListener('fullscreenchange', onFullscreenChange);
+  document.addEventListener('webkitfullscreenchange', onFullscreenChange);
   video.addEventListener('webkitbeginfullscreen', () => { webkitVideoFullscreen = true; syncFullscreenButton(); });
   video.addEventListener('webkitendfullscreen', () => { webkitVideoFullscreen = false; syncFullscreenButton(); });
   document.addEventListener('keydown', event => {
@@ -87,7 +123,7 @@
   let inView = false;
 
   const playIfVisible = () => {
-    if (!inView || document.hidden || !video.paused) return;
+    if (fallbackFullscreen || !inView || document.hidden || !video.paused) return;
     const attempt = video.play();
     if (attempt && typeof attempt.catch === 'function') {
       attempt.catch(() => { /* Reprodução manual continua disponível. */ });

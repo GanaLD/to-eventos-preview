@@ -73,6 +73,15 @@ jobs:
         run: |
           echo '7b6e54906ecd4e6bd661c4c9f3f59ed869250f1b9a80b2d622849a51bd723a72  site/assets/media/papoulas-invisivel-aquarela-v1.mp4' | sha256sum -c -
           test "$(wc -c < site/assets/media/papoulas-invisivel-aquarela-v1.mp4)" -gt 1000000
+      - name: Validar telas cheias e retorno do Hero no desktop e no celular
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-package-lock playwright@1.57.0
+          node tests/v7-range-server.mjs > /tmp/to-eventos-range-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/ -o /dev/null && break || sleep 1; done
+          node tests/interaction-regressions.mjs
       - name: Preparar GitHub Pages
         uses: actions/configure-pages@v5
         with:
