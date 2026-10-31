@@ -14,6 +14,7 @@ try {
     });
     await page.goto(url,{waitUntil:'load',timeout:60000});
     await page.waitForFunction(()=>ScrollTrigger.getById('to-hero-film-and-copy')||ScrollTrigger.getById('to-hero-mobile-film-and-copy'));
+    await page.evaluate(()=>document.fonts.ready);
     const sample=async(progress,label)=>{
       await page.evaluate(progress=>{
         const t=ScrollTrigger.getById('to-hero-film-and-copy')||ScrollTrigger.getById('to-hero-mobile-film-and-copy');
