@@ -75,10 +75,7 @@ io.notify([{target:video,isIntersecting:true,intersectionRatio:.7}]);
 assert.equal(video.playCount,2,'Retornando aos projetos, deve retomar automaticamente');
 context.document.hidden=true;handlers.visibilitychange();
 assert(video.paused,'Suspender em aba oculta');
-context.document.hidden=false;
-await buttonHandlers.click({preventDefault(){},stopPropagation(){}});
-assert.equal(fullscreenButton.attributes['aria-pressed'],'true','Connect entra em tela cheia');
-assert.equal(label.textContent,'Fechar tela cheia','Botão informa como sair da tela cheia');
-await buttonHandlers.click({preventDefault(){},stopPropagation(){}});
-assert.equal(fullscreenButton.attributes['aria-pressed'],'false','Connect sai da tela cheia pelo mesmo botão');
+assert.equal(fullscreenButton.attributes['aria-pressed'],'false','Connect inicia no tamanho normal');
+// O diálogo, a API nativa e as saídas por botão/Esc são exercitados no DOM real
+// por interaction-regressions.mjs, também obrigatório na publicação.
 console.log('PASS Hostinger parity: Connect autoplay e vídeo THAISO visível; Hero mobile e sanfona preservados');

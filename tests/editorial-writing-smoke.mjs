@@ -19,7 +19,7 @@ assert(writing.includes("'--contact-glow': .18") && writing.includes("'--contact
 assert(finish.includes('.contact-section::before') && finish.includes('.contact-section::after'), 'Brilho e linha de encerramento do contato');
 assert(hero.includes("clipPath: 'inset(0 0% 0 0)'"), 'Título principal deve ser escrito no scrub do HERO');
 assert(hero.includes('onUpdate: self =>') && hero.includes('timeline.progress(self.progress)'), 'HERO deve acompanhar o scroll nos dois sentidos');
-assert(pdf.includes('showcase.requestFullscreen') && /event\.key\s*!?==\s*'Escape'/.test(pdf) && !pdf.includes('document.body.appendChild(showcase)'), 'PDF abre em tela cheia e mantém o visualizador original no lugar');
+assert(pdf.includes('fullscreenCopy.requestFullscreen') && /event\.key\s*!?==\s*'Escape'/.test(pdf) && !pdf.includes('document.body.appendChild(showcase)'), 'PDF abre em tela cheia e mantém o visualizador original no lugar');
 assert(!/<a\b[^>]*\bdownload(?:\s|=|>)/i.test(html), 'A página não deve mostrar ação de download do PDF');
 assert(sitemap.includes('https://toeventos.com/sobre/'), 'Sitemap deve incluir a página Sobre');
 console.log('PASS: escrita nos títulos, entrada editorial, contato épico, fullscreen e retorno do HERO');

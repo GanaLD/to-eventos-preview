@@ -42,7 +42,7 @@ async function checkConnect(viewport, fallback, escape = false) {
       HTMLVideoElement.prototype.webkitEnterFullscreen = undefined;
     });
     await open(page); await projectPosition(page);
-    if (fallback) {
+    {
       await page.waitForFunction(() => document.querySelector('.case-featured video').readyState >= 1, null, { timeout: 20000 });
       assert(await page.evaluate(() => document.querySelector('.case-featured video').currentSrc.endsWith('/connect-web.mp4')), 'Connect must select the seekable MP4');
       await page.locator('.case-featured video').evaluate(async video => { video.muted = true; video.currentTime = 10; await video.play(); });
@@ -59,28 +59,28 @@ async function checkConnect(viewport, fallback, escape = false) {
     await page.waitForTimeout(1200);
     const result = await page.evaluate(() => {
       const frame = document.querySelector('.case-featured .case-image');
-      const overlay = document.querySelector('body > .is-connect-fullscreen-fallback');
-      const active = document.fullscreenElement === frame || !!overlay;
-      const r = (overlay || frame).getBoundingClientRect();
-      return { active, overlay: !!overlay, pressed: frame.querySelector('button').getAttribute('aria-pressed'), width: r.width, height: r.height, viewport: [innerWidth, innerHeight], y: scrollY };
+      const dialog = document.querySelector('dialog.to-media-dialog[open]');
+      const active = !!dialog && dialog.matches(':modal');
+      const r = (dialog || frame).getBoundingClientRect();
+      return { active, native: !!document.fullscreenElement&&!!dialog?.contains(document.fullscreenElement), pressed: frame.querySelector('button').getAttribute('aria-pressed'), width: r.width, height: r.height, viewport: [innerWidth, innerHeight], y: scrollY };
     });
     assert(result.active && result.pressed === 'true', JSON.stringify(result));
-    assert.equal(result.overlay, fallback, JSON.stringify(result));
+    assert.equal(result.native, !fallback, JSON.stringify(result));
     assert(result.width >= result.viewport[0] - 2 && result.height >= result.viewport[1] - 2, JSON.stringify(result));
     assert(Math.abs(result.y - before.y) < 5, JSON.stringify({ before, result }));
-    if (fallback) {
+    {
       await page.waitForFunction(() => {
-        const video = document.querySelector('body > .is-connect-fullscreen-fallback video');
+        const video = document.querySelector('dialog.to-media-dialog[open] video');
         return video && video.readyState >= 2 && !video.paused && video.currentTime >= 9.5;
       }, null, { timeout: 15000 });
     }
-    const close = fallback ? page.locator('body > .is-connect-fullscreen-fallback [data-connect-fullscreen]') : page.locator('[data-connect-fullscreen]');
+    const close = page.locator('dialog.to-media-dialog[open] [data-connect-fullscreen]');
     if (escape) await page.keyboard.press('Escape');
     else await close.click();
     await page.waitForTimeout(500);
     assert.equal(await page.evaluate(() => !!document.fullscreenElement || !!document.querySelector('.is-connect-fullscreen-fallback')), false);
     assert(await page.evaluate(() => document.querySelector('.case-featured video') === window.__connectOriginal));
-    if (fallback) assert(await page.evaluate(() => { const video = document.querySelector('.case-featured video'); return video.currentTime >= 9.5 && !video.paused; }), 'Connect did not resume at the same point');
+    assert(await page.evaluate(() => { const video = document.querySelector('.case-featured video'); return video.currentTime >= 9.5 && !video.paused; }), 'Connect did not resume at the same point');
     assert(Math.abs(await page.evaluate(() => scrollY) - before.y) < 5, 'Connect changed scroll position');
   } finally { await page.close(); }
 }
@@ -112,14 +112,14 @@ async function checkPdf(viewport, fallback, escape = false) {
     await page.waitForTimeout(500);
     const openState = await page.evaluate(() => {
       const original = document.querySelector('#to-pdf-showcase');
-      const copy = document.querySelector('body > .to-pdf-showcase.is-fullscreen-fallback');
-      const active = document.fullscreenElement === original || !!copy;
-      const r = (copy || original).getBoundingClientRect();
-      return { active, copy: !!copy, width: r.width, height: r.height, viewport: [innerWidth, innerHeight] };
+      const dialog = document.querySelector('dialog.to-pdf-dialog[open]');
+      const active = !!dialog && dialog.matches(':modal');
+      const r = (dialog || original).getBoundingClientRect();
+      return { active, native: !!document.fullscreenElement&&!!dialog?.contains(document.fullscreenElement), width: r.width, height: r.height, viewport: [innerWidth, innerHeight] };
     });
-    assert(openState.active && openState.copy === fallback, JSON.stringify(openState));
+    assert(openState.active && openState.native === !fallback, JSON.stringify(openState));
     assert(openState.width >= openState.viewport[0] - 2 && openState.height >= openState.viewport[1] - 2, JSON.stringify(openState));
-    const exit = fallback ? page.locator('body > .to-pdf-showcase.is-fullscreen-fallback [data-pdf-action="exit-fullscreen"]') : page.locator('#to-pdf-showcase [data-pdf-action="exit-fullscreen"]');
+    const exit = page.locator('dialog.to-pdf-dialog[open] [data-pdf-action="exit-fullscreen"]');
     if (escape) await page.keyboard.press('Escape');
     else await exit.click();
     await page.waitForTimeout(1000);
