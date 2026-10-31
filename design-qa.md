@@ -35,6 +35,8 @@ Data: 2026-10-31.
 - `tests/media-dialog-regressions.mjs`: passou em 1705 × 867, 1440 × 900, 1280 × 600 e 390 × 844; API permitida, recusada e pendente; modais na camada superior; botão de fechar dentro da viewport; PDF sem barra escondida; posição preservada.
 - `tests/mobile-loading-regressions.mjs`: passou; carregamento adiado e mídias ativadas ao chegar às seções.
 - Console: nenhuma exceção de página nos cenários de diálogo capturados.
+- Publicação confirmada em `https://toeventos.com/`, produção `db4983b` (fonte `3aa573e`). Os quatro arquivos enviados correspondem byte a byte à branch de produção; seis arquivos do Hero correspondem aos hashes anteriores. Pacote removido da área pública (404).
+- As duas suítes de interação e diálogo passaram novamente contra o domínio publicado, nos mesmos viewports. No Chrome do perfil do usuário, cabeçalho e vídeo mediram x=273,625 e largura=1121,766 px; vídeo e PDF abriram como diálogos modais de 1669 × 1080 px. Vídeo fechou pelo botão; Esc foi enviado ao controle focado do PDF. `/sobre/` responde 200.
 - Limite: Chrome isolado com emulação móvel; não representa validação em aparelho físico ou em todas as extensões do perfil pessoal.
 
 ## Checklist final
