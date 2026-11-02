@@ -41,6 +41,25 @@
     // Um elemento fixado não informa a posição original pelo seu retângulo.
     return Math.max(0, pinned ? pinned.start : element.getBoundingClientRect().top + window.scrollY);
   }
+  let navigation = null, navigationFrame = 0;
+  function followNavigation() {
+    navigationFrame = 0;
+    if (!navigation || performance.now() > navigation.until) return;
+    const top = Math.min(sectionTop(navigation.element), Math.max(0, document.documentElement.scrollHeight - innerHeight));
+    if (Math.abs(scrollY - top) > 3) window.scrollTo({top, behavior: reduceMotion ? 'instant' : 'smooth'});
+  }
+  function scheduleNavigation() {
+    if (!navigation || navigationFrame) return;
+    navigationFrame = requestAnimationFrame(followNavigation);
+  }
+  // Se fontes ou pins terminam de carregar durante o salto, conserva o destino.
+  // Um gesto manual encerra essa correção para nunca disputar o scroll do visitante.
+  window.ScrollTrigger?.addEventListener('refresh', scheduleNavigation);
+  document.fonts?.addEventListener('loadingdone', scheduleNavigation);
+  window.addEventListener('load', scheduleNavigation, {once:true});
+  for (const type of ['wheel','touchmove','pointerdown','keydown']) {
+    window.addEventListener(type, () => { navigation = null; }, {passive:true});
+  }
   document.addEventListener('click', event => {
     if (event.defaultPrevented || event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const link = event.target.closest?.('a[href]');
@@ -52,10 +71,17 @@
     event.preventDefault();
     // refresh() durante o toque cancela o smooth scroll no Chrome mobile.
     // Os pins já são atualizados nos eventos de carregamento e resize.
-    window.scrollTo({top: sectionTop(section.element), behavior: reduceMotion ? 'instant' : 'smooth'});
+    navigation = {element:section.element, until:performance.now()+8000};
+    followNavigation();
     history.replaceState(null, '', url.hash);
     scheduleUpdate();
   });
+  window.addEventListener('pagehide', () => {
+    navigation = null;
+    cancelAnimationFrame(navigationFrame);
+    window.ScrollTrigger?.removeEventListener('refresh', scheduleNavigation);
+    document.fonts?.removeEventListener('loadingdone', scheduleNavigation);
+  }, {once:true});
   window.addEventListener('scroll', scheduleUpdate, {passive:true});
   window.addEventListener('resize', scheduleUpdate, {passive:true});
   window.addEventListener('hashchange', scheduleUpdate);
