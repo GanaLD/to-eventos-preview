@@ -33,4 +33,23 @@ try {
     console.log('PASS âncoras por toque, rótulos e retorno ao início',width);
     await page.close();
   }
+  const cold = await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  await cold.route(/fonts\.googleapis\.com|use\.typekit\.net\/oet1pqt\.css/, async route => {
+    await new Promise(resolve => setTimeout(resolve,1800));
+    await route.continue();
+  });
+  await cold.goto(base,{waitUntil:'domcontentloaded',timeout:60000});
+  await cold.locator('.to-section-nav a[data-section="contato"]').tap();
+  await cold.waitForFunction(()=>document.readyState==='complete' && document.fonts.status==='loaded');
+  await cold.waitForTimeout(1800);
+  const contactTop=await cold.locator('#contato').evaluate(e=>e.getBoundingClientRect().top);
+  assert(contactTop>=-3 && contactTop<844*.35,'Âncora interrompida pelo carregamento tardio das fontes: '+contactTop);
+  await cold.mouse.wheel(0,-400);
+  await cold.waitForTimeout(400);
+  const manual=await cold.evaluate(()=>scrollY);
+  await cold.evaluate(()=>ScrollTrigger.refresh());
+  await cold.waitForTimeout(1200);
+  assert(Math.abs(await cold.evaluate(()=>scrollY)-manual)<5,'Correção da âncora não pode disputar um gesto manual');
+  await cold.close();
+  console.log('PASS toque durante fontes lentas e respeito ao scroll manual');
 } finally { await browser.close(); }

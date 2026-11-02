@@ -5,6 +5,10 @@ mobile this cancelled smooth scrolling: the URL changed, but the viewport stayed
 in the previous section. Navigation now uses the existing pin's start position
 without refreshing the page geometry. Touch no longer reveals overlapping desktop
 labels. Footer anchors follow the same navigation handler.
+If fonts or pins finish loading during a jump, the destination is recalculated.
+A wheel, touch-move, pointer or keyboard gesture cancels that adjustment so the
+visitor retains control. A regression test delays font stylesheets by 1.8 seconds
+and verifies both the anchor destination and subsequent manual scrolling.
 
 Performance changes preserve the original assets, animation timelines and CSS
 cascade. Seventeen local stylesheets are delivered in one gzip-friendly bundle;
