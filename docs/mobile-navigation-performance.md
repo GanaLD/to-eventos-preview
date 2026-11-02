@@ -32,9 +32,35 @@ locally under `qa-artifacts/`.
 | Candidate with safe mobile refresh | 90 | 0.9 s | 3.6 s | 30 ms | 0.018 |
 | Candidate repeat | 88 | 0.9 s | 3.8 s | 70 ms | 0 |
 
-The candidate reaches 90 but has not demonstrated a consistent 90+ result.
-Local results are not the Hostinger panel score. Publication requires live
-readback and another mobile measurement.
+Local candidate results varied. The completed publication was measured separately:
+
+| Published domain, same Lighthouse command | Performance | FCP | LCP | TBT | CLS |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Before upload, 2026-11-02 | 75 | 2.4 s | 4.0 s | 340 ms | 0 |
+| After upload | 91 | 1.2 s | 3.2 s | 140 ms | 0.002 |
+| After upload, repeat | 90 | 1.1 s | 3.0 s | 210 ms | 0 |
+
+The separate mobile report displayed in hPanel showed 89, FCP 1.2 s, LCP 3.7 s,
+TBT 0 ms and CLS 0.025. Do not describe the Lighthouse 90–91 results as a 90–91
+score in the Hostinger panel; they are different measurement runs.
+
+## Production verification
+
+- Code source: `a0186071109078e7670012c10c432ca79868051d`.
+- Production branch: `87f6b435a2fbbd73fc26b17b049d00a62b1c9a25`.
+- Pages, production promotion and GitHub visual QA completed successfully.
+- Nine changed files uploaded into `public_html` for account `u365415297`.
+- Each published file was downloaded through `toeventos.com` and matched the
+  production branch byte for byte using SHA-256. The unqualified home URL also
+  matched, without a cache-busting query.
+- Touch navigation passed again on the published domain at 360/390 pixels,
+  including slow fonts, footer return and subsequent manual scrolling.
+- Published hero forward/reverse, deferred media, Connect autoplay and PDF
+  availability passed. Home and `/sobre/` return 200 with `index,follow`.
+- The temporary upload archive was moved to the Hostinger trash and its public
+  URL returns 404.
+- Both final Lighthouse JSON and standalone HTML reports, the upload manifest
+  and SHA-256 readback are retained under local `qa-artifacts/`.
 
 ## Experiment ledger
 
