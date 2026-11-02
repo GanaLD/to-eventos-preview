@@ -78,7 +78,7 @@
       if(!entered && r.top<innerHeight*.82 && r.bottom>innerHeight*.15)enter();
     };
     requestAnimationFrame(()=>requestAnimationFrame(reconcile));
-    document.fonts?.ready?.then(()=>{ST.refresh();reconcile();});
+    document.fonts?.ready?.then(()=>{ST.refresh(matchMedia('(max-width: 899px)').matches);reconcile();});
   }
 
   // COMPETÊNCIAS — imagens já recortadas pelos limites ALFA reais.

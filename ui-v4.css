@@ -39,7 +39,7 @@
 .to-section-nav-list li{margin:0;padding:0}
 .to-section-nav-list a{position:relative;display:flex;gap:12px;align-items:center;justify-content:flex-end;width:100%;min-height:34px;padding:0 7px 0 0;text-decoration:none;outline-offset:3px;color:rgba(244,244,242,.88);font:600 11px/1.15 var(--font-ui);letter-spacing:.02em}
 .to-section-nav-list a>span{white-space:nowrap;opacity:0;transform:translateX(6px);pointer-events:none;transition:opacity .18s,transform .18s}
-.to-section-nav:hover a>span,.to-section-nav:focus-within a>span{opacity:1;transform:none}
+@media(min-width:721px){.to-section-nav:hover a>span,.to-section-nav:focus-within a>span{opacity:1;transform:none}}
 .to-section-nav-list a>i{z-index:2;flex:none;width:8px;height:8px;border:1px solid rgba(244,244,242,.7);border-radius:50%;background:var(--graphite);transition:border-color .15s,box-shadow .15s}
 .to-section-nav-list a.is-active>i,.to-section-nav-list a:hover>i{border-color:var(--to-rail);box-shadow:0 0 0 2px rgba(255,77,0,.24),0 0 11px rgba(255,77,0,.62)}
 .to-section-nav-list a.is-active>span{color:#ff7c48}
@@ -74,8 +74,8 @@
 .to-section-nav{top:auto;bottom:max(18px,env(safe-area-inset-bottom));left:14px;right:auto;transform:none;width:auto;max-width:calc(100vw - 110px);padding:5px 9px;border:1px solid rgba(255,255,255,.16);border-radius:40px;background:rgba(26,26,26,.86);backdrop-filter:blur(16px)}
 .to-section-nav:hover,.to-section-nav:focus-within{width:auto;padding:5px 9px;background:rgba(26,26,26,.93)}
 .to-section-nav-rail{display:none}
-.to-section-nav-list{display:flex;gap:5px;align-items:center}
-.to-section-nav-list a{width:30px;height:40px;min-height:40px;justify-content:center;padding:0}
+.to-section-nav-list{display:flex;gap:0;align-items:center}
+.to-section-nav-list a{width:clamp(38px,10vw,44px);height:44px;min-height:44px;justify-content:center;padding:0;touch-action:manipulation}
 .to-section-nav-list a>span{position:absolute;left:50%;top:-40px;transform:translateX(-50%);padding:6px 9px;border-radius:5px;background:#1a1a1a;opacity:0;pointer-events:none;font-size:10px}
 .to-section-nav-list a:focus-visible>span{opacity:1;transform:translateX(-50%)}
 .to-section-nav-list a>i{width:9px;height:9px}

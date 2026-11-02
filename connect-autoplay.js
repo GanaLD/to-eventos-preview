@@ -7,7 +7,21 @@
   let viewer = null, fullscreenTarget = null, expandedVideo = null, expanded = false, nativeEntered = false;
   let inView = false, sourceLoaded = false, wasPlaying = false;
 
+  const loadPoster = () => {
+    if (video.dataset.poster && !video.hasAttribute('poster')) video.poster = video.dataset.poster;
+  };
+  if (!matchMedia('(max-width: 899px)').matches) loadPoster();
+  else if ('IntersectionObserver' in window) {
+    const posterObserver = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      loadPoster();
+      posterObserver.disconnect();
+    }, {rootMargin:'600px'});
+    posterObserver.observe(frame || video);
+  } else loadPoster();
+
   const loadSources = () => {
+    loadPoster();
     if (sourceLoaded) return;
     sourceLoaded = true;
     const sources = video.querySelectorAll?.('source[data-src]') || [];

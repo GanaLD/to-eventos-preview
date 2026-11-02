@@ -165,7 +165,7 @@
   }
 
   // Fonte disponível, âncoras e scroll reverso sempre recalculam o layout real.
-  document.fonts?.ready?.then(()=>ST.refresh()).catch(()=>{});
+  document.fonts?.ready?.then(()=>ST.refresh(matchMedia('(max-width: 899px)').matches)).catch(()=>{});
   window.addEventListener('pagehide',()=>{
     activeTriggers.forEach(t=>t.kill());
   },{once:true});
