@@ -16,7 +16,7 @@ try{
   await page.goto(base,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.ScrollTrigger?.getAll().some(t=>t.trigger?.id==='projetos'));
   await page.waitForTimeout(2200);
-  for(const media of ['connect-web.mp4','papoulas-invisivel-aquarela-v1.mp4','pdf.min.js']){
+  for(const media of ['connect-web.mp4','connect-poster.webp','papoulas-invisivel-aquarela-v1.mp4','pdf.min.js']){
     assert(!requested.some(url=>url.includes(media)),media+' carregou antes da seção');
   }
   const florals=await page.locator('.solutions-floral').evaluateAll(images=>images.map(image=>image.currentSrc));
@@ -27,6 +27,7 @@ try{
   await page.waitForFunction(()=>[...document.querySelectorAll('.solutions-floral')].every(image=>image.currentSrc.includes('-mobile.webp')&&image.complete),{},{timeout:30000});
   await page.evaluate(()=>{const t=ScrollTrigger.getAll().find(t=>t.trigger?.id==='projetos');scrollTo(0,t.start+20)});
   await page.waitForFunction(()=>{const v=document.querySelector('[data-role="connect-autoplay"]');return v.currentSrc.includes('connect-web.mp4')&&!v.paused},{},{timeout:30000});
+  assert(await page.locator('[data-role="connect-autoplay"]').evaluate(v=>v.poster.endsWith('connect-poster.webp')),'Capa do Connect deve carregar ao chegar à seção');
   await page.evaluate(()=>{const t=ScrollTrigger.getAll().find(t=>t.trigger?.id==='projetos');scrollTo(0,t.end-10)});
   await page.locator('#to-pdf-showcase.is-ready').waitFor({timeout:30000});
   assert(requested.some(url=>url.includes('pdf.min.js')),'Leitor de PDF não foi carregado ao chegar à seção');

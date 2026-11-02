@@ -33,16 +33,29 @@
     requestedFrame = true;
     requestAnimationFrame(updateNavigation);
   }
-  for (const {link, element} of sections) {
-    link.addEventListener('click', event => {
-      event.preventDefault();
-      window.ScrollTrigger?.refresh();
-      const top = element.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({top, behavior: reduceMotion ? 'instant' : 'smooth'});
-      history.replaceState(null, '', '#' + element.id);
-      scheduleUpdate();
-    });
+  function sectionTop(element) {
+    const st = window.ScrollTrigger;
+    const pinned = element.id === 'hero'
+      ? st?.getById('to-hero-film-and-copy') || st?.getById('to-hero-mobile-film-and-copy')
+      : st?.getAll().find(trigger => trigger.trigger === element && trigger.pin);
+    // Um elemento fixado não informa a posição original pelo seu retângulo.
+    return Math.max(0, pinned ? pinned.start : element.getBoundingClientRect().top + window.scrollY);
   }
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest?.('a[href]');
+    if (!link || link.target === '_blank' || link.hasAttribute('download')) return;
+    const url = new URL(link.href, location.href);
+    if (url.origin !== location.origin || url.pathname !== location.pathname || url.search !== location.search) return;
+    const section = sections.find(item => '#' + item.element.id === url.hash);
+    if (!section) return;
+    event.preventDefault();
+    // refresh() durante o toque cancela o smooth scroll no Chrome mobile.
+    // Os pins já são atualizados nos eventos de carregamento e resize.
+    window.scrollTo({top: sectionTop(section.element), behavior: reduceMotion ? 'instant' : 'smooth'});
+    history.replaceState(null, '', url.hash);
+    scheduleUpdate();
+  });
   window.addEventListener('scroll', scheduleUpdate, {passive:true});
   window.addEventListener('resize', scheduleUpdate, {passive:true});
   window.addEventListener('hashchange', scheduleUpdate);

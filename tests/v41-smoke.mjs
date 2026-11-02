@@ -6,7 +6,10 @@ const css=readFileSync(new URL('../site/ui-v41.css', import.meta.url), 'utf8');
 const js=readFileSync(new URL('../site/ui-v41.js', import.meta.url), 'utf8');
 const original=readFileSync(new URL('../site/main.js', import.meta.url), 'utf8');
 
-assert(html.includes('<link rel="stylesheet" href="ui-v41.css">'), 'Folha V4.1 não carregada');
+const bundle=readFileSync(new URL('../site/site-styles.css', import.meta.url), 'utf8');
+assert(/<link[^>]*rel="stylesheet"[^>]*href="site-styles\.css\?[^\"]+"/.test(html), 'Bundle de estilos não carregado');
+assert(bundle.replace(/\r\n/g,'\n').includes(css.replace(/\r\n/g,'\n')), 'Bundle deve preservar integralmente os estilos V4.1');
+assert(/<link[^>]*href="ui-v41\.css"[^>]*data-style-source/.test(html), 'Fallback V4.1 não referenciado');
 assert(html.includes('<script defer src="ui-v41.js"></script>'), 'Script V4.1 não carregado');
 // V4.1 mantém o conteúdo e a transição; o menu superior antigo foi substituído.
 const menuCss=readFileSync(new URL('../site/staggered-menu.css', import.meta.url), 'utf8');

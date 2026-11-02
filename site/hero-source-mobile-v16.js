@@ -8,6 +8,8 @@
   if (!video || !hero) return;
   const portraitMedia = 'assets/media/motion-hero-vertical-v11.mp4?v=20261031-mobile-performance';
   const floralMedia = 'assets/media/floral-mobile-v14.mp4?v=20261031-mobile-performance';
+  const portraitPoster = 'assets/media/motion-hero-mobile-poster.webp';
+  const originalPoster = video.getAttribute('poster');
   const mq = window.matchMedia('(max-width: 899px) and (orientation: portrait)');
   let forced = false;
   function wantsPortrait() {
@@ -20,6 +22,11 @@
   function syncSource() {
     const mobile = wantsPortrait();
     document.documentElement.classList.toggle('to-hero-mobile-portrait-forced', mobile);
+    // Exibe o primeiro quadro original enquanto os dados do vídeo chegam.
+    // O vídeo e seu controle de scroll continuam sendo os mesmos.
+    if (mobile) video.setAttribute('poster', portraitPoster);
+    else if (originalPoster === null) video.removeAttribute('poster');
+    else video.setAttribute('poster', originalPoster);
     if (mobile && !window.__TO_PREVIEW_MEDIA__?.mobileMp4) {
       window.__TO_PREVIEW_MEDIA__ = {...window.__TO_PREVIEW_MEDIA__, mobileMp4: floralMedia};
     }

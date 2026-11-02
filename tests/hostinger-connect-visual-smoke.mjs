@@ -44,7 +44,8 @@ const fullscreenButton={hidden:false,attributes:{},
 const frame={classList:{add(){},remove(){}},
   querySelector:selector=>selector==='[data-connect-fullscreen]'?fullscreenButton:null
 };
-const video = {paused:true,muted:false,playCount:0,pauseCount:0,
+const video = {paused:true,muted:false,playCount:0,pauseCount:0,dataset:{poster:'assets/media/connect-poster.webp'},
+  hasAttribute(name){return name==='poster' && Boolean(this.poster)},
   closest:selector=>selector==='.case-image'?frame:null,
   play(){this.paused=false;this.playCount++;return Promise.resolve()},
   pause(){this.paused=true;this.pauseCount++},
@@ -52,6 +53,7 @@ const video = {paused:true,muted:false,playCount:0,pauseCount:0,
 };
 let io;
 const context={
+  matchMedia:()=>({matches:false}),
   document:{hidden:false,fullscreenElement:null,documentElement:{classList:{add(){},remove(){}}},
     querySelector:sel=>sel.includes('connect-autoplay')?video:null,
     addEventListener:(name,fn)=>handlers[name]=fn,
@@ -65,6 +67,7 @@ const context={
 };
 frame.requestFullscreen=()=>{context.document.fullscreenElement=frame;handlers.fullscreenchange?.();return Promise.resolve()};
 vm.runInNewContext(autoplayJs,context);
+assert.equal(video.poster,'assets/media/connect-poster.webp','Poster desktop deve estar disponível desde a inicialização');
 context.document.fullscreenElement=null;
 assert(io, 'Observar visibilidade real do Connect');
 io.notify([{target:video,isIntersecting:true,intersectionRatio:.75}]);

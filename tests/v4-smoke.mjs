@@ -20,6 +20,7 @@ assert(html.includes('portfolio-thais-ortiz.pdf'), 'Showcase do portfólio PDF d
 assert(style.includes('.hero-title{font-size:clamp'), 'HERO deve ter escala tipográfica responsiva');
 assert(style.includes('grid-template-columns:minmax(0,1.03fr) minmax(0,1fr)'), 'HERO deve manter colunas independentes');
 assert(style.includes('--to-rail:#FF4D00'), 'Cor do progresso lateral deve ser laranja TO');
-assert(script.includes('window.ScrollTrigger?.refresh()'), 'Navegação precisa sincronizar com GSAP');
+assert(script.includes("st?.getById('to-hero-film-and-copy')") && script.includes('pinned.start'), 'Navegação deve usar a origem real do pin GSAP');
+assert(!/\.refresh\s*\(/.test(script), 'Toque na navegação não deve reiniciar o layout e cancelar o scroll');
 assert(script.includes('aria-current'), 'Navegação precisa identificar seção ativa');
 console.log('TO Eventos V4 — testes de regressão estrutural aprovados');
